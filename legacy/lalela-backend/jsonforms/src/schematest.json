@@ -1,0 +1,41 @@
+{
+    
+    "type": "object",
+    "properties": {
+        "WitnessOrVictim": {
+            "type": "string",
+            "enum": [
+                "Victim",
+                "Witness"
+            ]
+        },
+        "victimAwareness": {
+            "type": "string",
+            "enum": [
+                "Yes",
+                "No"
+            ]
+        },
+        "WitnessFlow": {
+            "type": "object",
+            "properties": {
+                "WitnessWhen": {
+                    "type": "object",
+                    "properties": {
+                        "DateRecall": {
+                            "type": "string",
+                            "enum": [
+                                "Yes",
+                                "No"
+                            ]
+                        },
+                        "IncidentDate":{
+                            "type": "string",
+                            "format": "date"
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
