@@ -169,7 +169,68 @@
                                         "Other": {
                                             "type": "boolean"
                                         }
-                                    }}  
+                                    }},
+                                    "WitnessTypeBefore": {
+                                        "type":"string",
+                                        "enum": [
+                                            "Yes",
+                                            "No"
+                                        ]
+                                    },
+                                    "WitnessSamePerpBefore": {
+                                        "type":"string",
+                                        "enum": [
+                                            "Yes",
+                                            "No"
+                                        ]
+                                    },
+                                    "WitnessRepeatIncident": {
+                                        "type":"string",
+                                        "enum": [
+                                            "Yes",
+                                            "No"
+                                        ]
+                                    },
+                                    "WitnessReportTo": {
+                                        "type":"string",
+                                        "enum": [
+                                            "Yes",
+                                            "No"
+                                        ]
+                                    }
+
+            }
+        },
+        "WitnessEmotionalEvaluation": {
+            "type":"object",
+            "properties": {
+                "WitnessFeeling": {
+                    "type": "string"
+                },
+                "WitnessFeelingTime": {
+                    "type": "string"
+                },
+                "WitnessFeelingCurrent": {
+                    "type": "string",
+                    "enum": [
+                        "Yes",
+                        "No"
+                    ]
+                },
+                "WitnessSafety": {
+                    "type":"string",
+                    "enum": [
+                        "yes",
+                        "No"
+                    ]
+                },
+                "WitnessJobSafety": {
+                    "type": "string",
+                    "enum": [
+                        "Yes",
+                        "No"
+                    ]
+                }
             }
         }
 

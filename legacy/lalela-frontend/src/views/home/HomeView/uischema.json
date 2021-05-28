@@ -335,9 +335,34 @@
                     "options":{
                         "toggle": true
                     }
+                },
+                {"type": "Control",
+                "label": "Have you witnessed this type of harassment before",
+                "scope": "#/properties/WitnessFlow/properties/WitnessNatureIncident/properties/WitnessTypeBefore"
+            },
+            {"type": "Control",
+                "label": "Have you witnessed this type of harassment by the same person before?",
+                "scope": "#/properties/WitnessFlow/properties/WitnessNatureIncident/properties/WitnessSamePerpBefore",
+                "rule": {
+                    "effect":"SHOW",
+                    "condition": {
+                        "scope": "#/properties/WitnessFlow/properties/WitnessNatureIncident/properties/WitnessTypeBefore",
+                        "schema": {
+                            "enum": [
+                                "yes"
+                            ]
+                        }
+                    }
                 }
-
-                
+            },
+            {"type": "Control",
+                "label": "Do you believe that this will happen again?",
+                "scope": "#/properties/WitnessFlow/properties/WitnessNatureIncident/properties/WitnessRepeatIncident"
+            },
+            {"type": "Control",
+                "label": "Is the perpetrator someone whom you are required to report incidences of harassment/violence/miscnduct to? i.e. HR, manager etc",
+                "scope": "#/properties/WitnessFlow/properties/WitnessNatureIncident/properties/WitnessReportTo"
+            }            
             ],
             "rule":{
                 "effect":"SHOW",
@@ -355,6 +380,36 @@
             }},
             {"type":"Category",
             "label": "Emotional Evaluation",
+            "elements":[
+                {"type":"Label",
+                "text": "This section will focus on how this incident affected you."},
+                {"type":"Label",
+                "text": "Even as a witness it is important that your organisation has provisions in place to keep you safe and assist you in making this report"},
+                {"type":"Control",
+                "label": "Do you recall how you felt at the time as well as after the incident? Please describe as best you can",
+                "scope": "#/properties/WitnessFlow/properties/WitnessEmotionalEvaluation/properties/WitnessFeeling"},
+                {"type":"Control",
+                    "label": "How long did you feel this way after the incident?",
+                    "scope": "#/properties/WitnessFlow/properties/WitnessEmotionalEvaluation/properties/WitnessFeelingTime"},
+                {"type":"Control",
+                    "label": "Do you still feel this way?",
+                    "scope": "#/properties/WitnessFlow/properties/WitnessEmotionalEvaluation/properties/WitnessFeelingCurrent",
+                    "options": {
+                        "format": "radio"
+                    }},
+                {"type":"Control",
+                    "label": "Do you feel safe at work after this incident?",
+                    "scope": "#/properties/WitnessFlow/properties/WitnessEmotionalEvaluation/properties/WitnessSafety",
+                    "options": {
+                        "format": "radio"
+                    }},
+                {"type":"Control",
+                    "label": "Has this incident made you consider moving departments, changing teams or resigning?",
+                    "scope": "#/properties/WitnessFlow/properties/WitnessEmotionalEvaluation/properties/WitnessJobSafety",
+                    "options": {
+                        "format": "radio"
+                    }}    
+            ],
             "rule":{
                 "effect":"SHOW",
                 "condition":{
