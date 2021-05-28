@@ -1,0 +1,64 @@
+{
+    
+    "type": "object",
+    "properties": {
+        "WitnessOrVictim": {
+            "type": "string",
+            "enum": [
+                "Victim",
+                "Witness"
+            ]
+        },
+        "victimAwareness": {
+            "type": "string",
+            "enum": [
+                "Yes",
+                "No"
+            ]
+        },
+        "WitnessFlow": {
+            "type": "object",
+            "properties": {
+                "WitnessWhen": {
+                    "type": "object",
+                    "properties": {
+                        "DateRecall": {
+                            "type": "string",
+                            "enum": [
+                                "Yes",
+                                "No"
+                            ]
+                        },
+                        "IncidentDate":{
+                            "type": "string",
+                            "format": "date"
+                        }
+                    }
+                },
+                "WitnessWhere": {
+                    "type": "object",
+                    "properties": {
+                        "Where": {
+                            "type": "string"
+                        },
+                        "Perpetrator": {
+                            "type": "string"
+                        },
+                        "PerpetratorRelation": {
+                            "type": "string",
+                            "enum": ["Colleague",
+                                    "Manager",
+                                    "Supervisor",
+                                    "Department Head",
+                                    "HR",
+                                    "Other"]
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "required": [
+        "WitnessOrVictim"
+    ]
+}
