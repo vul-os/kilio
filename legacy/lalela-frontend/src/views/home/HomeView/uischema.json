@@ -269,7 +269,74 @@
                     "options":{
                         "toggle": true
                     }
+                },
+                {"type":"Label",
+                "text":"Do you feel as though you witnessed one or more of these forms of workplace violence"},
+                {
+                    "type": "Control",
+                    "label": "Workplace bullying",
+                    "scope": "#/properties/WitnessFlow/properties/WitnessNatureIncident/properties/TypeOfWorkplaceViolence/properties/WorkplaceBullying",
+                    "options":{
+                        "toggle": true
+                    }
+                },
+                {
+                    "type": "Control",
+                    "label": "Verbal Harassment",
+                    "scope": "#/properties/WitnessFlow/properties/WitnessNatureIncident/properties/TypeOfWorkplaceViolence/properties/VerbalHarassment",
+                    "options":{
+                        "toggle": true
+                    }
+                },
+                {
+                    "type": "Control",
+                    "label": "Physical Harassment/Abuse",
+                    "scope": "#/properties/WitnessFlow/properties/WitnessNatureIncident/properties/TypeOfWorkplaceViolence/properties/PhysicalHarassment",
+                    "options":{
+                        "toggle": true
+                    }
+                },
+                {
+                    "type": "Control",
+                    "label": "Sexual Harassment/Abuse",
+                    "scope": "#/properties/WitnessFlow/properties/WitnessNatureIncident/properties/TypeOfWorkplaceViolence/properties/SexualHarassment",
+                    "options":{
+                        "toggle": true
+                    }
+                },
+                {
+                    "type": "Control",
+                    "label": "Racial Discrimination",
+                    "scope": "#/properties/WitnessFlow/properties/WitnessNatureIncident/properties/TypeOfWorkplaceViolence/properties/RacialDiscrimination",
+                    "options":{
+                        "toggle": true
+                    }
+                },
+                {
+                    "type": "Control",
+                    "label": "Homophobia",
+                    "scope": "#/properties/WitnessFlow/properties/WitnessNatureIncident/properties/TypeOfWorkplaceViolence/properties/Homophobia",
+                    "options":{
+                        "toggle": true
+                    }
+                },
+                {
+                    "type": "Control",
+                    "label": "Transphobia",
+                    "scope": "#/properties/WitnessFlow/properties/WitnessNatureIncident/properties/TypeOfWorkplaceViolence/properties/Transphobia",
+                    "options":{
+                        "toggle": true
+                    }
+                },
+                {
+                    "type": "Control",
+                    "label": "Other",
+                    "scope": "#/properties/WitnessFlow/properties/WitnessNatureIncident/properties/TypeOfWorkplaceViolence/properties/Other",
+                    "options":{
+                        "toggle": true
+                    }
                 }
+
                 
             ],
             "rule":{

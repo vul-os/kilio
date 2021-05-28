@@ -138,7 +138,38 @@
                                             "type": "boolean"
                                         }
                                     }
-                                }  
+                                },
+                                "TypeOfWorkplaceViolence": {
+                                    "type":"object",
+                                    "properties": {
+                                        "WorkplaceBullying": {
+                                            "type": "boolean"
+                                        },
+                                        "VerbalHarassment": {
+                                            "type": "boolean"
+                                        },
+                                        "PhysicalHarassment": {
+                                            "type": "boolean"
+                                        },
+                                        "SexualHarassment": {
+                                            "type": "boolean"
+                                        },
+                                        "RacialDiscrimination": {
+                                            "type": "boolean"
+                                        },
+                                        "Homophobia": {
+                                            "type": "boolean"
+                                        },
+                                        "Transphobia": {
+                                            "type": "boolean"
+                                        },
+                                        "Ableism": {
+                                            "type": "boolean"
+                                        },
+                                        "Other": {
+                                            "type": "boolean"
+                                        }
+                                    }}  
             }
         }
 
