@@ -47,10 +47,16 @@
                     "type": "VerticalLayout",
                     "elements": [
                         {"type": "Label",
-                            "text": "Thank you for taking the time to to report what you have witnessed. This section will focus on the 'where' and 'when' of the incident."},
+                            "text": "Thank you for taking the time to to report what you have witnessed. This section will focus on the 'WHERE' and 'WHEN' of the incident.  "},
+                            {"type": "Label",
+                                "text": "Any and all information could be important, please give as much detail as possible."},    
+                            {"type": "Label",
+                                "text": "If you name the perpetrator, they will not be able to trace the reprt back to you. Furthermore, no one in your organisation will be ble to identify you."},
+                                
                             
-                        {
-                            "type": "HorizontalLayout",
+                            {
+                            "type": "Group",
+                            "label": "When",
                             "elements": [
                                 {"type": "Control",
                             "label": "Can you recall the Date of the incident?",
@@ -73,40 +79,71 @@
                                 }
                         }}
                         ]},
-                        {"type":"Control",
-                        "label": "Where did this incident take place? Any and all information could be imprtant, please give as much detail as possible",
-                        "scope": "#/properties/WitnessFlow/properties/WitnessWhere/properties/Where" },
+                        {"type": "Group",
+                        "label": "When",
+                        "elements": [
+                            {"type":"Control",
+                        "label": "Where did this incident take place?",
+                        "scope": "#/properties/WitnessFlow/properties/WitnessWhere/properties/Where" }]},
+                        { "type": "Group",
+                        "label": "Who",
+                        "elements": [
                         {
                             "type":"Control",
-                            "label": "Please tell us who the perpetrator was. \n This information is completely anonymous. If you name the perpetrator, they will not be able to trace the report back to you. Furthermore, no one in your organisation will be able to identify you.",
-                            "scope": "#/properties/WitnessFlow/properties/WitnessWhere/properties/Perpetrator"
+                            "label": "Please tell us who the perpetrator was.",
+                            "scope": "#/properties/WitnessFlow/properties/WitnessWho/properties/Perpetrator"
                             },
-                        {"type": "Label",
-                        "text": "Space"},
                         {"type":"Control",
                         "label": "What is the relationship between yorself and the perpetrator",
-                        "scope": "#/properties/WitnessFlow/properties/WitnessWhere/properties/PerpetratorRelation"}
+                        "scope": "#/properties/WitnessFlow/properties/WitnessWho/properties/PerpetratorRelationWitness"},
+                        {"type":"Control",
+                            "label": "What is the relationship between the victim and the perpetrator",
+                            "scope": "#/properties/WitnessFlow/properties/WitnessWho/properties/PerpetratorRelationVictim"},
+                        {"type":"Control",
+                        "label": "Were there any other witnesses besides yourself?",
+                        "scope": "#/properties/WitnessFlow/properties/WitnessWho/properties/AdditionalWitnesses",
+                        "options": {
+                            "format": "radio"
+                        }},
+                        {"type":"Control",
+                            "label": "Please indicate how many additional witnesses were present",
+                            "scope": "#/properties/WitnessFlow/properties/WitnessWho/properties/AdditionalWitnessesNumber",
+                            "rule": {
+                                "effect":"SHOW",
+                                "condition": {
+                                    "scope": "#/properties/WitnessFlow/properties/WitnessWho/properties/AdditionalWitnesses",
+                                    "schema": {
+                                        "enum":[
+                                            "Yes"
+                                        ]
+                                    }
+                                }
+                            }},
+                            {"type":"Control",
+                                "label": "Did you report the incident after it happened?",
+                                "scope": "#/properties/WitnessFlow/properties/WitnessWho/properties/WitnessReported",
+                                "options": {
+                                    "format": "radio"
+                                }},
+                            {"type":"Control",
+                            "label": "Please indicate which department you reported to aswell as how. (eg. over email to supervisor)",
+                            "scope": "#/properties/WitnessFlow/properties/WitnessWho/properties/WitnessReportedWhere",
+                            "rule": {
+                                "effect":"SHOW",
+                                "condition": {
+                                    "scope": "#/properties/WitnessFlow/properties/WitnessWho/properties/WitnessReported",
+                                    "schema": {
+                                        "enum":[
+                                            "Yes"
+                                        ]
+                                    }
+                                }
+                            }}
+                            ]}
                     ]
                 }
 
             ],
-            "rule":{
-                "effect":"SHOW",
-                "condition":{
-                    "scope": "#/properties/WitnessFlow/properties/WitnessWhen/properties/DateRecall",
-                    "schema": {
-                        "enum": [
-                            "Yes",
-                            "No"
-                        ]
-                        }
-
-                    }
-            }
-        },
-        {
-            "type": "Category",
-            "label": "Parties involved",
             "rule":{
                 "effect":"SHOW",
                 "condition":{
@@ -115,6 +152,36 @@
                         "enum": [
                             "Victim",
                             "Witness"
+                        ]
+                        }
+
+                    }
+            }
+        },
+        {
+            "type": "Category",
+            "label": "Nature Of Incident",
+            "elements":[
+                {"type":"Label",
+                "text":"This section will focus on what happned. Take your time and provide as much detail as possible."},
+                {
+                    "type":"Control",
+                    "label": "Please tell us what happened",
+                    "scope": "#/properties/WitnessFlow/properties/WitnessNatureIncident/properties/IncidentDetails",
+                    "options": {
+                        "multi": true
+                    }
+                    }
+            ],
+            "rule":{
+                "effect":"SHOW",
+                "condition":{
+                    "scope": "#/properties/WitnessFlow/properties/WitnessWhen/properties/DateRecall",
+                    "schema": {
+                        "enum": [
+                            "Yes",
+                            "No",
+                            "Skip"
                         ]
                         }
 

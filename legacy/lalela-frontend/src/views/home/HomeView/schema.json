@@ -26,25 +26,32 @@
                             "type": "string",
                             "enum": [
                                 "Yes",
-                                "No"
+                                "No",
+                                "Skip"
                             ]
                         },
                         "IncidentDate":{
                             "type": "string",
                             "format": "date"
                         }
-                    }
+                    },
+                    "required":[
+                        "DateRecall"
+                    ]
                 },
                 "WitnessWhere": {
                     "type": "object",
                     "properties": {
                         "Where": {
                             "type": "string"
-                        },
+                        }}},
+                        "WitnessWho": {
+                            "type":"object",
+                            "properties": {
                         "Perpetrator": {
                             "type": "string"
                         },
-                        "PerpetratorRelation": {
+                        "PerpetratorRelationWitness": {
                             "type": "string",
                             "enum": ["Colleague",
                                     "Manager",
@@ -52,9 +59,48 @@
                                     "Department Head",
                                     "HR",
                                     "Other"]
-                        }
-                    }
-                }
+                        },
+                        "PerpetratorRelationVictim": {
+                            "type": "string",
+                            "enum": ["Colleague",
+                                    "Manager",
+                                    "Supervisor",
+                                    "Department Head",
+                                    "HR",
+                                    "I dont know",
+                                    "Other"]
+                        },
+                        "AdditionalWitnesses": {
+                            "type":"string",
+                            "enum": [
+                                "Yes",
+                                "No"
+                            ]
+                        },
+                        "AdditionalWitnessesNumber": {
+                            "type": "integer",
+                            "minimum": 1,
+                            "maximum": 99
+                        },
+                        "WitnessReported": {
+                            "type": "string",
+                            "enum": [
+                                "Yes",
+                                "No"
+                            ]
+                        },
+                        "WitnessReportedWhere": {
+                            "type":"string"
+                        }}},
+                        "WitnessNatureIncident": {
+                            "type":"object",
+                            "properties":{
+                                "IncidentDetails": {
+                                    "type":"string"
+                                }  
+            }
+        }
+
             }
         }
     },
