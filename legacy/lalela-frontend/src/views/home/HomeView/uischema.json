@@ -166,13 +166,161 @@
                 "text":"This section will focus on what happned. Take your time and provide as much detail as possible."},
                 {
                     "type":"Control",
-                    "label": "Please tell us what happened",
+                    "label": "Please tell us what happened ***REPHRASE THIS QUESTION***",
                     "scope": "#/properties/WitnessFlow/properties/WitnessNatureIncident/properties/IncidentDetails",
                     "options": {
                         "multi": true
                     }
+                    },
+                    {"type":"Label",
+                    "text": "Do you feel that you witnessed discrimination of one or more of thee factors? Select all that apply"},
+                {
+                    "type": "Control",
+                    "label": "Race",
+                    "scope": "#/properties/WitnessFlow/properties/WitnessNatureIncident/properties/TypeOfDiscrimination/properties/Race",
+                    "options":{
+                        "toggle": true
                     }
+                },
+                {
+                    "type": "Control",
+                    "label": "Age",
+                    "scope": "#/properties/WitnessFlow/properties/WitnessNatureIncident/properties/TypeOfDiscrimination/properties/Age",
+                    "options":{
+                        "toggle": true
+                    }
+                },
+                {
+                    "type": "Control",
+                    "label": "Gender/Gender-Identity",
+                    "scope": "#/properties/WitnessFlow/properties/WitnessNatureIncident/properties/TypeOfDiscrimination/properties/Gender",
+                    "options":{
+                        "toggle": true
+                    }
+                },
+                {
+                    "type": "Control",
+                    "label": "Sexual Orientation",
+                    "scope": "#/properties/WitnessFlow/properties/WitnessNatureIncident/properties/TypeOfDiscrimination/properties/SexualOrientation",
+                    "options":{
+                        "toggle": true
+                    }
+                },
+                {
+                    "type": "Control",
+                    "label": "Religious Affiliation",
+                    "scope": "#/properties/WitnessFlow/properties/WitnessNatureIncident/properties/TypeOfDiscrimination/properties/ReligiousAffiliation",
+                    "options":{
+                        "toggle": true
+                    }
+                },
+                {
+                    "type": "Control",
+                    "label": "Political Affiliation",
+                    "scope": "#/properties/WitnessFlow/properties/WitnessNatureIncident/properties/TypeOfDiscrimination/properties/PoliticalAffiliation",
+                    "options":{
+                        "toggle": true
+                    }
+                },
+                {
+                    "type": "Control",
+                    "label": "Martial Status",
+                    "scope": "#/properties/WitnessFlow/properties/WitnessNatureIncident/properties/TypeOfDiscrimination/properties/MartialStatus",
+                    "options":{
+                        "toggle": true
+                    }
+                },
+                {
+                    "type": "Control",
+                    "label": "Socio-Economic Class",
+                    "scope": "#/properties/WitnessFlow/properties/WitnessNatureIncident/properties/TypeOfDiscrimination/properties/SocioEconomicClass",
+                    "options":{
+                        "toggle": true
+                    }
+                },
+                {
+                    "type": "Control",
+                    "label": "Pregnancy",
+                    "scope": "#/properties/WitnessFlow/properties/WitnessNatureIncident/properties/TypeOfDiscrimination/properties/Pregnancy",
+                    "options":{
+                        "toggle": true
+                    }
+                },
+                {
+                    "type": "Control",
+                    "label": "Disability",
+                    "scope": "#/properties/WitnessFlow/properties/WitnessNatureIncident/properties/TypeOfDiscrimination/properties/Disability",
+                    "options":{
+                        "toggle": true
+                    }
+                },
+                {
+                    "type": "Control",
+                    "label": "Language",
+                    "scope": "#/properties/WitnessFlow/properties/WitnessNatureIncident/properties/TypeOfDiscrimination/properties/Language",
+                    "options":{
+                        "toggle": true
+                    }
+                },
+                {
+                    "type": "Control",
+                    "label": "Other",
+                    "scope": "#/properties/WitnessFlow/properties/WitnessNatureIncident/properties/TypeOfDiscrimination/properties/Other",
+                    "options":{
+                        "toggle": true
+                    }
+                }
+                
             ],
+            "rule":{
+                "effect":"SHOW",
+                "condition":{
+                    "scope": "#/properties/WitnessFlow/properties/WitnessWhen/properties/DateRecall",
+                    "schema": {
+                        "enum": [
+                            "Yes",
+                            "No",
+                            "Skip"
+                        ]
+                        }
+
+                    }
+            }},
+            {"type":"Category",
+            "label": "Emotional Evaluation",
+            "rule":{
+                "effect":"SHOW",
+                "condition":{
+                    "scope": "#/properties/WitnessFlow/properties/WitnessWhen/properties/DateRecall",
+                    "schema": {
+                        "enum": [
+                            "Yes",
+                            "No",
+                            "Skip"
+                        ]
+                        }
+
+                    }
+            }
+            },
+            {"type":"Category",
+            "label":"Supporting Evidence",
+            "rule":{
+                "effect":"SHOW",
+                "condition":{
+                    "scope": "#/properties/WitnessFlow/properties/WitnessWhen/properties/DateRecall",
+                    "schema": {
+                        "enum": [
+                            "Yes",
+                            "No",
+                            "Skip"
+                        ]
+                        }
+
+                    }
+            }},
+            {"type":"Category",
+            "label":"Closing Statements",
             "rule":{
                 "effect":"SHOW",
                 "condition":{

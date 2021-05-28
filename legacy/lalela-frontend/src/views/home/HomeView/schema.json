@@ -97,6 +97,47 @@
                             "properties":{
                                 "IncidentDetails": {
                                     "type":"string"
+                                },
+                                "TypeOfDiscrimination": {
+                                    "type":"object",
+                                    "properties": {
+                                        "Race": {
+                                            "type": "boolean"
+                                        },
+                                        "Age": {
+                                            "type": "boolean"
+                                        },
+                                        "Gender": {
+                                            "type": "boolean"
+                                        },
+                                        "SexualOrientation": {
+                                            "type": "boolean"
+                                        },
+                                        "ReligiousAffiliation": {
+                                            "type": "boolean"
+                                        },
+                                        "PoliticalAffiliation": {
+                                            "type": "boolean"
+                                        },
+                                        "MartialStatus": {
+                                            "type": "boolean"
+                                        },
+                                        "SocioEconomicClass": {
+                                            "type": "boolean"
+                                        },
+                                        "Pregnancy": {
+                                            "type": "boolean"
+                                        },
+                                        "Disability": {
+                                            "type": "boolean"
+                                        },
+                                        "Language": {
+                                            "type": "boolean"
+                                        },
+                                        "Other": {
+                                            "type": "boolean"
+                                        }
+                                    }
                                 }  
             }
         }
