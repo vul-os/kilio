@@ -1,4 +1,4 @@
-package models
+package controllers
 
 //Exception struct declaration
 type Exception struct {

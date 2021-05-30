@@ -1,8 +1,8 @@
-package services
+package utils
 
 import (
-	"lalela-backend/internal/pkg/models"
-	"lalela-backend/internal/pkg/utils"
+	"cog-analytics-engine-go/internal/pkg/controllers"
+	"cog-analytics-engine-go/internal/pkg/models"
 	"fmt"
 	"strconv"
 )
@@ -17,11 +17,11 @@ type CasbinRule struct {
 	V5    string
 }
 
-func GetPermissionExists(permission *models.DashboardPermission) (bool, error) {
-	db := utils.GetDB()
-	var dashboardPermissions models.DashboardPermission
+func GetPermissionExists(permission *controllers.DashboardPermission) (bool, error) {
+	db := GetPostgreDB()
+	var dashboardPermissions controllers.DashboardPermission
 	if len(permission.DashboardID) != 0 && len(permission.UserID) != 0 {
-		if err := db.Where(&models.DashboardPermission{DashboardID: permission.DashboardID, UserID: permission.UserID}).Find(&dashboardPermissions).Error; err != nil {
+		if err := db.Where(&controllers.DashboardPermission{DashboardID: permission.DashboardID, UserID: permission.UserID}).Find(&dashboardPermissions).Error; err != nil {
 			return true, nil
 		} else {
 			return false, nil
@@ -31,8 +31,8 @@ func GetPermissionExists(permission *models.DashboardPermission) (bool, error) {
 	}
 }
 
-func AddPermission(permission *models.DashboardPermission) bool {
-	db := utils.GetDB()
+func AddPermission(permission *controllers.DashboardPermission) bool {
+	db := GetPostgreDB()
 	if permission.DashboardID == "" || permission.UserID == "" {
 		return false
 	} else {
@@ -53,14 +53,14 @@ func AppendUniqueSlice(slice []string, i string) []string {
 
 // todo :: Check if Used
 func GetGroups() []models.Group {
-	db := utils.GetDB()
+	db := GetPostgreDB()
 	var groups []models.Group
 	db.Find(&groups)
 	return groups
 }
 
 func GetGroups2() map[int]string {
-	db := utils.GetDB()
+	db := GetPostgreDB()
 	var groups []models.Group
 	groupsT := make(map[int]string)
 	db.Find(&groups)
@@ -71,7 +71,7 @@ func GetGroups2() map[int]string {
 }
 
 func GetRoles() map[string]string {
-	db := utils.GetDB()
+	db := GetPostgreDB()
 	var roles []models.Role
 	rolesT := make(map[string]string)
 	db.Find(&roles)
@@ -84,8 +84,8 @@ func GetRoles() map[string]string {
 }
 
 func GetDashboardsGroup() map[uint]string {
-	db := utils.GetDB()
-	var dashboards []models.Dashboard
+	db := GetPostgreDB()
+	var dashboards []controllers.Dashboard
 	dashboardsT := make(map[uint]string)
 	db.Find(&dashboards)
 
@@ -96,7 +96,7 @@ func GetDashboardsGroup() map[uint]string {
 }
 
 func GetPermissionsGroup(g string, r string) {
-	db := utils.GetDB().Table("casbin_rule")
+	db := GetPostgreDB().Table("casbin_rule")
 
 	var permissions []CasbinRule
 
@@ -110,7 +110,7 @@ func GetPermissionsGroup(g string, r string) {
 
 // Grab All Permissions for Users
 func GetPermissionsUser(u string) {
-	db := utils.GetDB().Table("casbin_rule")
+	db := GetPostgreDB().Table("casbin_rule")
 
 	var permissions []CasbinRule
 	var dashboards []string
@@ -132,7 +132,7 @@ func GetPermissionsUser(u string) {
 func GetDashboardPermissions(d string) map[string][]string {
 
 	// DB
-	db := utils.GetDB().Table("casbin_rule")
+	db := GetPostgreDB().Table("casbin_rule")
 
 	// Declares
 	var permissions []CasbinRule
@@ -157,7 +157,7 @@ func GetDashboardPermissions(d string) map[string][]string {
 func GetUserRoles(u string) map[string][]string {
 
 	//Init Db
-	db := utils.GetDB().Table("casbin_rule")
+	db := GetPostgreDB().Table("casbin_rule")
 
 	// Declare
 	var permissions []CasbinRule
@@ -182,7 +182,7 @@ func GetUserRoles(u string) map[string][]string {
 func GetUserRoles2(u string, g int) []string {
 
 	//Init Db
-	db := utils.GetDB().Table("casbin_rule")
+	db := GetPostgreDB().Table("casbin_rule")
 
 	// Declare
 	var permissions []CasbinRule
@@ -201,7 +201,7 @@ func GetUserRoles2(u string, g int) []string {
 func GetDashRoles(u int, g int) []string {
 
 	//Init Db
-	db := utils.GetDB().Table("casbin_rule")
+	db := GetPostgreDB().Table("casbin_rule")
 
 	// Declare
 	var permissions []CasbinRule
@@ -218,7 +218,7 @@ func GetDashRoles(u int, g int) []string {
 }
 
 func GetAllPermissionsGroup() []CasbinRule {
-	db := utils.GetDB().Table("casbin_rule")
+	db := GetPostgreDB().Table("casbin_rule")
 
 	var permissions []CasbinRule
 
@@ -231,7 +231,7 @@ func GetAllPermissionsGroup() []CasbinRule {
 }
 
 func GetAllPermissionsPolicies() []CasbinRule {
-	db := utils.GetDB().Table("casbin_rule")
+	db := GetPostgreDB().Table("casbin_rule")
 
 	var permissions []CasbinRule
 

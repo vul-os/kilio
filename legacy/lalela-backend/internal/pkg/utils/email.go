@@ -6,7 +6,6 @@ package utils
 
 import (
 	"bytes"
-	"lalela-backend/internal/pkg/middleware"
 	"context"
 	"fmt"
 	"github.com/spf13/viper"
@@ -38,12 +37,14 @@ func Send(data EmailTemplateData) (bool, error) {
 	// apiKey := os.Getenv("EMAIL_API_KEY")
 	//emailFrom := os.Getenv("EMAIL_FROM")
 	emailFrom := viper.Get("emailFrom").(string)
+
+	// todo: why is this still here?
 	// Create an instance of the Mailgun Client
-	mg := mailgun.NewMailgun("admin.cognizance.vision", "***REMOVED***")
+	mg := mailgun.NewMailgun("", "")
 
 	body, err := ParseTemplate("templates/actionable_email.html", data)
 	if err != nil {
-		log.Print(middleware.NewError(err))
+		log.Print(NewError(err))
 		return false, err
 	}
 	// The message object allows you to add attachments and Bcc recipients
@@ -53,7 +54,7 @@ func Send(data EmailTemplateData) (bool, error) {
 	resp, id, err := mg.Send(ctx, message)
 	if err != nil {
 		log.Fatal(err)
-		log.Print(middleware.NewError(err))
+		log.Print(NewError(err))
 		return false, err
 	}
 

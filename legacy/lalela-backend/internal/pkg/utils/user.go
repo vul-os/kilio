@@ -1,9 +1,7 @@
-package services
+package utils
 
 import (
-	"lalela-backend/internal/pkg/middleware"
-	"lalela-backend/internal/pkg/models"
-	"lalela-backend/internal/pkg/utils"
+	"cog-analytics-engine-go/internal/pkg/models"
 	"fmt"
 	"github.com/o1egl/govatar"
 	"log"
@@ -17,10 +15,10 @@ import (
 func GetUsers(user *models.User) ([]models.User, error) {
 
 	// Init DB
-	db := utils.GetDB()
+	db := GetPostgreDB()
 
 	// Init RBCA Util
-	e := utils.InitRBCA()
+	e := InitRBCA()
 
 	// Grab User ID
 	db.Where("email = ?", user.Email).First(user)
@@ -30,7 +28,7 @@ func GetUsers(user *models.User) ([]models.User, error) {
 	var userRows []models.User
 
 	// Check if User is allowed to view
-	if utils.PermissionCanViewUser(e, fmt.Sprint(user.ID), fmt.Sprint(user.UserGroupId)) || user.UserGroupId == 1 {
+	if PermissionCanViewUser(e, fmt.Sprint(user.ID), fmt.Sprint(user.UserGroupId)) || user.UserGroupId == 1 {
 
 		/// true
 		if user.UserGroupId == 1 {
@@ -69,7 +67,7 @@ func GetUsers(user *models.User) ([]models.User, error) {
 func GetUser(user models.User) (models.UserGetReport, error) {
 
 	// Init DB
-	db := utils.GetDB()
+	db := GetPostgreDB()
 
 	// Grab User ID
 	db.First(&user)
@@ -91,7 +89,7 @@ func GetUser(user models.User) (models.UserGetReport, error) {
 func GetUserRaw(user models.User) (models.User, error) {
 
 	// Init DB
-	db := utils.GetDB()
+	db := GetPostgreDB()
 
 	// Grab User ID
 	db.Where("email = ?", user.Email).First(&user)
@@ -101,28 +99,28 @@ func GetUserRaw(user models.User) (models.User, error) {
 }
 
 func GetUserLastLogin(id uint) string {
-	db := utils.GetDB()
+	db := GetPostgreDB()
 	var event models.Event
 	db.Where("user_id = ?", id).Last(&event)
 	return event.Date.Format("2006-01-02 15:04:05")
 }
 
 func GetUserGroup(id int) string {
-	db := utils.GetDB()
+	db := GetPostgreDB()
 	var group models.Group
 	db.Where("id = ?", id).Find(&group)
 	return group.Name
 }
 
 func GetUsersRaw() []models.User {
-	db := utils.GetDB()
+	db := GetPostgreDB()
 	var users []models.User
 	db.Find(&users)
 	return users
 }
 
 func GetUserExists(user *models.User) (bool, error) {
-	db := utils.GetDB()
+	db := GetPostgreDB()
 	var users models.User
 	if len(user.Email) != 0 {
 		if err := db.Where(&models.User{Email: user.Email}).Find(&users).Error; err != nil {
@@ -137,14 +135,14 @@ func GetUserExists(user *models.User) (bool, error) {
 }
 
 func AddUser(user *models.User) bool {
-	db := utils.GetDB()
+	db := GetPostgreDB()
 
 	// todo :: Find a better way to do emtpy checks
 
 	pass, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
 
 	if err != nil {
-		log.Print(middleware.NewError(err))
+		log.Print(NewError(err))
 		return false
 	}
 
@@ -161,10 +159,10 @@ func AddUser(user *models.User) bool {
 }
 
 func CreateUser(user *models.User) (*models.User, error) {
-	db := utils.GetDB().Table("users")
+	db := GetPostgreDB().Table("users")
 	pass, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
 	if err != nil {
-		log.Print(middleware.NewError(err))
+		log.Print(NewError(err))
 		return nil, err
 	}
 
@@ -179,7 +177,7 @@ func CreateUser(user *models.User) (*models.User, error) {
 	userDb := db.Create(user)
 
 	if userDb.Error != nil {
-		log.Print(middleware.NewError(userDb.Error))
+		log.Print(NewError(userDb.Error))
 		fmt.Println(userDb.Error)
 		return nil, userDb.Error
 	}
@@ -188,12 +186,12 @@ func CreateUser(user *models.User) (*models.User, error) {
 }
 
 func UpdateUser(user *models.User) {
-	db := utils.GetDB().Table("users")
+	db := GetPostgreDB().Table("users")
 	db.Save(&user)
 }
 
 func DeleteUser(user *models.User) {
-	db := utils.GetDB().Table("users")
+	db := GetPostgreDB().Table("users")
 	db.Delete(&user)
 }
 
@@ -211,11 +209,11 @@ func GenerateToken() string {
 }
 
 func FindByEmail(user *models.User) (*models.User, error) {
-	db := utils.GetDB().Table("users")
+	db := GetPostgreDB().Table("users")
 	userDb := &models.User{}
 	fmt.Println(user.Email)
 	if err := db.Where("Email = ?", user.Email).First(userDb).Error; err != nil {
-		log.Print(middleware.NewError(err))
+		log.Print(NewError(err))
 		fmt.Println(err)
 		return nil, err
 	}
@@ -227,7 +225,7 @@ func SetAvatar(user *models.User, r *http.Request) (*models.User, error) {
 
 	err := govatar.GenerateFileForUsername(govatar.MALE, user.Email, "./avatars/"+user.Email+".jpg")
 	if err != nil {
-		log.Print(middleware.NewError(err))
+		log.Print(NewError(err))
 	}
 	user.Avatar = "http://" + r.Host + "/avatars/" + user.Email + ".jpg"
 	UpdateUser(user)
@@ -237,11 +235,11 @@ func SetAvatar(user *models.User, r *http.Request) (*models.User, error) {
 // Added To Not Mess With Inital Func
 // todo :: Remove inital function
 func FindByEmailString(email string) (*models.User, error) {
-	db := utils.GetDB().Table("users")
+	db := GetPostgreDB().Table("users")
 	user := models.User{Email: email}
 	userDb := &models.User{}
 	if err := db.Where("Email = ?", user.Email).First(userDb).Error; err != nil {
-		log.Print(middleware.NewError(err))
+		log.Print(NewError(err))
 		fmt.Println(err)
 		return nil, err
 	}
@@ -249,14 +247,14 @@ func FindByEmailString(email string) (*models.User, error) {
 }
 
 func FindByToken(token string) (*models.User, error) {
-	db := utils.GetDB().Table("users")
+	db := GetPostgreDB().Table("users")
 	userDb := &models.User{}
 
 	if err := db.Where("reset_token = ?", token).First(userDb).Error; err != nil {
 		// var resp = map[string]interface{}{"status": false, "message": "Invalid Token"}
 		// json.NewEncoder(w).Encode(resp)
 		// return
-		log.Print(middleware.NewError(err))
+		log.Print(NewError(err))
 		return nil, err
 	}
 
@@ -264,14 +262,14 @@ func FindByToken(token string) (*models.User, error) {
 }
 
 func FindByValidationToken(token string) (*models.User, error) {
-	db := utils.GetDB().Table("users")
+	db := GetPostgreDB().Table("users")
 	userDb := &models.User{}
 
 	if err := db.Where("validation_token = ?", token).First(userDb).Error; err != nil {
 		// var resp = map[string]interface{}{"status": false, "message": "Invalid Token"}
 		// json.NewEncoder(w).Encode(resp)
 		// return
-		log.Print(middleware.NewError(err))
+		log.Print(NewError(err))
 		return nil, err
 	}
 
@@ -281,7 +279,7 @@ func FindByValidationToken(token string) (*models.User, error) {
 func CheckPassword(user *models.User, pw string) error {
 	errf := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(pw))
 	if errf != nil && errf == bcrypt.ErrMismatchedHashAndPassword { //Password does not match!
-		log.Print(middleware.NewError(errf))
+		log.Print(NewError(errf))
 		fmt.Println(errf)
 		return errf
 	}
@@ -299,45 +297,33 @@ func randSeq(n int) string {
 }
 
 func GiveUserSubAdmin(user uint, group int) {
-	utils.GroupPolicyExistsAdd("user::"+fmt.Sprint(user), "role::3", fmt.Sprint(group))
+	GroupPolicyExistsAdd("user::"+fmt.Sprint(user), "role::3", fmt.Sprint(group))
 }
 
 func FindById(id int) (string, error) {
-	db := utils.GetDB().Table("users")
+	db := GetPostgreDB().Table("users")
 	userDb := &models.User{}
 
 	if err := db.Where("id = ?", id).First(userDb).Error; err != nil {
-		log.Print(middleware.NewError(err))
+		log.Print(NewError(err))
 		return "nil", err
 	}
 
 	return userDb.Email, nil
 }
 
-func FindByIdRaw(id uint) (*models.User, error) {
-	db := utils.GetDB().Table("users")
-	userDb := &models.User{}
-
-	if err := db.Where("id = ?", id).First(userDb).Error; err != nil {
-		log.Print(middleware.NewError(err))
-		return nil, err
-	}
-
-	return userDb, nil
-}
-
 func FindByIdReturnGroup(id int) (string, error) {
-	db := utils.GetDB()
+	db := GetPostgreDB()
 	userDb := &models.User{}
 	groupD := &models.Group{}
 
 	if err := db.Where("id = ?", id).First(userDb).Error; err != nil {
-		log.Print(middleware.NewError(err))
+		log.Print(NewError(err))
 		return "nil", err
 	}
 
 	if err := db.Where("id = ?", userDb.UserGroupId).First(&groupD).Error; err != nil {
-		log.Print(middleware.NewError(err))
+		log.Print(NewError(err))
 		return "nil", err
 	}
 
@@ -345,11 +331,11 @@ func FindByIdReturnGroup(id int) (string, error) {
 }
 
 func FindByIdReturnGroupName(id int) (string, error) {
-	db := utils.GetDB()
+	db := GetPostgreDB()
 	groupD := &models.Group{}
 
 	if err := db.Where("id = ?", id).First(&groupD).Error; err != nil {
-		log.Print(middleware.NewError(err))
+		log.Print(NewError(err))
 		return "nil", err
 	}
 
@@ -363,9 +349,9 @@ func UserPermission(ar []string, id int, i uint) {
 
 		_, found := Find(ar, role)
 		if found {
-			utils.GroupPolicyExistsAdd("user::"+fmt.Sprint(i), ks, fmt.Sprint(id))
+			GroupPolicyExistsAdd("user::"+fmt.Sprint(i), ks, fmt.Sprint(id))
 		} else {
-			utils.GroupPolicyExistsRemove("user::"+fmt.Sprint(i), ks, fmt.Sprint(id))
+			GroupPolicyExistsRemove("user::"+fmt.Sprint(i), ks, fmt.Sprint(id))
 		}
 
 	}
@@ -382,7 +368,7 @@ func Find(slice []string, val string) (string, bool) {
 
 func GetUserCount() int64 {
 	var count int64
-	db := utils.GetDB()
+	db := GetPostgreDB()
 	var users []models.User
 	db.Find(&users).Count(&count)
 	return count

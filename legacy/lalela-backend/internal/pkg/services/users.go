@@ -1,9 +1,9 @@
-package controllers
+package services
 
 import (
-	"lalela-backend/internal/pkg/models"
-	"lalela-backend/internal/pkg/services"
-	"lalela-backend/internal/pkg/utils"
+	"cog-analytics-engine-go/internal/pkg/controllers"
+	"cog-analytics-engine-go/internal/pkg/models"
+	"cog-analytics-engine-go/internal/pkg/utils"
 	"fmt"
 	"golang.org/x/crypto/bcrypt"
 	"log"
@@ -12,59 +12,59 @@ import (
 
 type UserCon struct{}
 
-func (t *UserCon) UsersGet(r *http.Request, args *models.UsersGetRequest, reply *models.UsersGetResponse) error {
+func (t *UserCon) UsersGet(r *http.Request, args *controllers.UsersGetRequest, reply *controllers.UsersGetResponse) error {
 
-	err := services.JwtVerify(r)
+	err := utils.JwtVerify(r)
 	if err != nil {
 		log.Printf("Error: %s", err)
 		return err
 	}
 
-	sourceUser, err := services.FindByEmailString(args.Email)
+	sourceUser, err := utils.FindByEmailString(args.Email)
 	if err != nil {
 		log.Printf("Error: %s", err)
 		return err
 	}
 
-	userData, err := services.GetUsers(sourceUser)
+	userData, err := utils.GetUsers(sourceUser)
 	reply.Users = userData
 	return nil
 }
-func (t *UserCon) UserGet(r *http.Request, args *models.UserGetRequest, reply *models.UserGetResponse2) error {
+func (t *UserCon) UserGet(r *http.Request, args *controllers.UserGetRequest, reply *controllers.UserGetResponse2) error {
 
-	err := services.JwtVerify(r)
+	err := utils.JwtVerify(r)
 	if err != nil {
 		log.Printf("Error: %s", err)
 		return err
 	}
 
-	userData, err := services.GetUser(models.User{ID: args.Id})
+	userData, err := utils.GetUser(models.User{ID: args.Id})
 	reply.User = userData
-	reply.Dashboards = services.GetUserRoles("user::" + fmt.Sprint(args.Id))
+	reply.Dashboards = utils.GetUserRoles("user::" + fmt.Sprint(args.Id))
 	return nil
 }
-func (t *UserCon) UserIsAdmin(r *http.Request, args *models.UserIsAdminRequest, reply *models.UserIsAdminResponse) error {
+func (t *UserCon) UserIsAdmin(r *http.Request, args *controllers.UserIsAdminRequest, reply *controllers.UserIsAdminResponse) error {
 
-	err := services.JwtVerify(r)
+	err := utils.JwtVerify(r)
 	if err != nil {
 		log.Printf("Error: %s", err)
 		return err
 	}
 
-	userData, err := services.GetUserRaw(models.User{Email: args.Email})
-	userIsAdmin := services.IsUserAdmin(userData)
+	userData, err := utils.GetUserRaw(models.User{Email: args.Email})
+	userIsAdmin := utils.IsUserAdmin(userData)
 	reply.Admin = userIsAdmin
 	return nil
 }
-func (t *UserCon) UserAdd(r *http.Request, args *models.UserAddRequest, reply *models.UserAddResponse) error {
+func (t *UserCon) UserAdd(r *http.Request, args *controllers.UserAddRequest, reply *controllers.UserAddResponse) error {
 
-	err := services.JwtVerify(r)
+	err := utils.JwtVerify(r)
 	if err != nil {
 		log.Printf("Error: %s", err)
 		return err
 	}
 
-	sourceUser, err := services.FindByEmailString(args.Email)
+	sourceUser, err := utils.FindByEmailString(args.Email)
 	if err != nil {
 		log.Printf("Error: %s", err)
 		return err
@@ -80,16 +80,16 @@ func (t *UserCon) UserAdd(r *http.Request, args *models.UserAddRequest, reply *m
 			}
 		}
 
-		userDB, err := services.GetUserExists(&user)
+		userDB, err := utils.GetUserExists(&user)
 		if err != nil {
 			log.Printf("Error: %s", err)
 			return nil
 		}
 
 		if userDB == true {
-			if x := services.AddUser(&user); x != false {
+			if x := utils.AddUser(&user); x != false {
 				reply.Messages = append(reply.Messages, "User Does not Exist, Added "+user.Email)
-				tempUser, _ := services.FindByEmailString(user.Email)
+				tempUser, _ := utils.FindByEmailString(user.Email)
 				utils.GroupPolicyExistsAdd("user::"+fmt.Sprint(tempUser.ID), "role::4", fmt.Sprint(tempUser.UserGroupId))
 			} else {
 				reply.Messages = append(reply.Messages, "Empty User Fields, Not Added "+user.Email)
@@ -100,9 +100,9 @@ func (t *UserCon) UserAdd(r *http.Request, args *models.UserAddRequest, reply *m
 	}
 	return nil
 }
-func (t *UserCon) UserUpdate(r *http.Request, args *models.UserUpdateRequest, reply *models.UserUpdateResponse) error {
+func (t *UserCon) UserUpdate(r *http.Request, args *controllers.UserUpdateRequest, reply *controllers.UserUpdateResponse) error {
 
-	err := services.JwtVerify(r)
+	err := utils.JwtVerify(r)
 	if err != nil {
 		log.Printf("Error: %s", err)
 		return err
@@ -122,7 +122,7 @@ func (t *UserCon) UserUpdate(r *http.Request, args *models.UserUpdateRequest, re
 		//	return nil
 		//}
 
-		userDb, err := services.GetUserExists(&user)
+		userDb, err := utils.GetUserExists(&user)
 		if err != nil {
 			log.Printf("Error: %s", err)
 			return nil
@@ -137,7 +137,7 @@ func (t *UserCon) UserUpdate(r *http.Request, args *models.UserUpdateRequest, re
 
 				}
 				user.Password = string(pass)
-				services.UpdateUser(&user)
+				utils.UpdateUser(&user)
 				reply.Messages = append(reply.Messages, "User Exists, Updated "+user.Email)
 			} else {
 				reply.Messages = append(reply.Messages, "No User ID Given "+user.Email)
@@ -147,15 +147,15 @@ func (t *UserCon) UserUpdate(r *http.Request, args *models.UserUpdateRequest, re
 	}
 	return nil
 }
-func (t *UserCon) UserUpdateSingle(r *http.Request, args *models.UserUpdateRequestSingle, reply *models.UserUpdateResponse) error {
+func (t *UserCon) UserUpdateSingle(r *http.Request, args *controllers.UserUpdateRequestSingle, reply *controllers.UserUpdateResponse) error {
 
-	err := services.JwtVerify(r)
+	err := utils.JwtVerify(r)
 	if err != nil {
 		log.Printf("Error: %s", err)
 		return err
 	}
 
-	sourceUser, err := services.FindByEmailString(args.Email)
+	sourceUser, err := utils.FindByEmailString(args.Email)
 	if err != nil {
 		log.Printf("Error: %s", err)
 		return err
@@ -167,7 +167,7 @@ func (t *UserCon) UserUpdateSingle(r *http.Request, args *models.UserUpdateReque
 		return nil
 	}
 
-	userDb, err := services.GetUserExists(&args.User)
+	userDb, err := utils.GetUserExists(&args.User)
 	if err != nil {
 		log.Printf("Error: %s", err)
 		return nil
@@ -177,11 +177,11 @@ func (t *UserCon) UserUpdateSingle(r *http.Request, args *models.UserUpdateReque
 		reply.Messages = append(reply.Messages, "User Does Not Exist "+args.User.Email)
 	} else {
 		if args.User.ID != 0 {
-			user, _ := services.FindByEmail(&args.User)
+			user, _ := utils.FindByEmail(&args.User)
 
 			user.FirstName = args.User.FirstName
 			user.LastName = args.User.LastName
-			services.UpdateUser(user)
+			utils.UpdateUser(user)
 			reply.Messages = append(reply.Messages, "User Exists, Updated "+args.User.Email)
 		} else {
 			reply.Messages = append(reply.Messages, "No User ID Given "+args.User.Email)
@@ -190,15 +190,15 @@ func (t *UserCon) UserUpdateSingle(r *http.Request, args *models.UserUpdateReque
 
 	return nil
 }
-func (t *UserCon) UserDelete(r *http.Request, args *models.UserDeleteRequest, reply *models.UserDeleteResponse) error {
+func (t *UserCon) UserDelete(r *http.Request, args *controllers.UserDeleteRequest, reply *controllers.UserDeleteResponse) error {
 
-	err := services.JwtVerify(r)
+	err := utils.JwtVerify(r)
 	if err != nil {
 		log.Printf("Error: %s", err)
 		return err
 	}
 
-	sourceUser, err := services.FindByEmailString(args.Email)
+	sourceUser, err := utils.FindByEmailString(args.Email)
 	if err != nil {
 		log.Printf("Error: %s", err)
 		return err
@@ -210,7 +210,7 @@ func (t *UserCon) UserDelete(r *http.Request, args *models.UserDeleteRequest, re
 		return nil
 	}
 
-	userDb, err := services.GetUserExists(&args.User)
+	userDb, err := utils.GetUserExists(&args.User)
 	if err != nil {
 		log.Printf("Error: %s", err)
 		return nil
@@ -220,8 +220,8 @@ func (t *UserCon) UserDelete(r *http.Request, args *models.UserDeleteRequest, re
 		reply.Messages = append(reply.Messages, "User Does Not Exist "+args.User.Email)
 	} else {
 		if args.User.ID != 0 {
-			user, _ := services.FindByEmail(&args.User)
-			services.DeleteUser(&args.User)
+			user, _ := utils.FindByEmail(&args.User)
+			utils.DeleteUser(&args.User)
 			reply.Messages = append(reply.Messages, "User Exists, Deleted "+args.User.Email)
 			utils.GroupPolicyExistsRemove("user::"+fmt.Sprint(user.ID), "role::4", fmt.Sprint(user.UserGroupId))
 		} else {
@@ -231,15 +231,15 @@ func (t *UserCon) UserDelete(r *http.Request, args *models.UserDeleteRequest, re
 
 	return nil
 }
-func (t *UserCon) UserRolesUpdate(r *http.Request, args *models.UserRoleUpdateRequest, reply *models.UserRoleUpdateResponse) error {
+func (t *UserCon) UserRolesUpdate(r *http.Request, args *controllers.UserRoleUpdateRequest, reply *controllers.UserRoleUpdateResponse) error {
 
-	err := services.JwtVerify(r)
+	err := utils.JwtVerify(r)
 	if err != nil {
 		log.Printf("Error: %s", err)
 		return err
 	}
 
-	sourceUser, err := services.FindByEmailString(args.Email)
+	sourceUser, err := utils.FindByEmailString(args.Email)
 	if err != nil {
 		log.Printf("Error: %s", err)
 		return err
@@ -251,7 +251,7 @@ func (t *UserCon) UserRolesUpdate(r *http.Request, args *models.UserRoleUpdateRe
 		return nil
 	}
 
-	userDb, err := services.GetUserExists(&args.User)
+	userDb, err := utils.GetUserExists(&args.User)
 	if err != nil {
 		log.Printf("Error: %s", err)
 
@@ -262,7 +262,7 @@ func (t *UserCon) UserRolesUpdate(r *http.Request, args *models.UserRoleUpdateRe
 		reply.Messages = append(reply.Messages, "User Does Not Exist "+args.User.Email)
 	} else {
 		if args.User.ID != 0 {
-			services.UserPermission(args.Roles, args.GroupId, args.User.ID)
+			utils.UserPermission(args.Roles, args.GroupId, args.User.ID)
 			reply.Messages = append(reply.Messages, "User Exists, Deleted "+args.User.Email)
 			log.Printf("Error: %s", args.Roles)
 			//utils.GroupPolicyExistsRemove("user::"+fmt.Sprint(args.User.ID), "role::4", fmt.Sprint(args.User.UserGroupId))

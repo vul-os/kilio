@@ -1,8 +1,8 @@
 package utils
 
 import (
-	"lalela-backend/internal/pkg/middleware"
-	"lalela-backend/internal/pkg/models"
+	"cog-analytics-engine-go/internal/pkg/controllers"
+	"cog-analytics-engine-go/internal/pkg/models"
 	"fmt"
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/postgres"
@@ -10,6 +10,8 @@ import (
 	"log"
 	"strings"
 )
+
+// todo: this whole file?
 
 func InitSeed(d *gorm.DB) {
 	AutoMigrations(d)
@@ -22,6 +24,7 @@ func InitSeed(d *gorm.DB) {
 }
 
 func AutoMigrations(d *gorm.DB) {
+	d.AutoMigrate(&models.Connector{})
 	//d.AutoMigrate(&models.Action{})
 	//d.AutoMigrate(&models.Dashboard{})
 	//d.AutoMigrate(&models.Group{})
@@ -31,17 +34,11 @@ func AutoMigrations(d *gorm.DB) {
 	//d.AutoMigrate(&models.DateProcessedItem{})
 	//d.AutoMigrate(&models.DateProcessedTable{})
 	//d.AutoMigrate(&models.SiteConfig{})
-
-	d.AutoMigrate(&models.KanbanMember{})
-	d.AutoMigrate(&models.KanbanList{})
-	d.AutoMigrate(&models.KanbanCard{})
-	d.AutoMigrate(&models.KanbanEvents{})
-	d.AutoMigrate(&models.KanbanAssignLookUp{})
 }
 
 func AutoSeedSiteConfig() {
 
-	db := GetDB()
+	db := GetPostgreDB()
 
 	if err := db.Where("rule = ?", "isBlocked").First(&models.SiteConfig{}).Error; gorm.IsRecordNotFoundError(err) {
 		r := models.SiteConfig{
@@ -54,7 +51,7 @@ func AutoSeedSiteConfig() {
 
 func AutoSeedRoles() {
 
-	db := GetDB()
+	db := GetPostgreDB()
 
 	var roles = [6]string{
 		"Root",
@@ -75,7 +72,7 @@ func AutoSeedRoles() {
 
 func AutoSeedActions() {
 
-	db := GetDB()
+	db := GetPostgreDB()
 
 	var actions = [4]string{
 		"Read",
@@ -102,7 +99,7 @@ func AutoSeedExamples() {
 
 func AutoSeedExampleUsers() {
 
-	db := GetDB()
+	db := GetPostgreDB()
 
 	var Users = [2]models.User{
 		{
@@ -177,7 +174,7 @@ func AutoSeedExampleUsers() {
 		if err := db.Where("email = ?", user.Email).First(&models.User{}).Error; gorm.IsRecordNotFoundError(err) {
 			pass, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
 			if err != nil {
-				log.Print(middleware.NewError(err))
+				log.Print(NewError(err))
 			}
 			user.Password = string(pass)
 			db.Create(&user)
@@ -187,9 +184,9 @@ func AutoSeedExampleUsers() {
 
 func AutoSeedExampleDashboards() {
 
-	db := GetDB()
+	db := GetPostgreDB()
 
-	var Dashboards = [4]models.Dashboard{
+	var Dashboards = [4]controllers.Dashboard{
 		{
 			DashboardUrl:  "https://embed.chartio.com/d/future-fragment-1/production_pns_distribution_percentage_report/",
 			DashboardName: "Distribution Report",
@@ -229,7 +226,7 @@ func AutoSeedExampleDashboards() {
 	}
 
 	for _, dashboard := range Dashboards {
-		if err := db.Where("dashboard_url = ?", dashboard.DashboardUrl).First(&models.Dashboard{}).Error; gorm.IsRecordNotFoundError(err) {
+		if err := db.Where("dashboard_url = ?", dashboard.DashboardUrl).First(&controllers.Dashboard{}).Error; gorm.IsRecordNotFoundError(err) {
 			db.Create(&dashboard)
 		}
 	}
@@ -237,7 +234,7 @@ func AutoSeedExampleDashboards() {
 
 func AutoSeedExampleGroups() {
 
-	db := GetDB()
+	db := GetPostgreDB()
 
 	var Groups = [3]models.Group{
 		{
@@ -259,9 +256,9 @@ func AutoSeedExampleGroups() {
 }
 
 func AutoSeedExamplePermissions() {
-	gs := GetGroups()
-	ds := GetDashboards()
-	us := GetUsersRaw()
+	gs := GetGroupsSeed()
+	ds := GetDashboardsSeed()
+	us := GetUsersRawSeed()
 
 	for _, dashboard := range ds {
 
@@ -284,22 +281,22 @@ func AutoSeedExamplePermissions() {
 }
 
 // General Functions
-func GetGroups() []models.Group {
-	db := GetDB()
+func GetGroupsSeed() []models.Group {
+	db := GetPostgreDB()
 	var groups []models.Group
 	db.Find(&groups)
 	return groups
 }
 
-func GetDashboards() []models.Dashboard {
-	db := GetDB()
-	var dashboards []models.Dashboard
+func GetDashboardsSeed() []controllers.Dashboard {
+	db := GetPostgreDB()
+	var dashboards []controllers.Dashboard
 	db.Find(&dashboards)
 	return dashboards
 }
 
-func GetUsersRaw() []models.User {
-	db := GetDB()
+func GetUsersRawSeed() []models.User {
+	db := GetPostgreDB()
 	var users []models.User
 	db.Find(&users)
 	return users

@@ -1,20 +1,20 @@
 package utils
 
 import (
-	"lalela-backend/internal/pkg/middleware"
 	"github.com/casbin/casbin/v2"
 	gormadapter "github.com/casbin/gorm-adapter/v3"
+
 	"log"
 )
 
 // Init RBCA Enforcer
 func InitRBCA() *casbin.Enforcer {
 
-	a, _ := gormadapter.NewAdapter("postgres", dbURIString, true)
+	a, _ := gormadapter.NewAdapter("postgres", dbURIString)
 
-	e, err := casbin.NewEnforcer("./internal/config/model.conf", a)
+	e, err := casbin.NewEnforcer("./configs/config/model.conf", a)
 	if err != nil {
-		log.Print(middleware.NewError(err))
+		log.Print(NewError(err))
 	}
 
 	e.LoadPolicy()
@@ -191,26 +191,4 @@ func GroupPolicyExistsRemove(sub string, obj string, dom string) bool {
 	} else {
 		return false
 	}
-}
-
-//// KANBAN
-
-// Check if User can assign to card
-func PermissionsKanbanUserCanAssign() {
-
-}
-
-// Check if User is allowed to move card
-func PermissionsKanbanUserCanMoveCard() {
-
-}
-
-// Check if Useer has access to card, if not Add
-func PermissionsKanbanAddUserToCard() {
-
-}
-
-// Check if Useer has access to card, if so Remove
-func PermissionsKanbanRemoveUserFromCard() {
-
 }

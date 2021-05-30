@@ -1,8 +1,7 @@
-package models
+package controllers
 
 
 //// PermissionCon
-
 type GetUserRolesRequest struct {
 	Email  string `json:"email"`
 	UserId uint   `json:"userid"`

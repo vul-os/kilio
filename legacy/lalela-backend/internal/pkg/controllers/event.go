@@ -1,10 +1,11 @@
-package models
+package controllers
 
+import "cog-analytics-engine-go/internal/pkg/models"
 
 //// EventCon
 
 type EventLogRequest struct {
-	Event Event
+	Event models.Event
 }
 
 type EventLogResponse struct {
