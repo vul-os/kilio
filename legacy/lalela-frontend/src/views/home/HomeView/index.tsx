@@ -7,12 +7,18 @@ import schema from './schema.json';
 import uischema from './uischema.json'
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
-
 import { JsonForms } from '@jsonforms/react';
 import {
   materialRenderers,
   materialCells,
 } from '@jsonforms/material-renderers';
+import mobileCategorizationLayoutRenderer, { mobileCategorizationTester } from './MyGroup';
+
+const renderers = [
+{ tester: mobileCategorizationTester, renderer: mobileCategorizationLayoutRenderer, },
+  ...materialRenderers,
+  //register custom renderers
+];
 const initialData = data;
 const useStyles = makeStyles(() => ({
   root: {
@@ -37,7 +43,7 @@ const HomeView: FC = () => {
             schema={schema}
             uischema={uischema}
             data={data}
-            renderers={materialRenderers}
+            renderers={renderers}
             cells={materialCells}
             onChange={({ data }) => setData(data)}
           />
