@@ -1,466 +1,522 @@
 {
-    "type": "Categorization",
-    "elements": [
+  "type": "Categorization",
+  "elements": [
+    {
+      "type": "Category",
+      "label": "Basic Intro",
+      "elements": [
         {
-            "type": "Category",
-            "label": "Basic Intro",
-            "elements": [
-                {"type": "Label",
-                "text": "Before we begin please let us know if you are reporting an incident agaisnt yourself, or on behalf of another person"},
+          "type": "VerticalLayout",
+          "elements": [
+            {
+              "type": "Group",
+              "label": "Before we begin please let us know if you are reporting an incident against yourself, or on behalf of another person",
+              "elements": [
                 {
-                    "type": "VerticalLayout",
-                    "elements": [
-                        {
-                            "type": "Control",
-                            "scope": "#/properties/WitnessOrVictim",
-                            "label": "Please indicate if you are reporting on behalf of someone",
-                            "options": {
-                                "format": "radio"
-                            }
-                        },
-                        {
-                            "type": "Control",
-                            "label": "Does the victim know you are filing this report?",
-                            "scope": "#/properties/victimAwareness",
-                            "options": {
-                                "format": "radio"
-                            },
-                            "rule": {
-                            "effect": "SHOW",
-                            "condition": {
-                            "scope": "#/properties/WitnessOrVictim",
-                            "schema": {
-                                "const": "Witness"
-                                }
-
-                            }
-                        }
-                        }                        
-                    ]
-                }
-            ]},
-        {
-            "type": "Category",
-            "label": "Time, Date & Location",
-            "elements": [
+                  "type": "Control",
+                  "scope": "#/properties/WitnessOrVictim",
+                  "label": "Please indicate if you are reporting on behalf of someone",
+                  "options": {
+                    "format": "radio"
+                  }
+                },
                 {
-                    "type": "VerticalLayout",
-                    "elements": [
-                        {"type": "Label",
-                            "text": "Thank you for taking the time to to report what you have witnessed. This section will focus on the 'WHERE' and 'WHEN' of the incident.  "},
-                            {"type": "Label",
-                                "text": "Any and all information could be important, please give as much detail as possible."},    
-                            {"type": "Label",
-                                "text": "If you name the perpetrator, they will not be able to trace the reprt back to you. Furthermore, no one in your organisation will be ble to identify you."},
-                                
-                            
-                            {
-                            "type": "Group",
-                            "label": "When",
-                            "elements": [
-                                {"type": "Control",
-                            "label": "Can you recall the Date of the incident?",
-                            "scope": "#/properties/WitnessFlow/properties/WitnessWhen/properties/DateRecall",
-                            "options": {
-                                "format": "radio"
-                            }
-                        },
-                        {"type": "Control",
-                        "label": "Please indicate the date",
-                        "scope": "#/properties/WitnessFlow/properties/WitnessWhen/properties/IncidentDate",
-                        "rule": {
-                            "effect": "SHOW",
-                            "condition": {
-                                "scope": "#/properties/WitnessFlow/properties/WitnessWhen/properties/DateRecall",
-                                "schema": {
-                                    "const": "Yes"
-                                    }
-    
-                                }
-                        }}
-                        ]},
-                        {"type": "Group",
-                        "label": "When",
-                        "elements": [
-                            {"type":"Control",
-                        "label": "Where did this incident take place?",
-                        "scope": "#/properties/WitnessFlow/properties/WitnessWhere/properties/Where" }]},
-                        { "type": "Group",
-                        "label": "Who",
-                        "elements": [
-                        {
-                            "type":"Control",
-                            "label": "Please tell us who the perpetrator was.",
-                            "scope": "#/properties/WitnessFlow/properties/WitnessWho/properties/Perpetrator"
-                            },
-                        {"type":"Control",
-                        "label": "What is the relationship between yorself and the perpetrator",
-                        "scope": "#/properties/WitnessFlow/properties/WitnessWho/properties/PerpetratorRelationWitness"},
-                        {"type":"Control",
-                            "label": "What is the relationship between the victim and the perpetrator",
-                            "scope": "#/properties/WitnessFlow/properties/WitnessWho/properties/PerpetratorRelationVictim"},
-                        {"type":"Control",
-                        "label": "Were there any other witnesses besides yourself?",
-                        "scope": "#/properties/WitnessFlow/properties/WitnessWho/properties/AdditionalWitnesses",
-                        "options": {
-                            "format": "radio"
-                        }},
-                        {"type":"Control",
-                            "label": "Please indicate how many additional witnesses were present",
-                            "scope": "#/properties/WitnessFlow/properties/WitnessWho/properties/AdditionalWitnessesNumber",
-                            "rule": {
-                                "effect":"SHOW",
-                                "condition": {
-                                    "scope": "#/properties/WitnessFlow/properties/WitnessWho/properties/AdditionalWitnesses",
-                                    "schema": {
-                                        "enum":[
-                                            "Yes"
-                                        ]
-                                    }
-                                }
-                            }},
-                            {"type":"Control",
-                                "label": "Did you report the incident after it happened?",
-                                "scope": "#/properties/WitnessFlow/properties/WitnessWho/properties/WitnessReported",
-                                "options": {
-                                    "format": "radio"
-                                }},
-                            {"type":"Control",
-                            "label": "Please indicate which department you reported to aswell as how. (eg. over email to supervisor)",
-                            "scope": "#/properties/WitnessFlow/properties/WitnessWho/properties/WitnessReportedWhere",
-                            "rule": {
-                                "effect":"SHOW",
-                                "condition": {
-                                    "scope": "#/properties/WitnessFlow/properties/WitnessWho/properties/WitnessReported",
-                                    "schema": {
-                                        "enum":[
-                                            "Yes"
-                                        ]
-                                    }
-                                }
-                            }}
-                            ]}
-                    ]
-                }
-
-            ],
-            "rule":{
-                "effect":"SHOW",
-                "condition":{
-                    "scope": "#/properties/WitnessOrVictim",
-                    "schema": {
-                        "enum": [
-                            "Victim",
-                            "Witness"
-                        ]
-                        }
-
+                  "type": "Control",
+                  "label": "Does the victim know you are filing this report?",
+                  "scope": "#/properties/victimAwareness",
+                  "options": {
+                    "format": "radio"
+                  },
+                  "rule": {
+                    "effect": "SHOW",
+                    "condition": {
+                      "scope": "#/properties/WitnessOrVictim",
+                      "schema": {
+                        "const": "Witness"
+                      }
                     }
+                  }
+                }]
             }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "Category",
+      "label": "Time, Date & Location",
+      "elements": [
+        {
+          "type": "Group",
+          "label": "Thank you for taking the time to to report what you have witnessed. This section will focus on the 'WHERE' and 'WHEN' of the incident.",
+          "elements": []
         },
         {
-            "type": "Category",
-            "label": "Nature Of Incident",
-            "elements":[
-                {"type":"Label",
-                "text":"This section will focus on what happned. Take your time and provide as much detail as possible."},
+          "type": "Group",
+          "label": "Any and all information could be important, please give as much detail as possible.",
+          "elements": []
+        },
+        {
+          "type": "Group",
+          "label": "If you name the perpetrator, they will not be able to trace the reprt back to you. Furthermore, no one in your organisation will be ble to identify you.",
+          "elements": []
+        },
+        {
+          "type": "VerticalLayout",
+          "elements": [
+            {
+              "type": "Group",
+              "label": "When",
+              "elements": [
+
                 {
-                    "type":"Control",
-                    "label": "Please tell us what happened ***REPHRASE THIS QUESTION***",
-                    "scope": "#/properties/WitnessFlow/properties/WitnessNatureIncident/properties/IncidentDetails",
-                    "options": {
-                        "multi": true
-                    }
-                    },
-                    {"type":"Label",
-                    "text": "Do you feel that you witnessed discrimination of one or more of thee factors? Select all that apply"},
-                {
-                    "type": "Control",
-                    "label": "Race",
-                    "scope": "#/properties/WitnessFlow/properties/WitnessNatureIncident/properties/TypeOfDiscrimination/properties/Race",
-                    "options":{
-                        "toggle": true
-                    }
+                  "type": "Control",
+                  "label": "Can you recall the Date of the incident?",
+                  "scope": "#/properties/WitnessFlow/properties/WitnessWhen/properties/DateRecall",
+                  "options": {
+                    "format": "radio"
+                  }
                 },
                 {
-                    "type": "Control",
-                    "label": "Age",
-                    "scope": "#/properties/WitnessFlow/properties/WitnessNatureIncident/properties/TypeOfDiscrimination/properties/Age",
-                    "options":{
-                        "toggle": true
-                    }
-                },
-                {
-                    "type": "Control",
-                    "label": "Gender/Gender-Identity",
-                    "scope": "#/properties/WitnessFlow/properties/WitnessNatureIncident/properties/TypeOfDiscrimination/properties/Gender",
-                    "options":{
-                        "toggle": true
-                    }
-                },
-                {
-                    "type": "Control",
-                    "label": "Sexual Orientation",
-                    "scope": "#/properties/WitnessFlow/properties/WitnessNatureIncident/properties/TypeOfDiscrimination/properties/SexualOrientation",
-                    "options":{
-                        "toggle": true
-                    }
-                },
-                {
-                    "type": "Control",
-                    "label": "Religious Affiliation",
-                    "scope": "#/properties/WitnessFlow/properties/WitnessNatureIncident/properties/TypeOfDiscrimination/properties/ReligiousAffiliation",
-                    "options":{
-                        "toggle": true
-                    }
-                },
-                {
-                    "type": "Control",
-                    "label": "Political Affiliation",
-                    "scope": "#/properties/WitnessFlow/properties/WitnessNatureIncident/properties/TypeOfDiscrimination/properties/PoliticalAffiliation",
-                    "options":{
-                        "toggle": true
-                    }
-                },
-                {
-                    "type": "Control",
-                    "label": "Martial Status",
-                    "scope": "#/properties/WitnessFlow/properties/WitnessNatureIncident/properties/TypeOfDiscrimination/properties/MartialStatus",
-                    "options":{
-                        "toggle": true
-                    }
-                },
-                {
-                    "type": "Control",
-                    "label": "Socio-Economic Class",
-                    "scope": "#/properties/WitnessFlow/properties/WitnessNatureIncident/properties/TypeOfDiscrimination/properties/SocioEconomicClass",
-                    "options":{
-                        "toggle": true
-                    }
-                },
-                {
-                    "type": "Control",
-                    "label": "Pregnancy",
-                    "scope": "#/properties/WitnessFlow/properties/WitnessNatureIncident/properties/TypeOfDiscrimination/properties/Pregnancy",
-                    "options":{
-                        "toggle": true
-                    }
-                },
-                {
-                    "type": "Control",
-                    "label": "Disability",
-                    "scope": "#/properties/WitnessFlow/properties/WitnessNatureIncident/properties/TypeOfDiscrimination/properties/Disability",
-                    "options":{
-                        "toggle": true
-                    }
-                },
-                {
-                    "type": "Control",
-                    "label": "Language",
-                    "scope": "#/properties/WitnessFlow/properties/WitnessNatureIncident/properties/TypeOfDiscrimination/properties/Language",
-                    "options":{
-                        "toggle": true
-                    }
-                },
-                {
-                    "type": "Control",
-                    "label": "Other",
-                    "scope": "#/properties/WitnessFlow/properties/WitnessNatureIncident/properties/TypeOfDiscrimination/properties/Other",
-                    "options":{
-                        "toggle": true
-                    }
-                },
-                {"type":"Label",
-                "text":"Do you feel as though you witnessed one or more of these forms of workplace violence"},
-                {
-                    "type": "Control",
-                    "label": "Workplace bullying",
-                    "scope": "#/properties/WitnessFlow/properties/WitnessNatureIncident/properties/TypeOfWorkplaceViolence/properties/WorkplaceBullying",
-                    "options":{
-                        "toggle": true
-                    }
-                },
-                {
-                    "type": "Control",
-                    "label": "Verbal Harassment",
-                    "scope": "#/properties/WitnessFlow/properties/WitnessNatureIncident/properties/TypeOfWorkplaceViolence/properties/VerbalHarassment",
-                    "options":{
-                        "toggle": true
-                    }
-                },
-                {
-                    "type": "Control",
-                    "label": "Physical Harassment/Abuse",
-                    "scope": "#/properties/WitnessFlow/properties/WitnessNatureIncident/properties/TypeOfWorkplaceViolence/properties/PhysicalHarassment",
-                    "options":{
-                        "toggle": true
-                    }
-                },
-                {
-                    "type": "Control",
-                    "label": "Sexual Harassment/Abuse",
-                    "scope": "#/properties/WitnessFlow/properties/WitnessNatureIncident/properties/TypeOfWorkplaceViolence/properties/SexualHarassment",
-                    "options":{
-                        "toggle": true
-                    }
-                },
-                {
-                    "type": "Control",
-                    "label": "Racial Discrimination",
-                    "scope": "#/properties/WitnessFlow/properties/WitnessNatureIncident/properties/TypeOfWorkplaceViolence/properties/RacialDiscrimination",
-                    "options":{
-                        "toggle": true
-                    }
-                },
-                {
-                    "type": "Control",
-                    "label": "Homophobia",
-                    "scope": "#/properties/WitnessFlow/properties/WitnessNatureIncident/properties/TypeOfWorkplaceViolence/properties/Homophobia",
-                    "options":{
-                        "toggle": true
-                    }
-                },
-                {
-                    "type": "Control",
-                    "label": "Transphobia",
-                    "scope": "#/properties/WitnessFlow/properties/WitnessNatureIncident/properties/TypeOfWorkplaceViolence/properties/Transphobia",
-                    "options":{
-                        "toggle": true
-                    }
-                },
-                {
-                    "type": "Control",
-                    "label": "Other",
-                    "scope": "#/properties/WitnessFlow/properties/WitnessNatureIncident/properties/TypeOfWorkplaceViolence/properties/Other",
-                    "options":{
-                        "toggle": true
-                    }
-                },
-                {"type": "Control",
-                "label": "Have you witnessed this type of harassment before",
-                "scope": "#/properties/WitnessFlow/properties/WitnessNatureIncident/properties/WitnessTypeBefore"
-            },
-            {"type": "Control",
-                "label": "Have you witnessed this type of harassment by the same person before?",
-                "scope": "#/properties/WitnessFlow/properties/WitnessNatureIncident/properties/WitnessSamePerpBefore",
-                "rule": {
-                    "effect":"SHOW",
+                  "type": "Control",
+                  "label": "Please indicate the date",
+                  "scope": "#/properties/WitnessFlow/properties/WitnessWhen/properties/IncidentDate",
+                  "rule": {
+                    "effect": "SHOW",
                     "condition": {
-                        "scope": "#/properties/WitnessFlow/properties/WitnessNatureIncident/properties/WitnessTypeBefore",
-                        "schema": {
-                            "enum": [
-                                "yes"
-                            ]
-                        }
+                      "scope": "#/properties/WitnessFlow/properties/WitnessWhen/properties/DateRecall",
+                      "schema": {
+                        "const": "Yes"
+                      }
                     }
+                  }
                 }
+              ]
             },
-            {"type": "Control",
-                "label": "Do you believe that this will happen again?",
-                "scope": "#/properties/WitnessFlow/properties/WitnessNatureIncident/properties/WitnessRepeatIncident"
+            {
+              "type": "Group",
+              "label": "When",
+              "elements": [
+                {
+                  "type": "Control",
+                  "label": "Where did this incident take place?",
+                  "scope": "#/properties/WitnessFlow/properties/WitnessWhere/properties/Where"
+                }
+              ]
             },
-            {"type": "Control",
-                "label": "Is the perpetrator someone whom you are required to report incidences of harassment/violence/miscnduct to? i.e. HR, manager etc",
-                "scope": "#/properties/WitnessFlow/properties/WitnessNatureIncident/properties/WitnessReportTo"
-            }            
-            ],
-            "rule":{
-                "effect":"SHOW",
-                "condition":{
-                    "scope": "#/properties/WitnessFlow/properties/WitnessWhen/properties/DateRecall",
-                    "schema": {
+            {
+              "type": "Group",
+              "label": "Who",
+              "elements": [
+                {
+                  "type": "Control",
+                  "label": "Please tell us who the perpetrator was.",
+                  "scope": "#/properties/WitnessFlow/properties/WitnessWho/properties/Perpetrator"
+                },
+                {
+                  "type": "Control",
+                  "label": "What is the relationship between yorself and the perpetrator",
+                  "scope": "#/properties/WitnessFlow/properties/WitnessWho/properties/PerpetratorRelationWitness"
+                },
+                {
+                  "type": "Control",
+                  "label": "What is the relationship between the victim and the perpetrator",
+                  "scope": "#/properties/WitnessFlow/properties/WitnessWho/properties/PerpetratorRelationVictim"
+                },
+                {
+                  "type": "Control",
+                  "label": "Were there any other witnesses besides yourself?",
+                  "scope": "#/properties/WitnessFlow/properties/WitnessWho/properties/AdditionalWitnesses",
+                  "options": {
+                    "format": "radio"
+                  }
+                },
+                {
+                  "type": "Control",
+                  "label": "Please indicate how many additional witnesses were present",
+                  "scope": "#/properties/WitnessFlow/properties/WitnessWho/properties/AdditionalWitnessesNumber",
+                  "rule": {
+                    "effect": "SHOW",
+                    "condition": {
+                      "scope": "#/properties/WitnessFlow/properties/WitnessWho/properties/AdditionalWitnesses",
+                      "schema": {
                         "enum": [
-                            "Yes",
-                            "No",
-                            "Skip"
+                          "Yes"
                         ]
-                        }
-
+                      }
                     }
-            }},
-            {"type":"Category",
-            "label": "Emotional Evaluation",
-            "elements":[
-                {"type":"Label",
-                "text": "This section will focus on how this incident affected you."},
-                {"type":"Label",
-                "text": "Even as a witness it is important that your organisation has provisions in place to keep you safe and assist you in making this report"},
-                {"type":"Control",
-                "label": "Do you recall how you felt at the time as well as after the incident? Please describe as best you can",
-                "scope": "#/properties/WitnessFlow/properties/WitnessEmotionalEvaluation/properties/WitnessFeeling"},
-                {"type":"Control",
-                    "label": "How long did you feel this way after the incident?",
-                    "scope": "#/properties/WitnessFlow/properties/WitnessEmotionalEvaluation/properties/WitnessFeelingTime"},
-                {"type":"Control",
-                    "label": "Do you still feel this way?",
-                    "scope": "#/properties/WitnessFlow/properties/WitnessEmotionalEvaluation/properties/WitnessFeelingCurrent",
-                    "options": {
-                        "format": "radio"
-                    }},
-                {"type":"Control",
-                    "label": "Do you feel safe at work after this incident?",
-                    "scope": "#/properties/WitnessFlow/properties/WitnessEmotionalEvaluation/properties/WitnessSafety",
-                    "options": {
-                        "format": "radio"
-                    }},
-                {"type":"Control",
-                    "label": "Has this incident made you consider moving departments, changing teams or resigning?",
-                    "scope": "#/properties/WitnessFlow/properties/WitnessEmotionalEvaluation/properties/WitnessJobSafety",
-                    "options": {
-                        "format": "radio"
-                    }}    
-            ],
-            "rule":{
-                "effect":"SHOW",
-                "condition":{
-                    "scope": "#/properties/WitnessFlow/properties/WitnessWhen/properties/DateRecall",
-                    "schema": {
+                  }
+                },
+                {
+                  "type": "Control",
+                  "label": "Did you report the incident after it happened?",
+                  "scope": "#/properties/WitnessFlow/properties/WitnessWho/properties/WitnessReported",
+                  "options": {
+                    "format": "radio"
+                  }
+                },
+                {
+                  "type": "Control",
+                  "label": "Please indicate which department you reported to aswell as how. (eg. over email to supervisor)",
+                  "scope": "#/properties/WitnessFlow/properties/WitnessWho/properties/WitnessReportedWhere",
+                  "rule": {
+                    "effect": "SHOW",
+                    "condition": {
+                      "scope": "#/properties/WitnessFlow/properties/WitnessWho/properties/WitnessReported",
+                      "schema": {
                         "enum": [
-                            "Yes",
-                            "No",
-                            "Skip"
+                          "Yes"
                         ]
-                        }
-
+                      }
                     }
+                  }
+                }
+              ]
             }
-            },
-            {"type":"Category",
-            "label":"Supporting Evidence",
-            "rule":{
-                "effect":"SHOW",
-                "condition":{
-                    "scope": "#/properties/WitnessFlow/properties/WitnessWhen/properties/DateRecall",
-                    "schema": {
-                        "enum": [
-                            "Yes",
-                            "No",
-                            "Skip"
-                        ]
-                        }
-
-                    }
-            }},
-            {"type":"Category",
-            "label":"Closing Statements",
-            "rule":{
-                "effect":"SHOW",
-                "condition":{
-                    "scope": "#/properties/WitnessFlow/properties/WitnessWhen/properties/DateRecall",
-                    "schema": {
-                        "enum": [
-                            "Yes",
-                            "No",
-                            "Skip"
-                        ]
-                        }
-
-                    }
-            }}
-        
-                ],
-        "options": {
-            "variant": "stepper",
-            "showNavButtons": true
+          ]
+        }
+      ],
+      "rule": {
+        "effect": "SHOW",
+        "condition": {
+          "scope": "#/properties/WitnessOrVictim",
+          "schema": {
+            "enum": [
+              "Victim",
+              "Witness"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "type": "Category",
+      "label": "Nature Of Incident",
+      "elements": [
+        {
+          "type": "Label",
+          "text": "This section will focus on what happned. Take your time and provide as much detail as possible."
+        },
+        {
+          "type": "Control",
+          "label": "Please tell us what happened ***REPHRASE THIS QUESTION***",
+          "scope": "#/properties/WitnessFlow/properties/WitnessNatureIncident/properties/IncidentDetails",
+          "options": {
+            "multi": true
+          }
+        },
+        {
+          "type": "Label",
+          "text": "Do you feel that you witnessed discrimination of one or more of thee factors? Select all that apply"
+        },
+        {
+          "type": "Control",
+          "label": "Race",
+          "scope": "#/properties/WitnessFlow/properties/WitnessNatureIncident/properties/TypeOfDiscrimination/properties/Race",
+          "options": {
+            "toggle": true
+          }
+        },
+        {
+          "type": "Control",
+          "label": "Age",
+          "scope": "#/properties/WitnessFlow/properties/WitnessNatureIncident/properties/TypeOfDiscrimination/properties/Age",
+          "options": {
+            "toggle": true
+          }
+        },
+        {
+          "type": "Control",
+          "label": "Gender/Gender-Identity",
+          "scope": "#/properties/WitnessFlow/properties/WitnessNatureIncident/properties/TypeOfDiscrimination/properties/Gender",
+          "options": {
+            "toggle": true
+          }
+        },
+        {
+          "type": "Control",
+          "label": "Sexual Orientation",
+          "scope": "#/properties/WitnessFlow/properties/WitnessNatureIncident/properties/TypeOfDiscrimination/properties/SexualOrientation",
+          "options": {
+            "toggle": true
+          }
+        },
+        {
+          "type": "Control",
+          "label": "Religious Affiliation",
+          "scope": "#/properties/WitnessFlow/properties/WitnessNatureIncident/properties/TypeOfDiscrimination/properties/ReligiousAffiliation",
+          "options": {
+            "toggle": true
+          }
+        },
+        {
+          "type": "Control",
+          "label": "Political Affiliation",
+          "scope": "#/properties/WitnessFlow/properties/WitnessNatureIncident/properties/TypeOfDiscrimination/properties/PoliticalAffiliation",
+          "options": {
+            "toggle": true
+          }
+        },
+        {
+          "type": "Control",
+          "label": "Martial Status",
+          "scope": "#/properties/WitnessFlow/properties/WitnessNatureIncident/properties/TypeOfDiscrimination/properties/MartialStatus",
+          "options": {
+            "toggle": true
+          }
+        },
+        {
+          "type": "Control",
+          "label": "Socio-Economic Class",
+          "scope": "#/properties/WitnessFlow/properties/WitnessNatureIncident/properties/TypeOfDiscrimination/properties/SocioEconomicClass",
+          "options": {
+            "toggle": true
+          }
+        },
+        {
+          "type": "Control",
+          "label": "Pregnancy",
+          "scope": "#/properties/WitnessFlow/properties/WitnessNatureIncident/properties/TypeOfDiscrimination/properties/Pregnancy",
+          "options": {
+            "toggle": true
+          }
+        },
+        {
+          "type": "Control",
+          "label": "Disability",
+          "scope": "#/properties/WitnessFlow/properties/WitnessNatureIncident/properties/TypeOfDiscrimination/properties/Disability",
+          "options": {
+            "toggle": true
+          }
+        },
+        {
+          "type": "Control",
+          "label": "Language",
+          "scope": "#/properties/WitnessFlow/properties/WitnessNatureIncident/properties/TypeOfDiscrimination/properties/Language",
+          "options": {
+            "toggle": true
+          }
+        },
+        {
+          "type": "Control",
+          "label": "Other",
+          "scope": "#/properties/WitnessFlow/properties/WitnessNatureIncident/properties/TypeOfDiscrimination/properties/Other",
+          "options": {
+            "toggle": true
+          }
+        },
+        {
+          "type": "Label",
+          "text": "Do you feel as though you witnessed one or more of these forms of workplace violence"
+        },
+        {
+          "type": "Control",
+          "label": "Workplace bullying",
+          "scope": "#/properties/WitnessFlow/properties/WitnessNatureIncident/properties/TypeOfWorkplaceViolence/properties/WorkplaceBullying",
+          "options": {
+            "toggle": true
+          }
+        },
+        {
+          "type": "Control",
+          "label": "Verbal Harassment",
+          "scope": "#/properties/WitnessFlow/properties/WitnessNatureIncident/properties/TypeOfWorkplaceViolence/properties/VerbalHarassment",
+          "options": {
+            "toggle": true
+          }
+        },
+        {
+          "type": "Control",
+          "label": "Physical Harassment/Abuse",
+          "scope": "#/properties/WitnessFlow/properties/WitnessNatureIncident/properties/TypeOfWorkplaceViolence/properties/PhysicalHarassment",
+          "options": {
+            "toggle": true
+          }
+        },
+        {
+          "type": "Control",
+          "label": "Sexual Harassment/Abuse",
+          "scope": "#/properties/WitnessFlow/properties/WitnessNatureIncident/properties/TypeOfWorkplaceViolence/properties/SexualHarassment",
+          "options": {
+            "toggle": true
+          }
+        },
+        {
+          "type": "Control",
+          "label": "Racial Discrimination",
+          "scope": "#/properties/WitnessFlow/properties/WitnessNatureIncident/properties/TypeOfWorkplaceViolence/properties/RacialDiscrimination",
+          "options": {
+            "toggle": true
+          }
+        },
+        {
+          "type": "Control",
+          "label": "Homophobia",
+          "scope": "#/properties/WitnessFlow/properties/WitnessNatureIncident/properties/TypeOfWorkplaceViolence/properties/Homophobia",
+          "options": {
+            "toggle": true
+          }
+        },
+        {
+          "type": "Control",
+          "label": "Transphobia",
+          "scope": "#/properties/WitnessFlow/properties/WitnessNatureIncident/properties/TypeOfWorkplaceViolence/properties/Transphobia",
+          "options": {
+            "toggle": true
+          }
+        },
+        {
+          "type": "Control",
+          "label": "Other",
+          "scope": "#/properties/WitnessFlow/properties/WitnessNatureIncident/properties/TypeOfWorkplaceViolence/properties/Other",
+          "options": {
+            "toggle": true
+          }
+        },
+        {
+          "type": "Control",
+          "label": "Have you witnessed this type of harassment before",
+          "scope": "#/properties/WitnessFlow/properties/WitnessNatureIncident/properties/WitnessTypeBefore"
+        },
+        {
+          "type": "Control",
+          "label": "Have you witnessed this type of harassment by the same person before?",
+          "scope": "#/properties/WitnessFlow/properties/WitnessNatureIncident/properties/WitnessSamePerpBefore",
+          "rule": {
+            "effect": "SHOW",
+            "condition": {
+              "scope": "#/properties/WitnessFlow/properties/WitnessNatureIncident/properties/WitnessTypeBefore",
+              "schema": {
+                "enum": [
+                  "yes"
+                ]
+              }
             }
+          }
+        },
+        {
+          "type": "Control",
+          "label": "Do you believe that this will happen again?",
+          "scope": "#/properties/WitnessFlow/properties/WitnessNatureIncident/properties/WitnessRepeatIncident"
+        },
+        {
+          "type": "Control",
+          "label": "Is the perpetrator someone whom you are required to report incidences of harassment/violence/miscnduct to? i.e. HR, manager etc",
+          "scope": "#/properties/WitnessFlow/properties/WitnessNatureIncident/properties/WitnessReportTo"
+        }
+      ],
+      "rule": {
+        "effect": "SHOW",
+        "condition": {
+          "scope": "#/properties/WitnessFlow/properties/WitnessWhen/properties/DateRecall",
+          "schema": {
+            "enum": [
+              "Yes",
+              "No",
+              "Skip"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "type": "Category",
+      "label": "Emotional Evaluation",
+      "elements": [
+        {
+          "type": "Label",
+          "text": "This section will focus on how this incident affected you."
+        },
+        {
+          "type": "Label",
+          "text": "Even as a witness it is important that your organisation has provisions in place to keep you safe and assist you in making this report"
+        },
+        {
+          "type": "Control",
+          "label": "Do you recall how you felt at the time as well as after the incident? Please describe as best you can",
+          "scope": "#/properties/WitnessFlow/properties/WitnessEmotionalEvaluation/properties/WitnessFeeling"
+        },
+        {
+          "type": "Control",
+          "label": "How long did you feel this way after the incident?",
+          "scope": "#/properties/WitnessFlow/properties/WitnessEmotionalEvaluation/properties/WitnessFeelingTime"
+        },
+        {
+          "type": "Control",
+          "label": "Do you still feel this way?",
+          "scope": "#/properties/WitnessFlow/properties/WitnessEmotionalEvaluation/properties/WitnessFeelingCurrent",
+          "options": {
+            "format": "radio"
+          }
+        },
+        {
+          "type": "Control",
+          "label": "Do you feel safe at work after this incident?",
+          "scope": "#/properties/WitnessFlow/properties/WitnessEmotionalEvaluation/properties/WitnessSafety",
+          "options": {
+            "format": "radio"
+          }
+        },
+        {
+          "type": "Control",
+          "label": "Has this incident made you consider moving departments, changing teams or resigning?",
+          "scope": "#/properties/WitnessFlow/properties/WitnessEmotionalEvaluation/properties/WitnessJobSafety",
+          "options": {
+            "format": "radio"
+          }
+        }
+      ],
+      "rule": {
+        "effect": "SHOW",
+        "condition": {
+          "scope": "#/properties/WitnessFlow/properties/WitnessWhen/properties/DateRecall",
+          "schema": {
+            "enum": [
+              "Yes",
+              "No",
+              "Skip"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "type": "Category",
+      "label": "Supporting Evidence",
+      "rule": {
+        "effect": "SHOW",
+        "condition": {
+          "scope": "#/properties/WitnessFlow/properties/WitnessWhen/properties/DateRecall",
+          "schema": {
+            "enum": [
+              "Yes",
+              "No",
+              "Skip"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "type": "Category",
+      "label": "Closing Statements",
+      "rule": {
+        "effect": "SHOW",
+        "condition": {
+          "scope": "#/properties/WitnessFlow/properties/WitnessWhen/properties/DateRecall",
+          "schema": {
+            "enum": [
+              "Yes",
+              "No",
+              "Skip"
+            ]
+          }
+        }
+      }
+    }
+  ],
+  "options": {
+    "variant": "stepper",
+    "showNavButtons": true
+  }
 }
