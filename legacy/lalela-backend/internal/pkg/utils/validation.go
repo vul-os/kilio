@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"github.com/dgrijalva/jwt-go"
-	"github.com/spf13/viper"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -19,7 +18,7 @@ type SignedDetails struct {
 	jwt.StandardClaims
 }
 
-var SecretKey = viper.Get("secretKey").(string)
+var SecretKey string
 
 // GenerateAllTokens generates both teh detailed token and refresh token
 func GenerateToken(email string) (signedToken string, err error) {

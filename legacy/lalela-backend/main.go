@@ -15,6 +15,9 @@ import (
 	"net/http"
 )
 
+var allowedHeaders = []string{"Accept", "Accept-Language", "Content-Type", "Content-Language", "Origin",
+	"x-access-token", "Access-Control-Allow-Origin"}
+
 func main() {
 
 	// Viper Get Requires Type
@@ -27,22 +30,18 @@ func main() {
 
 	// Get Port
 	port := viper.Get("port").(string)
+	utils.Client = utils.InitDB()
+	utils.SecretKey = viper.Get("secretKey").(string)
 
-	// Create a new RPC server
+	// Create a new RPC serverr
 	s := rpc.NewServer()
-
 	s.RegisterCodec(json.NewCodec(), "application/json")
 
 	// Register the service by creating a new JSON server
 	InitRPC(s)
-
 	r := mux.NewRouter()
-
 	r.Handle("/rpc", s)
-
-	err = http.ListenAndServe(":"+port, handlers.CORS(
-		handlers.AllowedHeaders([]string{"Accept", "Accept-Language", "Content-Type", "Content-Language", "Origin", "x-access-token", "Access-Control-Allow-Origin"}),
-	)(r))
+	err = http.ListenAndServe(":" + port, handlers.CORS(handlers.AllowedHeaders(allowedHeaders))(r))
 	if err != nil {
 		log.Print(utils.NewError(err))
 	}
@@ -51,6 +50,10 @@ func main() {
 
 func InitRPC(s *rpc.Server) {
 	err := s.RegisterService(new(controllers.UserCon), "UserCon")
+	if err != nil {
+		log.Print(utils.NewError(err))
+	}
+	err = s.RegisterService(new(controllers.FormsCon), "FormsCon")
 	if err != nil {
 		log.Print(utils.NewError(err))
 	}

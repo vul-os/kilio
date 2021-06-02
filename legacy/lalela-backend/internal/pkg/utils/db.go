@@ -11,7 +11,10 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-func initDB() *mongo.Client {
+//Client Database instance
+var Client *mongo.Client
+
+func InitDB() *mongo.Client {
 	MongoDb := viper.Get("mongoDbUrl").(string)
 
 	client, err := mongo.NewClient(options.Client().ApplyURI(MongoDb))
@@ -30,9 +33,6 @@ func initDB() *mongo.Client {
 
 	return client
 }
-
-//Client Database instance
-var Client *mongo.Client = initDB()
 
 //OpenCollection is a  function makes a connection with a collection in the database
 func OpenCollection(client *mongo.Client, collectionName string) *mongo.Collection {
