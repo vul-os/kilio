@@ -1,48 +1,21 @@
 package models
 
-import "time"
+import (
+	"time"
 
-//User struct declaration
+	"go.mongodb.org/mongo-driver/bson/primitive"
+)
+
 type User struct {
-	ID               uint      `gorm:"AUTO_INCREMENT"`
-	FirstName        string    `json:"firstName"`
-	LastName         string    `json:"lastName"`
-	Email            string    `gorm:"type:varchar(100);unique_index"`
-	Password         string    `json:"password"`
-	UserGroupId      int       `json:"userGroupId"`
-	RoleID           int       `json:"roleID"`
-	ClientID         int       `json:"clientID"`
-	CategoryName     string    `json:"categoryName"`
-	Avatar           string    `json:"avatar"`
-	IsTrail          bool      `json:"isTrail"`
-	TrailExpire      time.Time `json:"-"`
-	ResetToken       string    `json:"-"`
-	ResetTokenExpiry time.Time `json:"-"`
-	CreatedAt        time.Time `json:"-"`
-	UpdatedAt        time.Time `json:"-"`
+	ID              primitive.ObjectID `json:"id" bson:"_id,omitempty"`
+	FirstName       *string            `json:"first_name"`
+	LastName        *string            `json:"last_name"`
+	Password        *string            `json:"password"`
+	Email           *string            `json:"email"`
+	UserType        *string            `json:"user_type"`
+	ValidationToken *string            `json:"validation_token"`
+	EmailToken      *string            `json:"email_token"`
+	RefreshToken    *string            `json:"refresh_token"`
+	CreatedAt       time.Time          `json:"created_at"`
+	UpdatedAt       time.Time          `json:"updated_at"`
 }
-
-//UserGetReport struct declaration
-type UserGetReport struct {
-	ID          uint      `gorm:"AUTO_INCREMENT"`
-	FirstName   string    `json:"firstName"`
-	LastName    string    `json:"lastName"`
-	Email       string    `gorm:"type:varchar(100);unique_index"`
-	Password    string    `json:"password"`
-	UserGroupId string    `json:"userGroupId"`
-	Avatar      string    `json:"avatar"`
-	IsTrail     bool      `json:"isTrail"`
-	TrailExpire time.Time `json:"trailExpire"`
-	LastLogin   string    `json:"lastLogin"`
-}
-
-//User struct declaration
-type UserWithRoles struct {
-	ID        uint     `gorm:"AUTO_INCREMENT"`
-	FirstName string   `json:"firstName"`
-	LastName  string   `json:"lastName"`
-	Email     string   `gorm:"type:varchar(100);unique_index"`
-	Avatar    string   `json:"avatar"`
-	Roles     []string `json:"roles"`
-}
-

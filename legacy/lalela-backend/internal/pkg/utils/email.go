@@ -37,10 +37,11 @@ func Send(data EmailTemplateData) (bool, error) {
 	// apiKey := os.Getenv("EMAIL_API_KEY")
 	//emailFrom := os.Getenv("EMAIL_FROM")
 	emailFrom := viper.Get("emailFrom").(string)
+	mailgunDomain := viper.Get("mailgunDomain").(string)
+	mailgunApiKey := viper.Get("mailgunApiKey").(string)
 
-	// todo: why is this still here?
 	// Create an instance of the Mailgun Client
-	mg := mailgun.NewMailgun("", "")
+	mg := mailgun.NewMailgun(mailgunDomain, mailgunApiKey)
 
 	body, err := ParseTemplate("templates/actionable_email.html", data)
 	if err != nil {
@@ -54,7 +55,6 @@ func Send(data EmailTemplateData) (bool, error) {
 	resp, id, err := mg.Send(ctx, message)
 	if err != nil {
 		log.Fatal(err)
-		log.Print(NewError(err))
 		return false, err
 	}
 
@@ -66,11 +66,11 @@ func Send(data EmailTemplateData) (bool, error) {
 }
 
 func ParseTemplate(templateFileName string, data interface{}) (string, error) {
+	buf := new(bytes.Buffer)
 	t, err := template.ParseFiles(templateFileName)
 	if err != nil {
 		return "", err
 	}
-	buf := new(bytes.Buffer)
 	if err = t.Execute(buf, data); err != nil {
 		return "", err
 	}

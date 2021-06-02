@@ -1,77 +1,53 @@
 package controllers
 
-import "cog-analytics-engine-go/internal/pkg/models"
+import (
 
-//// UserCon
-type UsersGetRequest struct {
-	Email string `json:"email"`
+	"context"
+	"fmt"
+	"go.mongodb.org/mongo-driver/bson"
+	"lalela-backend/internal/pkg/models"
+	"lalela-backend/internal/pkg/utils"
+	"net/http"
+	"time"
+)
+
+type UserCon struct{}
+
+type UserRequest struct {
+	Email string `json:"name"`
+	Password string `json:"password"`
 }
 
-type UsersGetResponse struct {
-	Users []models.User
+type UserResponse struct {
+	Response string `json:"response"`
+	Id string `json:"id"`
 }
 
-type UserGetRequest struct {
-	Email string `json:"email"`
-	Id    uint   `json:"id"`
-}
+func (t *UserCon) Login(r *http.Request, args *UserRequest,	reply *UserResponse) error {
+	var ctx, cancel = context.WithTimeout(context.Background(), 100 * time.Second)
+	var foundUser models.User
 
-type UserGetResponse struct {
-	User models.User
-}
+	var userCollection = utils.OpenCollection(utils.Client, "user")
 
-type UserIsAdminRequest struct {
-	Email string `json:"email"`
-}
+	err := userCollection.FindOne(ctx, bson.M{"email": args.Email}).Decode(&foundUser)
+	if err != nil {
+		fmt.Println("No user found")
+	}
+	defer cancel()
 
-type UserIsAdminResponse struct {
-	Admin bool
-}
+	passwordIsValid := utils.VerifyPassword(args.Password, *foundUser.Password)
+	if !passwordIsValid {
+		return nil
+	}
+	defer cancel()
 
-type UserGetResponse2 struct {
-	User       models.UserGetReport
-	Dashboards map[string][]string
-}
+	jwtToken, err := utils.GenerateToken(args.Email)
+	if err != nil {
+		fmt.Println("Generating token error")
+	}
 
-type UserAddRequest struct {
-	Email string `json:"email"`
-	Users []models.User
-}
-
-type UserAddResponse struct {
-	Messages []string `json:"message"`
-}
-
-type UserUpdateRequest struct {
-	Email string `json:"email"`
-	Users []models.User
-}
-
-type UserUpdateRequestSingle struct {
-	Email string `json:"email"`
-	User  models.User
-}
-
-type UserUpdateResponse struct {
-	Messages []string `json:"message"`
-}
-
-type UserDeleteRequest struct {
-	Email string `json:"email"`
-	User  models.User
-}
-
-type UserDeleteResponse struct {
-	Messages []string `json:"message"`
-}
-
-type UserRoleUpdateRequest struct {
-	Email   string `json:"email"`
-	User    models.User
-	Roles   []string
-	GroupId int
-}
-
-type UserRoleUpdateResponse struct {
-	Messages []string `json:"message"`
+	utils.UpdateToken(userCollection, args.Email, jwtToken)
+	reply.Response = "ok"
+	reply.Id = foundUser.ID.String()
+	return nil
 }
