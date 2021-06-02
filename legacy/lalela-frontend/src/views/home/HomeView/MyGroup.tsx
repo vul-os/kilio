@@ -89,17 +89,14 @@ class mobileCategorizationLayoutRenderer extends RendererComponent<mobileCategor
     const actionsContainerStyle = {
       marginBottom: '16px'
     }
-    // const buttonWrapperStyle = {
-    //   textAlign: 'right' as 'right',
-    //   width: '100%',
-    //   margin: '1em auto'
-    // };
-    // const buttonNextStyle = {
-    //   float: 'right' as 'right'
-    // };
-    // const buttonStyle = {
-    //   marginRight: '1em'
-    // };
+    const buttonWrapperStyle = {
+      textAlign: 'right' as 'right',
+      width: '100%',
+      margin: '1em auto'
+    };
+    const buttonNextStyle = {
+      float: 'right' as 'right'
+    };
     const childProps: MaterialLayoutRendererProps = {
       elements: categorization.elements[activeCategory].elements,
       schema,
@@ -116,6 +113,7 @@ class mobileCategorizationLayoutRenderer extends RendererComponent<mobileCategor
       <Hidden xsUp={!visible}>
 
         <div style={rootStyle}>
+          <Hidden mdUp>
           <Stepper activeStep={activeCategory} orientation="vertical">
             {categories.map((e: Category, idx: number) => (
               <Step key={e.label}>
@@ -161,6 +159,41 @@ class mobileCategorizationLayoutRenderer extends RendererComponent<mobileCategor
             {/*  </Paper>*/}
             {/*)}*/}
           </Stepper>
+          </Hidden>
+          <Hidden smDown>
+          <Stepper activeStep={activeCategory} nonLinear>
+          {categories.map((e: Category, idx: number) => (
+            <Step key={e.label}>
+              <StepButton onClick={() => this.handleStep(idx)}>
+                {e.label}
+              </StepButton>
+            </Step>
+          ))}
+        </Stepper>
+        <div>
+          <MaterialLayoutRenderer {...childProps} />
+        </div>
+        { !!appliedUiSchemaOptions.showNavButtons ? (<div style={buttonWrapperStyle}>
+          <Button
+            style={buttonNextStyle}
+            variant="contained"
+            color="primary"
+            disabled={activeCategory >= categories.length - 1}
+            onClick={() => this.handleStep(activeCategory + 1)}
+          >
+            Next
+          </Button>
+          <Button
+            style={buttonStyle}
+            color="secondary"
+            variant="contained"
+            disabled={activeCategory <= 0}
+            onClick={() => this.handleStep(activeCategory - 1)}
+          >
+            Previous
+          </Button>
+        </div>) : (<></>)}
+          </Hidden>
 
         </div>
         {/*<MobileStepper*/}

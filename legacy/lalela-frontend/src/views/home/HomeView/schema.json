@@ -230,6 +230,75 @@
                         "Yes",
                         "No"
                     ]
+                },
+                "WitnessJobActions": {
+                    "type": "object",
+                    "properties": {
+                       "ChangeInDepartment": {
+                           "type":"boolean"
+                       },
+                       "ChangeInTeams": {
+                           "type":"boolean"
+                       },
+                       "Resignation": {
+                           "type": "boolean"
+                       },
+                       "Other": {
+                           "type":"boolean"
+                       },
+                       "WitnessJobActionsOther": {
+                           "type":"string"
+                       } 
+                    }
+                },
+                "WitnessEmotionAction": {
+                    "type":"string",
+                    "enum": [
+                        "Yes",
+                        "No"
+                    ]
+                },
+                "WitnessEmotionActionExplained": {
+                    "type": "string"
+                },
+                "WitnessEventHandling": {
+                    "type":"object",
+                    "properties": {
+                        "WitnessSanctionedIncident": {
+                            "type":"string",
+                            "enum": ["Yes",
+                                    "No"]
+                        },
+                        "WitnessSanctionedIncidentApology": {
+                            "type":"boolean"
+                        },
+                        "WitnessSanctionedIncidentVerbalWarning": {
+                            "type":"boolean"
+                        },
+                        "WitnessSanctionedIncidentWrittenWarning": {
+                            "type":"boolean"
+                        },
+                        "WitnessSanctionedIncidentSuspension": {
+                            "type":"boolean"
+                        },
+                        "WitnessSanctionedIncidentDismissal": {
+                            "type":"boolean"
+                        },
+                        "WitnessSanctionedIncidentOther": {
+                            "type":"boolean"
+                        },
+                        "WitnessSanctionedIncidentOtherExplained": {
+                            "type":"string"
+                        },
+                        "WitnessIncidentSensitivityTraining": {
+                            "type":"string",
+                            "enum": [
+                                "Yes",
+                                "No"
+                            ]
+                        }
+
+                    }
                 }
             }
         }
