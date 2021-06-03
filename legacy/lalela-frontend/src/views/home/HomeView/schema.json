@@ -301,6 +301,14 @@
                     }
                 }
             }
+        },
+        "WitnessSupportingDocuments": {
+            "type":"object",
+            "properties": {
+                "uploadDoc": {
+                    "type":"object"
+                }
+            }
         }
 
             }

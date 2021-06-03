@@ -13,11 +13,11 @@ import {
   materialCells,
 } from '@jsonforms/material-renderers';
 import mobileCategorizationLayoutRenderer, { mobileCategorizationTester } from './MyGroup';
-
+import FileUploadControl, { UploadTester } from './uploadRender';
 const renderers = [
 { tester: mobileCategorizationTester, renderer: mobileCategorizationLayoutRenderer, },
+{ tester: UploadTester, renderer: FileUploadControl, },
   ...materialRenderers,
-  //register custom renderers
 ];
 const initialData = data;
 const useStyles = makeStyles(() => ({

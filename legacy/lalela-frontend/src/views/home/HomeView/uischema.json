@@ -662,7 +662,11 @@
             {"type":"Label",
               "text": "If you have evidence and d not wish to add it to the portal, we suggest keeping it in a safe place"},
             {"type":"Label",
-              "text": "If you decide to use our upload feature, your data will only be stored for a limited amount of time. Once your case is resolved, this data will be deleted"}
+              "text": "If you decide to use our upload feature, your data will only be stored for a limited amount of time. Once your case is resolved, this data will be deleted"},
+            {
+            "type": "Control",
+            "scope": "#/properties/WitnessFlow/properties/WitnessSupportingDocuments/properties/uploadDoc"
+            }
           ],
           "rule":{
               "effect":"SHOW",
