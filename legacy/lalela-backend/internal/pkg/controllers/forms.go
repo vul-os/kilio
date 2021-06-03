@@ -27,9 +27,8 @@ type FormCreateResponse struct {
 
 func (t *FormsCon) CreateForm(r *http.Request, args *FormCreateRequest,	reply *FormCreateResponse) error {
 	var ctx, cancel = context.WithTimeout(context.Background(), 100 * time.Second)
-	var formsModel models.Forms
-
-	var formsCollection = utils.OpenCollection(utils.Client, "forms")
+	var model models.Forms
+	var collection = utils.OpenCollection(utils.Client, "forms")
 
 	var sceheme interface{}
 	var uiSceheme interface{}
@@ -42,16 +41,16 @@ func (t *FormsCon) CreateForm(r *http.Request, args *FormCreateRequest,	reply *F
 		cancel()
 		return err
 	}
-	formsModel.FormName = args.Name
-	formsModel.Scheme = sceheme
-	formsModel.UiScheme = uiSceheme
+	model.FormName = args.Name
+	model.Scheme = sceheme
+	model.UiScheme = uiSceheme
 
-	_, err := formsCollection.InsertOne(ctx, formsModel)
+	_, err := collection.InsertOne(ctx, model)
 	if err != nil {
 		cancel()
 		return err
 	}
-	_, err = formsCollection.InsertOne(ctx, formsModel)
+	_, err = collection.InsertOne(ctx, model)
 	if err != nil {
 		cancel()
 		return err
@@ -72,7 +71,7 @@ func (t *FormsCon) GetForm(r *http.Request, args *FormGetRequest, reply *FormCre
 
 	var formsCollection = utils.OpenCollection(utils.Client, "forms")
 
-	objectId, err := primitive.ObjectIDFromHex("60b8080ddf18fdc3625491db")
+	objectId, err := primitive.ObjectIDFromHex(args.Id)
 	if err != nil{
 		fmt.Println("Invalid id")
 		cancel()
@@ -91,4 +90,6 @@ func (t *FormsCon) GetForm(r *http.Request, args *FormGetRequest, reply *FormCre
 	cancel()
 	return nil
 }
+
+
 
