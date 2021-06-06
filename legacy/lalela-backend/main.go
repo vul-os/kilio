@@ -30,9 +30,9 @@ func main() {
 
 	// Get Port
 	port := viper.Get("port").(string)
-	utils.Client = utils.InitDB()
 	utils.SecretKey = viper.Get("secretKey").(string)
 
+	utils.InitDB()
 	// Create a new RPC serverr
 	s := rpc.NewServer()
 	s.RegisterCodec(json.NewCodec(), "application/json")

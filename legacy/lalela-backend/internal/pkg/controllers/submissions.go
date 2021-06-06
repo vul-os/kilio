@@ -25,7 +25,7 @@ type SubmissionSubmitResponse struct {
 func (t *SubmissionsCon) SubmitForm(r *http.Request, args *SubmissionSubmitRequest, reply *SubmissionSubmitResponse) error {
 	var ctx, cancel = context.WithTimeout(context.Background(), 100*time.Second)
 	var model models.Submissions
-	var collections = utils.OpenCollection(utils.Client, "submissions")
+	var collections = utils.OpenCollection(utils.MongoClient, "submissions")
 
 	var submish interface{}
 	if err := json.Unmarshal(args.SubmissionData, &submish); err != nil {

@@ -40,7 +40,7 @@ func Send(data EmailTemplateData) (bool, error) {
 	mailgunDomain := viper.Get("mailgunDomain").(string)
 	mailgunApiKey := viper.Get("mailgunApiKey").(string)
 
-	// Create an instance of the Mailgun Client
+	// Create an instance of the Mailgun MongoClient
 	mg := mailgun.NewMailgun(mailgunDomain, mailgunApiKey)
 
 	body, err := ParseTemplate("templates/actionable_email.html", data)

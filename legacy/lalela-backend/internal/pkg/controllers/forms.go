@@ -28,7 +28,7 @@ type FormCreateResponse struct {
 func (t *FormsCon) CreateForm(r *http.Request, args *FormCreateRequest,	reply *FormCreateResponse) error {
 	var ctx, cancel = context.WithTimeout(context.Background(), 100 * time.Second)
 	var model models.Forms
-	var collection = utils.OpenCollection(utils.Client, "forms")
+	var collection = utils.OpenCollection(utils.MongoClient, "forms")
 
 	var sceheme interface{}
 	var uiSceheme interface{}
@@ -69,7 +69,7 @@ func (t *FormsCon) GetForm(r *http.Request, args *FormGetRequest, reply *FormCre
 	var ctx, cancel = context.WithTimeout(context.Background(), 100 * time.Second)
 	var formsModel models.Forms
 
-	var formsCollection = utils.OpenCollection(utils.Client, "forms")
+	var formsCollection = utils.OpenCollection(utils.MongoClient, "forms")
 
 	objectId, err := primitive.ObjectIDFromHex(args.Id)
 	if err != nil{
