@@ -7,7 +7,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"lalela-backend/internal/pkg/models"
-	"lalela-backend/internal/pkg/utils"
+	"lalela-backend/internal/pkg/services"
 	"net/http"
 	"time"
 )
@@ -28,7 +28,7 @@ type FormCreateResponse struct {
 func (t *FormsCon) CreateForm(r *http.Request, args *FormCreateRequest,	reply *FormCreateResponse) error {
 	var ctx, cancel = context.WithTimeout(context.Background(), 100 * time.Second)
 	var model models.Forms
-	var collection = utils.OpenCollection(utils.MongoClient, "forms")
+	var collection = services.OpenCollection("forms")
 
 	var sceheme interface{}
 	var uiSceheme interface{}
@@ -69,7 +69,7 @@ func (t *FormsCon) GetForm(r *http.Request, args *FormGetRequest, reply *FormCre
 	var ctx, cancel = context.WithTimeout(context.Background(), 100 * time.Second)
 	var formsModel models.Forms
 
-	var formsCollection = utils.OpenCollection(utils.MongoClient, "forms")
+	var collection = services.OpenCollection("forms")
 
 	objectId, err := primitive.ObjectIDFromHex(args.Id)
 	if err != nil{
@@ -78,7 +78,7 @@ func (t *FormsCon) GetForm(r *http.Request, args *FormGetRequest, reply *FormCre
 		return err
 	}
 
-	err = formsCollection.FindOne(ctx, bson.M{"_id": objectId}).Decode(&formsModel)
+	err = collection.FindOne(ctx, bson.M{"_id": objectId}).Decode(&formsModel)
 	if err != nil {
 		fmt.Println("No forms found")
 		cancel()

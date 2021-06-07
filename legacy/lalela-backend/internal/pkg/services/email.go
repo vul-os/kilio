@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
-package utils
+package services
 
 import (
 	"bytes"
@@ -40,7 +40,7 @@ func Send(data EmailTemplateData) (bool, error) {
 	mailgunDomain := viper.Get("mailgunDomain").(string)
 	mailgunApiKey := viper.Get("mailgunApiKey").(string)
 
-	// Create an instance of the Mailgun MongoClient
+	// Create an instance of the Mailgun Client
 	mg := mailgun.NewMailgun(mailgunDomain, mailgunApiKey)
 
 	body, err := ParseTemplate("templates/actionable_email.html", data)

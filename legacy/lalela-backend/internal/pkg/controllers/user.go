@@ -7,7 +7,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"lalela-backend/internal/pkg/models"
-	"lalela-backend/internal/pkg/utils"
+	"lalela-backend/internal/pkg/services"
 	"net/http"
 	"time"
 )
@@ -28,10 +28,9 @@ type UserResponse struct {
 func (t *UserCon) Login(r *http.Request, args *UserRequest,	reply *UserResponse) error {
 	var ctx, cancel = context.WithTimeout(context.Background(), 100 * time.Second)
 	var foundUser models.User
+	var collection = services.OpenCollection("user")
 
-	var userCollection = utils.OpenCollection(utils.MongoClient, "user")
-
-	err := userCollection.FindOne(ctx, bson.M{"email": args.Email}).Decode(&foundUser)
+	err := collection.FindOne(ctx, bson.M{"email": args.Email}).Decode(&foundUser)
 	if err != nil {
 		fmt.Println("No user found")
 		cancel()
@@ -39,19 +38,19 @@ func (t *UserCon) Login(r *http.Request, args *UserRequest,	reply *UserResponse)
 	}
 	defer cancel()
 
-	passwordIsValid := utils.VerifyPassword(args.Password, *foundUser.Password)
+	passwordIsValid := services.VerifyPassword(args.Password, *foundUser.Password)
 	if !passwordIsValid {
 		cancel()
 		return nil
 	}
 	defer cancel()
 
-	jwtToken, err := utils.GenerateToken(args.Email)
+	jwtToken, err := services.GenerateToken(args.Email)
 	if err != nil {
 		fmt.Println("Generating token error")
 	}
 
-	utils.UpdateToken(userCollection, args.Email, jwtToken)
+	services.UpdateToken(collection, args.Email, jwtToken)
 	reply.Response = "ok"
 	reply.Id = foundUser.ID.String()
 	return nil
@@ -61,20 +60,21 @@ func (t *UserCon) Login(r *http.Request, args *UserRequest,	reply *UserResponse)
 func (t *UserCon) RegisterUser(r *http.Request, args *UserRequest,	reply *UserResponse) error {
 	var ctx, cancel = context.WithTimeout(context.Background(), 100*time.Second)
 	var user models.User
-	var userCollection = utils.OpenCollection(utils.MongoClient, "user")
+	var collection = services.OpenCollection("user")
 
-	user.Email = &args.Email
 	user.ID = primitive.NewObjectID()
-	token, _ := utils.GenerateToken(args.Email)
-	password := utils.HashPassword(args.Password)
+	user.Email = &args.Email
+
+	token, _ := services.GenerateToken(args.Email)
 	user.ValidationToken = &token
+	password := services.HashPassword(args.Password)
 	user.Password = &password
 
 	user.CreatedAt, _ = time.Parse(time.RFC3339, time.Now().Format(time.RFC3339))
 	user.UpdatedAt, _ = time.Parse(time.RFC3339, time.Now().Format(time.RFC3339))
 
 	fmt.Println(user)
-	insertId, err := userCollection.InsertOne(ctx, user)
+	insertId, err := collection.InsertOne(ctx, user)
 	if err != nil {
 		cancel()
 		return err

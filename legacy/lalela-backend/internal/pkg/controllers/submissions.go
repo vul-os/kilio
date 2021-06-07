@@ -4,7 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"lalela-backend/internal/pkg/models"
-	"lalela-backend/internal/pkg/utils"
+	"lalela-backend/internal/pkg/services"
 	"net/http"
 	"time"
 )
@@ -25,7 +25,7 @@ type SubmissionSubmitResponse struct {
 func (t *SubmissionsCon) SubmitForm(r *http.Request, args *SubmissionSubmitRequest, reply *SubmissionSubmitResponse) error {
 	var ctx, cancel = context.WithTimeout(context.Background(), 100*time.Second)
 	var model models.Submissions
-	var collections = utils.OpenCollection(utils.MongoClient, "submissions")
+	var collection = services.OpenCollection("submissions")
 
 	var submish interface{}
 	if err := json.Unmarshal(args.SubmissionData, &submish); err != nil {
@@ -38,7 +38,7 @@ func (t *SubmissionsCon) SubmitForm(r *http.Request, args *SubmissionSubmitReque
 	model.Identifier = args.Identifier
 	model.Status = "submitted"
 
-	_, err := collections.InsertOne(ctx, model)
+	_, err := collection.InsertOne(ctx, model)
 	if err != nil {
 		cancel()
 		return err
