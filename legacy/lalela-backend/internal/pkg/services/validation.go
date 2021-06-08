@@ -9,12 +9,14 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"log"
+	"net/http"
 	"time"
 )
 
 // SignedDetails
 type SignedDetails struct {
-	Email      string
+	Email string
+	Id    string
 	jwt.StandardClaims
 }
 
@@ -23,7 +25,7 @@ var SecretKey string
 // GenerateAllTokens generates both teh detailed token and refresh token
 func GenerateToken(email string) (signedToken string, err error) {
 	claims := &SignedDetails{
-		Email:      email,
+		Email: email,
 		StandardClaims: jwt.StandardClaims{
 			ExpiresAt: time.Now().Local().Add(time.Hour * time.Duration(24)).Unix(),
 		},
@@ -37,6 +39,17 @@ func GenerateToken(email string) (signedToken string, err error) {
 	}
 
 	return token, err
+}
+
+func ValidateJWTRequest(r *http.Request) *SignedDetails {
+	token := getTokenFromRequest(r)
+	return ValidateToken(token)
+}
+
+func getTokenFromRequest(r *http.Request) string {
+	const BEARER_SCHEMA = "Bearer "
+	authHeader := r.Header.Get("Authorization")
+	return authHeader[len(BEARER_SCHEMA):]
 }
 
 //ValidateToken validates the jwt token
@@ -68,7 +81,7 @@ func ValidateToken(signedToken string) (claims *SignedDetails) {
 }
 
 func UpdateToken(collection *mongo.Collection, signedToken string, id string) {
-	var ctx, cancel = context.WithTimeout(context.Background(), 100 * time.Second)
+	var ctx, cancel = context.WithTimeout(context.Background(), 100*time.Second)
 
 	var updateObj primitive.D
 	updateObj = append(updateObj, bson.E{Key: "ValidationToken", Value: signedToken})

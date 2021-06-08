@@ -12,9 +12,11 @@ import (
 // todo: this should not be part of the backend?
 
 
-var rootAdminEmail = "imranparuk@live.com"
+var RootAdminEmail = "imranparuk@live.com"
 var orgSP1AdminEmail = "notimran@live.com"
 var orgSP1NormalEmail = "skaapie@live.com"
+
+var RootAdminId string
 
 var passwordForAll = "lalela"
 
@@ -23,12 +25,27 @@ var organizations = [][]string {
 	{"Spar Branch 2", ""},
 }
 
+func AdminPolicies() {
+	actions := []string{"get", "create"}
+	objects := []string{"form", "forms", "user", "users", "submission", "submissions"}
+	for _, obj := range objects {
+		for _, act := range actions {
+			_, err := services.Enforcer.AddPolicy("admin", "global", obj, act)
+			if err != nil {
+				fmt.Println(err)
+			}
+		}
+	}
+	_, _ = services.Enforcer.AddGroupingPolicy(RootAdminId, "admin", "global")
+}
+
 
 func SeedDB() {
 	addOrgs()
 	addSuperAdminUser()
 	addOrgAdminUser()
 	addOrgUser()
+	AdminPolicies()
 }
 
 func addOrgs() {
@@ -59,12 +76,12 @@ func addSuperAdminUser() {
 	var collection = services.OpenCollection("user")
 
 	user.ID = primitive.NewObjectID()
-	user.Email = &rootAdminEmail
+	user.Email = RootAdminEmail
 
-	token, _ := services.GenerateToken(rootAdminEmail)
-	user.ValidationToken = &token
+	token, _ := services.GenerateToken(RootAdminEmail)
+	user.ValidationToken = token
 	password := services.HashPassword(passwordForAll)
-	user.Password = &password
+	user.Password = password
 
 	user.CreatedAt, _ = time.Parse(time.RFC3339, time.Now().Format(time.RFC3339))
 	user.UpdatedAt, _ = time.Parse(time.RFC3339, time.Now().Format(time.RFC3339))
@@ -75,6 +92,7 @@ func addSuperAdminUser() {
 	}
 	userId := result.InsertedID.(primitive.ObjectID).Hex()
 	_ = fmt.Sprintf(`UserId: %s`, userId)
+	RootAdminId = userId
 
 	for _, org := range organizations {
 		//alice, admin, domain1
@@ -92,12 +110,12 @@ func addOrgAdminUser() {
 	var collection = services.OpenCollection("user")
 
 	user.ID = primitive.NewObjectID()
-	user.Email = &orgSP1AdminEmail
+	user.Email = orgSP1AdminEmail
 
-	token, _ := services.GenerateToken(rootAdminEmail)
-	user.ValidationToken = &token
+	token, _ := services.GenerateToken(orgSP1AdminEmail)
+	user.ValidationToken = token
 	password := services.HashPassword(passwordForAll)
-	user.Password = &password
+	user.Password = password
 
 	user.CreatedAt, _ = time.Parse(time.RFC3339, time.Now().Format(time.RFC3339))
 	user.UpdatedAt, _ = time.Parse(time.RFC3339, time.Now().Format(time.RFC3339))
@@ -122,12 +140,12 @@ func addOrgUser()  {
 	var collection = services.OpenCollection("user")
 
 	user.ID = primitive.NewObjectID()
-	user.Email = &orgSP1NormalEmail
+	user.Email = orgSP1NormalEmail
 
-	token, _ := services.GenerateToken(rootAdminEmail)
-	user.ValidationToken = &token
+	token, _ := services.GenerateToken(orgSP1NormalEmail)
+	user.ValidationToken = token
 	password := services.HashPassword(passwordForAll)
-	user.Password = &password
+	user.Password = password
 
 	user.CreatedAt, _ = time.Parse(time.RFC3339, time.Now().Format(time.RFC3339))
 	user.UpdatedAt, _ = time.Parse(time.RFC3339, time.Now().Format(time.RFC3339))
