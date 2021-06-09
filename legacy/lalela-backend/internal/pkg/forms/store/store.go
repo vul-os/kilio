@@ -6,8 +6,14 @@ import (
 
 type Store interface {
 	CreateOne(CreateOneRequest) (*CreateOneResponse, error)
-	GetOne(GetOneRequest) (*GetOneResponse, error)
+	GetOne(FindOneRequest) (*FindOneResponse, error)
 }
+
+const FormsServiceProvider = "Forms-Store"
+
+const FormsCreateOneService = FormsServiceProvider + ".CreateOne"
+const FormsFindOneService = FormsServiceProvider + ".FindOne"
+
 
 type CreateOneRequest struct {
 	Name string `json:"name"`
@@ -19,11 +25,11 @@ type CreateOneResponse struct {
 	Id string `json:"id"`
 }
 
-type GetOneRequest struct {
+type FindOneRequest struct {
 	Id string `json:"id"`
 }
 
-type GetOneResponse struct {
+type FindOneResponse struct {
 	Name string `json:"name"`
 	Scheme interface{} `json:"scheme"`
 	UiScheme interface{} `json:"ui_scheme"`

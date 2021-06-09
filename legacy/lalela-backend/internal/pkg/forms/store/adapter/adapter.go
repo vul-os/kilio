@@ -1,9 +1,8 @@
 package adapter
 
 import (
-	"encoding/json"
-	"fmt"
-	"lalela-backend/internal/pkg/auth"
+	"github.com/rs/zerolog/log"
+	jsonRPCServiceProvider "lalela-backend/internal/pkg/api/jsonRpc/service/provider"
 	formsStore "lalela-backend/internal/pkg/forms/store"
 	"net/http"
 )
@@ -20,55 +19,28 @@ func New(
 	}
 }
 
-
 func (a *adaptor) Name() jsonRPCServiceProvider.Name {
-	return shopStore.ServiceProvider
+	return formsStore.FormsServiceProvider
 }
 
-type FormsCon struct{}
-
-
-
-func (t *FormsCon) CreateOne(r *http.Request, args *CreateOneRequest,	reply *CreateOneResponse) error {
-	canDo, err := auth.Authorize(r, "forms", "create")
+func (a *adaptor) CreateOne(r *http.Request, request *formsStore.CreateOneRequest,
+	response *formsStore.CreateOneResponse) error {
+	result, err := a.store.CreateOne(*request)
 	if err != nil {
+		log.Error().Err(err)
 		return err
 	}
-	if !canDo {
-		return nil
-	}
-
-	err = store.CreateOne(args.Name, args.Scheme, args.UiScheme)
-	if err != nil {
-		return err
-	}
+	response.Id = result.Id
 	return nil
 }
 
-type GetOneRequest struct {
-	Id string `json:"id"`
-}
-
-type GetOneResponse struct {
-	Name string `json:"name"`
-	Scheme json.RawMessage `json:"scheme"`
-	UiScheme json.RawMessage `json:"ui_scheme"`
-}
-
-
-func (t *FormsCon) GetOne(r *http.Request, args *GetOneRequest, reply *GetOneResponse) error {
-	canDo, err := auth.Authorize(r, "forms", "get")
+func (a *adaptor) FindOne(r *http.Request, request *formsStore.FindOneRequest,
+	response *formsStore.FindOneResponse) error {
+	model, err := a.store.GetOne(*request)
 	if err != nil {
+		log.Error().Err(err)
 		return err
 	}
-	if !canDo {
-		return nil
-	}
-
-	model, err := store.GetOne(args.Id)
-	if err != nil {
-		return err
-	}
-	fmt.Println(model)
+	response = model
 	return nil
 }
