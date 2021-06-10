@@ -68,7 +68,7 @@ func (a *adaptor) CreateOne(r *http.Request, request *CreateOneRequest,
 func (a *adaptor) FindOne(r *http.Request, request *formsStore.FindOneRequest,
 	response *FindOneResponse) error {
 
-	result, err := a.store.GetOne(*request)
+	result, err := a.store.FindOne(*request)
 	if err != nil {
 		log.Error().Err(err)
 		return err

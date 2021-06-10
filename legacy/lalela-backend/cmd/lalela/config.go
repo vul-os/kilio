@@ -17,13 +17,6 @@ func init() {
 	viper.SetDefault("ServerPort", "8080")
 	viper.SetDefault("MongoDBHosts", []string{"localhost:27017"})
 	viper.SetDefault("MongoDBName", DbName)
-
-	// todo: remove this
-	viper.SetDefault("MongoDBUsername", "scraperama")
-	viper.SetDefault("MongoDBPassword", "***REMOVED***")
-	viper.SetDefault("PrivateKeyString", "***REMOVED***")
-
-
 }
 
 type Config struct {

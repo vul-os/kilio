@@ -9,8 +9,8 @@ import (
 	mongoFormsStore "lalela-backend/internal/pkg/forms/store/mongo"
 
 	"gopkg.in/square/go-jose.v2"
+	"lalela-backend/internal/pkg/auth/key"
 	formsJSONRPCAdapter "lalela-backend/internal/pkg/forms/store/adapter"
-	"lalela-backend/internal/pkg/key"
 	"lalela-backend/internal/pkg/logs"
 	"lalela-backend/internal/pkg/mongo"
 	"os"

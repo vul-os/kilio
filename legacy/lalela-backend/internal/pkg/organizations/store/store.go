@@ -4,7 +4,7 @@ import (
 	"context"
 	"github.com/spf13/cast"
 	"go.mongodb.org/mongo-driver/bson/primitive"
-	"lalela-backend/internal/pkg/database"
+	"lalela-backend/internal/pkg/mongo"
 	"lalela-backend/internal/pkg/organizations"
 	"time"
 )
