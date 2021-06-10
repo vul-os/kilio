@@ -3,8 +3,9 @@ package main
 import (
 	"github.com/rs/zerolog/log"
 	"github.com/spf13/viper"
-	"scraperama/internal/pkg/database"
 )
+
+const DbName = "cluster0"
 
 func init() {
 	err := viper.BindEnv("ServerPort", "PORT")
@@ -15,7 +16,14 @@ func init() {
 	// set default configuration
 	viper.SetDefault("ServerPort", "8080")
 	viper.SetDefault("MongoDBHosts", []string{"localhost:27017"})
-	viper.SetDefault("MongoDBName", database.ScraperamaDatabaseName)
+	viper.SetDefault("MongoDBName", DbName)
+
+	// todo: remove this
+	viper.SetDefault("MongoDBUsername", "scraperama")
+	viper.SetDefault("MongoDBPassword", "***REMOVED***")
+	viper.SetDefault("PrivateKeyString", "***REMOVED***")
+
+
 }
 
 type Config struct {
@@ -30,8 +38,7 @@ type Config struct {
 
 func GetConfig(configFileName *string) (*Config, error) {
 	// set places to look for config file
-	viper.AddConfigPath("cmd/scraperama")
-	viper.AddConfigPath("config")
+	viper.AddConfigPath("cmd/lalela")
 	viper.AddConfigPath(".")
 
 	// set the name of the config file
