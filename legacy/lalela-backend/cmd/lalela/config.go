@@ -17,6 +17,7 @@ func init() {
 	viper.SetDefault("ServerPort", "8080")
 	viper.SetDefault("MongoDBHosts", []string{"localhost:27017"})
 	viper.SetDefault("MongoDBName", DbName)
+
 }
 
 type Config struct {

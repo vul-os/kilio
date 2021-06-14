@@ -16,7 +16,7 @@ import (
 	"github.com/mailgun/mailgun-go/v4"
 )
 
-type TemplateData struct {
+type EmailTemplateData struct {
 	To         string
 	Subject    string
 	Name       string
@@ -26,7 +26,7 @@ type TemplateData struct {
 	MainText   string
 }
 
-func Send(data TemplateData) (bool, error) {
+func Send(data EmailTemplateData) (bool, error) {
 	waitGroup := sync.WaitGroup{} // a WaitGroup waits for a collection of goroutines to finish, pass this by address
 	// context.WithCancel returns a copy of parent with a new Done channel.
 	// The returned context's Done channel is closed when the returned cancel function is called or when the parent

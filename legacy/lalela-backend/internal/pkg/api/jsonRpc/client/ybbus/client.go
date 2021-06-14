@@ -1,15 +1,11 @@
 package ybbus
 
 import (
-	"encoding/json"
 	"github.com/rs/zerolog/log"
 	"github.com/ybbus/jsonrpc"
 	jsonRPCClient "lalela-backend/internal/pkg/api/jsonRpc/client"
-	lalelaException "lalela-backend/internal/pkg/exception"
 	"net/http"
 	"time"
-	"lalela-backend/internal/pkg/security/claims"
-
 )
 
 type client struct {
@@ -26,24 +22,14 @@ func New(
 	}
 }
 
-func (c *client) JSONRPCRequest(method string, authClaims claims.Claims, request, response interface{}) error {
-	var marshalledClaimsForHeader string
-	if authClaims != nil {
-		marshalledClaims, err := json.Marshal(claims.Serialized{Claims: authClaims})
-		if err != nil {
-			log.Error().Err(err).Msg("could not marshall claims")
-			return lalelaException.ErrUnexpected{}
-		}
-		marshalledClaimsForHeader = string(marshalledClaims)
-	}
-
+func (c *client) JSONRPCRequest(method string, request, response interface{}) error {
 	rpcResponse, err := jsonrpc.NewClientWithOpts(
 		c.url,
 		&jsonrpc.RPCClientOpts{
 			HTTPClient: &http.Client{Timeout: time.Second * 10},
 			CustomHeaders: map[string]string{
 				"Pre-Shared-Secret": c.preSharedSecret,
-				"Claims":            marshalledClaimsForHeader,
+				//"Claims":            marshalledClaimsForHeader,
 			},
 		},
 	).Call(method, request)

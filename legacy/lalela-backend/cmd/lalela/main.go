@@ -2,17 +2,18 @@ package main
 
 import (
 	"flag"
-	"fmt"
+	. "fmt"
 	jsonRpcHttpServer "lalela-backend/internal/pkg/api/jsonRpc/server/http"
 	jsonRPCServiceProvider "lalela-backend/internal/pkg/api/jsonRpc/service/provider"
 
-	mongoFormsStore "lalela-backend/internal/pkg/forms/store/mongo"
-
 	"gopkg.in/square/go-jose.v2"
-	"lalela-backend/internal/pkg/auth/key"
 	formsJSONRPCAdapter "lalela-backend/internal/pkg/forms/store/adapter"
+	mongoFormsStore "lalela-backend/internal/pkg/forms/store/mongo"
+	"lalela-backend/internal/pkg/key"
 	"lalela-backend/internal/pkg/logs"
 	"lalela-backend/internal/pkg/mongo"
+	userJSONRPCAdapter "lalela-backend/internal/pkg/users/store/adapter"
+	mongoUsersStore "lalela-backend/internal/pkg/users/store/mongo"
 	"os"
 	"os/signal"
 
@@ -26,11 +27,11 @@ import (
 var configFileName = flag.String("config-file-name", "config", "specify config file")
 
 func main() {
-	flag.Parse()
-	logs.Setup()
+	flag.Parse()			//used to parse command line input for usage
+	logs.Setup()			//logging with JSON output via zerologs package
 
 	//// get config
-	config, err := GetConfig(configFileName)
+	config, err := GetConfig(configFileName) //
 	if err != nil {
 		log.Fatal().Err(err).Msg("getting config from file")
 	}
@@ -59,6 +60,9 @@ func main() {
 	// Service Providers
 	//
 	FormsStore := mongoFormsStore.New(
+		mongoDb,
+	)
+	UsersStore := mongoUsersStore.New(
 		mongoDb,
 	)
 	log.Info().Msg("FUUUUUUUUUUUUUUUUUUUUUUUUUUUCK")
@@ -105,7 +109,7 @@ func main() {
 	if err != nil {
 		log.Fatal().Err(err).Msg("generating new jose signer")
 	}
-	fmt.Println(joseSigner)
+	Println(joseSigner)
 	//BasicTokenGenerator := basicTokenGenerator.New(
 	//	joseSigner,
 	//	RequestValidator,
@@ -130,7 +134,7 @@ func main() {
 
 	// create rpc http server
 	server := jsonRpcHttpServer.New(
-		"0.0.0.0",
+		"localhost",
 		config.ServerPort,
 		[]jsonRpcHttpServer.RPCServerConfig{
 			//
@@ -142,6 +146,7 @@ func main() {
 				Middleware: []func(http.Handler) http.Handler{},
 				ServiceProviders: []jsonRPCServiceProvider.Provider{
 					formsJSONRPCAdapter.New(FormsStore),
+					userJSONRPCAdapter.New(UsersStore),
 				},
 			},
 
