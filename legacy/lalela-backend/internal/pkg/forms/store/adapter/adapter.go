@@ -10,14 +10,14 @@ import (
 
 
 type adaptor struct {
-	store formsStore.Store
+	mongoStore formsStore.Store
 }
 
 func New(
 	store formsStore.Store,
 ) jsonRPCServiceProvider.Provider {
 	return &adaptor{
-		store: store,
+		mongoStore: store,
 	}
 }
 
@@ -51,7 +51,7 @@ func (a *adaptor) CreateOne(r *http.Request, request *CreateOneRequest,
 		return err
 	}
 
-	result, err := a.store.CreateOne(formsStore.CreateOneRequest{
+	result, err := a.mongoStore.CreateOne(formsStore.CreateOneRequest{
 		Name: request.Name,
 		Scheme: scheme,
 		UiScheme: uiScheme,
@@ -68,7 +68,7 @@ func (a *adaptor) CreateOne(r *http.Request, request *CreateOneRequest,
 func (a *adaptor) FindOne(r *http.Request, request *formsStore.FindOneRequest,
 	response *FindOneResponse) error {
 
-	result, err := a.store.GetOne(*request)
+	result, err := a.mongoStore.FindOne(*request)
 	if err != nil {
 		log.Error().Err(err)
 		return err

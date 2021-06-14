@@ -2,7 +2,7 @@ package store
 
 type Store interface {
 	CreateOne(CreateOneRequest) (*CreateOneResponse, error)
-	GetOne(FindOneRequest) (*FindOneResponse, error)
+	FindOne(FindOneRequest) (*FindOneResponse, error)
 }
 
 const FormsServiceProvider = "Forms-Store"

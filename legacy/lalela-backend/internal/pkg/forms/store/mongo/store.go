@@ -28,7 +28,7 @@ func (s *store) CreateOne(request formsStore.CreateOneRequest) (*formsStore.Crea
 	return &formsStore.CreateOneResponse{}, nil
 }
 
-func (s *store) GetOne(request formsStore.FindOneRequest) (*formsStore.FindOneResponse, error) {
+func (s *store) FindOne(request formsStore.FindOneRequest) (*formsStore.FindOneResponse, error) {
 	objectId, err := primitive.ObjectIDFromHex(request.Id)
 	var formsModel forms.Forms
 

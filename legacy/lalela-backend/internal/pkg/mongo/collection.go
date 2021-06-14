@@ -20,6 +20,11 @@ func NewCollection(
 	}
 }
 
+func (c *Collection) GetMongoCollection() *mongoDriver.Collection {
+	return c.driverCollection
+}
+
+
 func (c *Collection) SetupIndex(model mongoDriver.IndexModel) error {
 	ctx, _ := context.WithTimeout(context.Background(), 5*time.Second)
 	if _, err := c.driverCollection.Indexes().CreateOne(ctx, model); err != nil {

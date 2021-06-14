@@ -1,35 +1,31 @@
 package store
 
 import (
-	"context"
-	"github.com/spf13/cast"
-	"go.mongodb.org/mongo-driver/bson/primitive"
-	"lalela-backend/internal/pkg/database"
-	"lalela-backend/internal/pkg/organizations"
-	"time"
+
 )
 
 
 
 func CreateOne(orgName string) (string, error) {
-	var ctx, cancel = context.WithTimeout(context.Background(), 100*time.Second)
-	var org organizations.Organizations
-	var collection = database.OpenCollection("organizations")
-
-	org.ID = primitive.NewObjectID()
-	org.Name = orgName
-
-	org.CreatedAt, _ = time.Parse(time.RFC3339, time.Now().Format(time.RFC3339))
-	org.UpdatedAt, _ = time.Parse(time.RFC3339, time.Now().Format(time.RFC3339))
-
-	insertId, err := collection.InsertOne(ctx, org)
-	if err != nil {
-		cancel()
-		return "", err
-	}
-	defer cancel()
-
-	return cast.ToString(insertId.InsertedID), err
+	//var ctx, cancel = context.WithTimeout(context.Background(), 100*time.Second)
+	//var org organizations.Organizations
+	//var collection = database.OpenCollection("organizations")
+	//
+	//org.ID = primitive.NewObjectID()
+	//org.Name = orgName
+	//
+	//org.CreatedAt, _ = time.Parse(time.RFC3339, time.Now().Format(time.RFC3339))
+	//org.UpdatedAt, _ = time.Parse(time.RFC3339, time.Now().Format(time.RFC3339))
+	//
+	//insertId, err := collection.InsertOne(ctx, org)
+	//if err != nil {
+	//	cancel()
+	//	return "", err
+	//}
+	//defer cancel()
+	//
+	//return cast.ToString(insertId.InsertedID), err
+	return "", nil
 }
 
 //func getUserOrganizations(email string) ([]organizations.Organizations, error) {

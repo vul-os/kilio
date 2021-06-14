@@ -1,82 +1,43 @@
 package store
 
 import (
-	"time"
+	"lalela-backend/internal/pkg/security/claims"
+	"lalela-backend/internal/pkg/users"
 )
 
 type Store interface {
-	CreateUser(CreateUserRequest) (*CreateUserResponse, error)
-	FindUser(FindUserRequest) (*FindUserResponse, error)
+	CreateOne(CreateOneRequest) (*CreateOneResponse, error)
+	FindOne(FindOneRequest) (*FindOneResponse, error)
+	UpdateOne(UpdateOneRequest) (*UpdateOneResponse, error)
 }
 
-const UserServiceProvider = "User-Store"
+const ServiceProvider = "User-Store"
 
-const UserCreateUserService = UserServiceProvider + ".CreateUser"
-const UserFindUserService = UserServiceProvider + ".FindUser"
+const git  = ServiceProvider + ".CreateOne"
+const FindOneService = ServiceProvider + ".FindOne"
+const FindManyService = ServiceProvider + ".FindMany"
+const UpdateOneService = ServiceProvider + ".UpdateOne"
 
-type CreateUserRequest struct {
-	ID              string 				`json:"id"`
-	OrganizationId  string 				`json:"organization_id"`
-	FirstName       string             `json:"first_name"`
-	LastName        string             `json:"last_name"`
-	Password        string             `json:"password"`
-	Email           string             `json:"email"`
-	RoleID          string             `json:"role_id"`
-	ValidationToken string             `json:"validation_token"`
-	EmailToken      string             `json:"email_token"`
-	RefreshToken    string             `json:"refresh_token"`
-	CreatedAt       time.Time          `json:"created_at"`
-	UpdatedAt       time.Time          `json:"updated_at"`
+type CreateOneRequest struct {
+	User users.User
 }
 
-type CreateUserResponse struct {
-	Id 				string 				`json:"id"`
-	FirstName       string             `json:"first_name"`
-	LastName        string             `json:"last_name"`
-}
-type FindUserRequest struct {
-	Id string `json:"id"`
+type CreateOneResponse struct {
 }
 
-type FindUserResponse struct {
-	FirstName       string             `json:"first_name"`
-	LastName        string             `json:"last_name"`
+type FindOneRequest struct {
+	Claims     claims.Claims
+	Identifier string
 }
 
-/*func CreateOne(email string, password string) (string, error) {
-	var ctx, cancel = context.WithTimeout(context.Background(), 100*time.Second)
-	var user users.User
-	var collection = database.OpenCollection("user")
-
-	user.ID = primitive.NewObjectID()
-	user.Email = email
-
-
-	token, _ := auth.GenerateToken(email)
-	user.ValidationToken = token
-	pass := auth.HashPassword(password)
-	user.Password = pass
-	user.OrganizationId = primitive.NilObjectID
-
-	user.CreatedAt, _ = time.Parse(time.RFC3339, time.Now().Format(time.RFC3339))
-	user.UpdatedAt, _ = time.Parse(time.RFC3339, time.Now().Format(time.RFC3339))
-
-	insertId, err := collection.InsertOne(ctx, user)
-	if err != nil {
-		cancel()
-		return "", err
-	}
-	defer cancel()
-
-	return cast.ToString(insertId.InsertedID), err
+type FindOneResponse struct {
+	User users.User
 }
 
-func FindUserByEmail(email string) (users.User, error) {
-	var collection = database.OpenCollection("user")
-	var foundUser users.User
-	err := collection.FindOne(context.Background(), bson.M{"email": email}).Decode(&foundUser)
-	if err != nil {
-		return users.User{}, err
-	}
-	return foundUser, err
-}*/
+type UpdateOneRequest struct {
+	Claims claims.Claims
+	User   users.User
+}
+
+type UpdateOneResponse struct {
+}

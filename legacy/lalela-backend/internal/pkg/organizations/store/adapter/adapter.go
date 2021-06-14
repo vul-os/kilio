@@ -1,10 +1,7 @@
 package adapter
 
 import (
-	"fmt"
-	"lalela-backend/internal/pkg/auth"
-	"lalela-backend/internal/pkg/organizations/store"
-	userStore "lalela-backend/internal/pkg/users/store"
+
 	"net/http"
 )
 
@@ -21,25 +18,25 @@ type CreateOneResponse struct {
 
 
 func (t *OrganizationsCon) CreateOne(r *http.Request, args *CreateOneRequest, reply *CreateOneResponse) error {
-	canDo, err := auth.Authorize(r, "organization", "create")
-	if err != nil {
-		return err
-	}
-	if !canDo {
-		claims := auth.ValidateJWTRequest(r)
-		user, err := userStore.FindUserByEmail(claims.Email)
-		if err != nil {
-			return err
-		}
-		if !user.OrganizationId.IsZero() {
-			fmt.Println("User has no Org, let them make one")
-			return nil
-		}
-	}
-
-	_, err = store.CreateOne(args.Name)
-	if err != nil {
-		return err
-	}
+	//canDo, err := auth.Authorize(r, "organization", "create")
+	//if err != nil {
+	//	return err
+	//}
+	//if !canDo {
+	//	claims := auth.ValidateJWTRequest(r)
+	//	user, err := userStore.FindUserByEmail(claims.Email)
+	//	if err != nil {
+	//		return err
+	//	}
+	//	if !user.OrganizationId.IsZero() {
+	//		fmt.Println("User has no Org, let them make one")
+	//		return nil
+	//	}
+	//}
+	//
+	//_, err = store.CreateOne(args.Name)
+	//if err != nil {
+	//	return err
+	//}
 	return nil
 }

@@ -17,7 +17,6 @@ func init() {
 	viper.SetDefault("ServerPort", "8080")
 	viper.SetDefault("MongoDBHosts", []string{"localhost:27017"})
 	viper.SetDefault("MongoDBName", DbName)
-
 }
 
 type Config struct {
@@ -28,6 +27,7 @@ type Config struct {
 	MongoDBUsername         string
 	MongoDBPassword         string
 	PrivateKeyString        string
+	CasbinModelFile			string
 }
 
 func GetConfig(configFileName *string) (*Config, error) {
