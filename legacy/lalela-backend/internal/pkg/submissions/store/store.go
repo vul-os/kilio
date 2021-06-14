@@ -1,37 +1,31 @@
 package store
 
-import (
-	"context"
-	"encoding/json"
-	"go.mongodb.org/mongo-driver/bson/primitive"
-	"lalela-backend/internal/pkg/database"
-	"lalela-backend/internal/pkg/submissions"
-	"time"
-)
+type Store interface {
+	CreateOne(CreateOneRequest) (*CreateOneResponse, error)
+	FindOne(FindOneRequest) (*FindOneResponse, error)
+}
 
-func CreateOne(formId string, orgId string, submissionData json.RawMessage, identifier string) (error){
-	var ctx, cancel = context.WithTimeout(context.Background(), 100*time.Second)
-	var model submissions.Submissions
-	var collection = database.OpenCollection("submissions")
+const FormsServiceProvider = "Submissions-Store"
 
-	var submish interface{}
-	if err := json.Unmarshal(submissionData, &submish); err != nil {
-		cancel()
-		return err
-	}
-	cancel()
+const FormsCreateOneService = FormsServiceProvider + ".CreateOne"
+const FormsFindOneService = FormsServiceProvider + ".FindOne"
 
-	model.FormId, _ = primitive.ObjectIDFromHex(formId)
-	model.OrganizationId, _ = primitive.ObjectIDFromHex(orgId)
-	model.SubmissionData = submissionData
-	model.Identifier = identifier
-	model.Status = "submitted"
+type CreateOneRequest struct {
+	FormId string      `json:"form_id"`
+	OrgId  string      `json:"org_id"`
+	Data   interface{} `json:"data"`
+}
 
-	_, err := collection.InsertOne(ctx, model)
-	if err != nil {
-		cancel()
-		return err
-	}
-	cancel()
-	return nil
+type CreateOneResponse struct {
+	Id string `json:"id"`
+}
+
+type FindOneRequest struct {
+	Id string `json:"id"`
+}
+
+type FindOneResponse struct {
+	FormId string      `json:"form_id"`
+	OrgId  string      `json:"org_id"`
+	Data   interface{} `json:"data"`
 }
