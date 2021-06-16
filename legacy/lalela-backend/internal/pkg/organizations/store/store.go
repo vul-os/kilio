@@ -1,54 +1,28 @@
 package store
 
-import (
-
-)
-
-
-
-func CreateOne(orgName string) (string, error) {
-	//var ctx, cancel = context.WithTimeout(context.Background(), 100*time.Second)
-	//var org organizations.Organizations
-	//var collection = database.OpenCollection("organizations")
-	//
-	//org.ID = primitive.NewObjectID()
-	//org.Name = orgName
-	//
-	//org.CreatedAt, _ = time.Parse(time.RFC3339, time.Now().Format(time.RFC3339))
-	//org.UpdatedAt, _ = time.Parse(time.RFC3339, time.Now().Format(time.RFC3339))
-	//
-	//insertId, err := collection.InsertOne(ctx, org)
-	//if err != nil {
-	//	cancel()
-	//	return "", err
-	//}
-	//defer cancel()
-	//
-	//return cast.ToString(insertId.InsertedID), err
-	return "", nil
+type Store interface {
+	CreateOne(CreateOneRequest) (*CreateOneResponse, error)
+	FindOne(FindOneRequest) (*FindOneResponse, error)
 }
 
-//func getUserOrganizations(email string) ([]organizations.Organizations, error) {
-//	foundUser, err := store.FindUserByEmail(email)
-//	if err != nil {
-//		return nil, err
-//	}
-//
-//	orgs, err := auth.Enforcer.GetDomainsForUser(foundUser.ID.Hex())
-//	if err != nil {
-//		return nil, err
-//	}
-//
-//	var collection = database.OpenCollection("organizations")
-//	var orgz []organizations.Organizations
-//
-//	for _, orgId := range orgs {
-//		var organization organizations.Organizations
-//		err := collection.FindOne(context.Background(), bson.M{"_id": orgId}).Decode(&organization)
-//		if err != nil {
-//			return []organizations.Organizations{}, err
-//		}
-//		orgz = append(orgz, organization)
-//	}
-//	return orgz, nil
-//}
+const OrgsServiceProvider = "Forms-Store"
+
+const OrgsCreateOneService = OrgsServiceProvider + ".CreateOne"
+const OrgsFindOneService = OrgsServiceProvider + ".FindOne"
+
+
+type CreateOneRequest struct {
+	Name string `json:"name"`
+}
+
+type CreateOneResponse struct {
+	Id string `json:"id"`
+}
+
+type FindOneRequest struct {
+	Id string `json:"id"`
+}
+
+type FindOneResponse struct {
+	Name string `json:"name"`
+}

@@ -1,42 +1,65 @@
 package adapter
 
 import (
-
+	"github.com/rs/zerolog/log"
+	jsonRPCServiceProvider "lalela-backend/internal/pkg/api/jsonRpc/service/provider"
+	formsStore "lalela-backend/internal/pkg/forms/store"
+	orgsStore "lalela-backend/internal/pkg/organizations/store"
 	"net/http"
 )
 
-type OrganizationsCon struct{}
+
+type adaptor struct {
+	mongoStore orgsStore.Store
+}
+
+func New(
+	store orgsStore.Store,
+) jsonRPCServiceProvider.Provider {
+	return &adaptor{
+		mongoStore: store,
+	}
+}
+
+func (a *adaptor) Name() jsonRPCServiceProvider.Name {
+	return orgsStore.OrgsServiceProvider
+}
 
 
 type CreateOneRequest struct {
 	Name string `json:"name"`
 }
 
-type CreateOneResponse struct {
-	Id string `json:"id"`
+type FindOneResponse struct {
+	Name string `json:"name"`
 }
 
+func (a *adaptor) CreateOne(r *http.Request, request *CreateOneRequest,
+	response *formsStore.CreateOneResponse) error {
 
-func (t *OrganizationsCon) CreateOne(r *http.Request, args *CreateOneRequest, reply *CreateOneResponse) error {
-	//canDo, err := auth.Authorize(r, "organization", "create")
-	//if err != nil {
-	//	return err
-	//}
-	//if !canDo {
-	//	claims := auth.ValidateJWTRequest(r)
-	//	user, err := userStore.FindUserByEmail(claims.Email)
-	//	if err != nil {
-	//		return err
-	//	}
-	//	if !user.OrganizationId.IsZero() {
-	//		fmt.Println("User has no Org, let them make one")
-	//		return nil
-	//	}
-	//}
-	//
-	//_, err = store.CreateOne(args.Name)
-	//if err != nil {
-	//	return err
-	//}
+	result, err := a.mongoStore.CreateOne(orgsStore.CreateOneRequest{
+		Name: request.Name,
+	})
+
+	if err != nil {
+		log.Error().Err(err)
+		return err
+	}
+	response.Id = result.Id
+	return nil
+}
+
+func (a *adaptor) FindOne(r *http.Request, request *orgsStore.FindOneRequest,
+	response *FindOneResponse) error {
+
+	result, err := a.mongoStore.FindOne(*request)
+	if err != nil {
+		log.Error().Err(err)
+		return err
+	}
+
+	response = &FindOneResponse{
+		Name: result.Name,
+	}
 	return nil
 }
