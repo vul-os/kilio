@@ -5,6 +5,7 @@ import (
 	"github.com/rs/zerolog/log"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
+	mongoDriver "go.mongodb.org/mongo-driver/mongo"
 	orgsStore "lalela-backend/internal/pkg/organizations/store"
 	"lalela-backend/internal/pkg/organizations"
 	"lalela-backend/internal/pkg/mongo"
@@ -15,8 +16,17 @@ type store struct {
 }
 
 func New(database *mongo.Database) orgsStore.Store {
+	orgCollection := database.Collection("organizations")
+	// setup collection indices
+	if err := orgCollection.SetupIndices(
+		[]mongoDriver.IndexModel{
+			mongo.NewUniqueIndex("name"),
+		},
+	); err != nil {
+		log.Fatal().Err(err).Msg("error setting up user collection indices")
+	}
 	return &store {
-		collection: database.Collection("forms"),
+		collection: orgCollection,
 	}
 }
 

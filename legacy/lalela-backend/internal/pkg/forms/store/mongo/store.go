@@ -5,6 +5,7 @@ import (
 	"github.com/rs/zerolog/log"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
+	mongoDriver "go.mongodb.org/mongo-driver/mongo"
 	"lalela-backend/internal/pkg/forms"
 	formsStore "lalela-backend/internal/pkg/forms/store"
 	"lalela-backend/internal/pkg/mongo"
@@ -15,8 +16,17 @@ type store struct {
 }
 
 func New(database *mongo.Database) formsStore.Store {
+	formCollection := database.Collection("forms")
+	// setup collection indices
+	if err := formCollection.SetupIndices(
+		[]mongoDriver.IndexModel{
+			mongo.NewUniqueIndex("FormName"),
+		},
+	); err != nil {
+		log.Fatal().Err(err).Msg("error setting up form collection indices")
+	}
 	return &store {
-		collection: database.Collection("forms"),
+		collection: formCollection,
 	}
 }
 
