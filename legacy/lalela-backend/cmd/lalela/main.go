@@ -7,20 +7,20 @@ import (
 	jsonRPCServiceProvider "lalela-backend/internal/pkg/api/jsonRpc/service/provider"
 	"lalela-backend/internal/pkg/middleware"
 	"lalela-backend/internal/pkg/security/casbin"
-
+	formsJSONRPCAdaptor "lalela-backend/internal/pkg/forms/store/adapter"
 	mongoFormsStore "lalela-backend/internal/pkg/forms/store/mongo"
-
 	"gopkg.in/square/go-jose.v2"
-	"lalela-backend/internal/pkg/security/key"
-	formsJSONRPCAdapter "lalela-backend/internal/pkg/forms/store/adapter"
 	"lalela-backend/internal/pkg/logs"
 	"lalela-backend/internal/pkg/mongo"
-	"os"
-	"os/signal"
+	authenticatorJSONRPCAdaptor "lalela-backend/internal/pkg/security/authenticator/adaptor/jsonRpc"
+	basicAuthenticator "lalela-backend/internal/pkg/security/authenticator/basic"
+	"lalela-backend/internal/pkg/security/key"
 	basicTokenGenerator "lalela-backend/internal/pkg/security/token/generator/basic"
 	basicTokenValidator "lalela-backend/internal/pkg/security/token/validator/basic"
-	basicAuthenticator "lalela-backend/internal/pkg/security/authenticator/basic"
+	userStoreJsonRpcAdaptor "lalela-backend/internal/pkg/users/store/adaptor/jsonRPC"
 	mongoUsersStore "lalela-backend/internal/pkg/users/store/mongo"
+	"os"
+	"os/signal"
 
 	//orgAdapter "lalela-backend/internal/pkg/organizations/store/adapter"
 	//submissionAdapter "lalela-backend/internal/pkg/submissions/store/adapter"
@@ -154,7 +154,7 @@ func main() {
 				Path:       "/api/public",
 				Middleware: []func(http.Handler) http.Handler{},
 				ServiceProviders: []jsonRPCServiceProvider.Provider{
-					formsJSONRPCAdapter.New(FormsStore),
+					authenticatorJSONRPCAdaptor.New(BasicAuthenticator),
 				},
 			},
 
@@ -190,7 +190,9 @@ func main() {
 					//roleStoreJsonRpcAdaptor.New(MongoRoleStore),
 					//
 					//// user
-					//userStoreJsonRpcAdaptor.New(MongoUserStore),
+					userStoreJsonRpcAdaptor.New(MongoUserStore),
+					formsJSONRPCAdaptor.New(FormsStore),
+
 					//userAdminJSONRPCAdaptor.New(BasicUserAdmin),
 
 				},
