@@ -20,7 +20,7 @@ func New(database *mongo.Database) formsStore.Store {
 	// setup collection indices
 	if err := formCollection.SetupIndices(
 		[]mongoDriver.IndexModel{
-			mongo.NewUniqueIndex("FormName"),
+			mongo.NewUniqueIndex("form_name"),
 		},
 	); err != nil {
 		log.Fatal().Err(err).Msg("error setting up form collection indices")

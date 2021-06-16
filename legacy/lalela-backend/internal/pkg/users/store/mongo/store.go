@@ -3,7 +3,6 @@ package mongo
 import (
 	"github.com/rs/zerolog/log"
 	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/bson/primitive"
 	mongoDriver "go.mongodb.org/mongo-driver/mongo"
 	"lalela-backend/internal/pkg/mongo"
 	"lalela-backend/internal/pkg/users"
@@ -18,7 +17,7 @@ func New(
 	database *mongo.Database,
 ) userStore.Store {
 	// get collection
-	userCollection := database.Collection("user")
+	userCollection := database.Collection("users")
 
 	// setup collection indices
 	if err := userCollection.SetupIndices(
@@ -31,12 +30,19 @@ func New(
 	}
 
 	return &store{
-		collection: database.Collection("user"),
+		collection: userCollection,
 	}
 }
 
 func (s *store) CreateOne(request userStore.CreateOneRequest) (*userStore.CreateOneResponse, error) {
-	if err := s.collection.CreateOne(request.User); err != nil {
+
+	err := s.collection.CreateOne(users.User{
+		ID:         request.User.ID,
+		Name:       request.User.Name,
+		Email:      request.User.Email,
+		Password:   request.User.Password,
+	});
+	if  err != nil {
 		log.Error().Err(err).Msg("error creating user")
 		return nil, err
 	}
@@ -44,12 +50,8 @@ func (s *store) CreateOne(request userStore.CreateOneRequest) (*userStore.Create
 }
 
 func (s *store) FindOne(request userStore.FindOneRequest) (*userStore.FindOneResponse, error) {
-	objectId, err := primitive.ObjectIDFromHex(request.Identifier)
-	if err != nil {
-		return nil, err
-	}
 	var result users.User
-	if err := s.collection.FindOne(&result, bson.M{"_id": objectId}); err != nil {
+	if err := s.collection.FindOne(&result, bson.M{"id": request.Identifier}); err != nil {
 		switch err.(type) {
 		case mongo.ErrNotFound:
 			return nil, err

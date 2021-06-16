@@ -2,9 +2,7 @@ package casbin
 
 import (
 	"context"
-	"github.com/rs/zerolog/log"
 	"go.mongodb.org/mongo-driver/bson"
-	mongoDriver "go.mongodb.org/mongo-driver/mongo"
 	"lalela-backend/internal/pkg/mongo"
 	"runtime"
 	"strings"
@@ -50,20 +48,6 @@ func NewAdapter(database *mongo.Database) (persist.BatchAdapter, error) {
 		timeout:    defaultTimeout,
 	}
 
-	indexes := []mongoDriver.IndexModel{
-		mongo.NewUniqueIndex("ptype"),
-		mongo.NewUniqueIndex("v0"),
-		mongo.NewUniqueIndex("v1"),
-		mongo.NewUniqueIndex("v2"),
-		mongo.NewUniqueIndex("v4"),
-		mongo.NewUniqueIndex("v5"),
-	}
-
-	if err := collection.SetupIndices(
-		indexes,
-	); err != nil {
-		log.Fatal().Err(err).Msg("error setting up user collection indices")
-	}
 	// Call the destructor when the object is released.
 	runtime.SetFinalizer(a, finalizer)
 	return a, nil

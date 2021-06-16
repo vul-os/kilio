@@ -2,8 +2,9 @@ package adapter
 
 import (
 	"github.com/rs/zerolog/log"
+	uuid "github.com/satori/go.uuid"
 	jsonRPCServiceProvider "lalela-backend/internal/pkg/api/jsonRpc/service/provider"
-	formsStore "lalela-backend/internal/pkg/forms/store"
+	"lalela-backend/internal/pkg/organizations"
 	orgsStore "lalela-backend/internal/pkg/organizations/store"
 	"net/http"
 )
@@ -31,14 +32,17 @@ type CreateOneRequest struct {
 }
 
 type FindOneResponse struct {
-	Name string `json:"name"`
+	Org organizations.Organizations `json:"organization"`
 }
 
 func (a *adaptor) CreateOne(r *http.Request, request *CreateOneRequest,
-	response *formsStore.CreateOneResponse) error {
+	response *orgsStore.CreateOneResponse) error {
 
 	result, err := a.mongoStore.CreateOne(orgsStore.CreateOneRequest{
-		Name: request.Name,
+		Org: organizations.Organizations{
+			ID:   uuid.NewV4().String(),
+			Name: request.Name,
+		},
 	})
 
 	if err != nil {
@@ -51,15 +55,31 @@ func (a *adaptor) CreateOne(r *http.Request, request *CreateOneRequest,
 
 func (a *adaptor) FindOne(r *http.Request, request *orgsStore.FindOneRequest,
 	response *FindOneResponse) error {
-
-	result, err := a.mongoStore.FindOne(*request)
+	findOneResponse, err := a.mongoStore.FindOne(
+		orgsStore.FindOneRequest{
+			Identifier: request.Identifier,
+		},
+	)
 	if err != nil {
-		log.Error().Err(err)
 		return err
 	}
 
-	response = &FindOneResponse{
-		Name: result.Name,
-	}
+	response.Org = findOneResponse.Org
+
 	return nil
 }
+//func (a *adaptor) FindOne(r *http.Request, request *orgsStore.FindOneRequest,
+//	response *FindOneResponse) error {
+//
+//	var org organizations.Organizations
+//	result, err := a.mongoStore.FindOne(request)
+//	if err != nil {
+//		log.Error().Err(err)
+//		return err
+//	}
+//
+//	response = &FindOneResponse{
+//		,
+//	}
+//	return nil
+//}

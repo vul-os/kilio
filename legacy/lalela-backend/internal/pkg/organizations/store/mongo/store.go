@@ -1,14 +1,12 @@
 package mongo
 
 import (
-	"fmt"
 	"github.com/rs/zerolog/log"
 	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/bson/primitive"
 	mongoDriver "go.mongodb.org/mongo-driver/mongo"
-	orgsStore "lalela-backend/internal/pkg/organizations/store"
-	"lalela-backend/internal/pkg/organizations"
 	"lalela-backend/internal/pkg/mongo"
+	"lalela-backend/internal/pkg/organizations"
+	orgsStore "lalela-backend/internal/pkg/organizations/store"
 )
 
 type store struct {
@@ -31,22 +29,20 @@ func New(database *mongo.Database) orgsStore.Store {
 }
 
 func (s *store) CreateOne(request orgsStore.CreateOneRequest) (*orgsStore.CreateOneResponse, error) {
-	if err := s.collection.CreateOne(request); err != nil {
-		log.Error().Err(err).Msg("error creating one job entity")
+	err := s.collection.CreateOne(organizations.Organizations{
+		ID:         request.Org.ID,
+		Name:       request.Org.Name,
+	});
+	if  err != nil {
+		log.Error().Err(err).Msg("error creating org")
 		return nil, err
 	}
 	return &orgsStore.CreateOneResponse{}, nil
 }
 
 func (s *store) FindOne(request orgsStore.FindOneRequest) (*orgsStore.FindOneResponse, error) {
-	objectId, err := primitive.ObjectIDFromHex(request.Id)
 	var orgsModel organizations.Organizations
-
-	if err != nil{
-		fmt.Println("Invalid id")
-		return &orgsStore.FindOneResponse{}, err
-	}
-	if err := s.collection.FindOne(&orgsModel, bson.M{"_id": objectId}); err != nil {
+	if err := s.collection.FindOne(&orgsModel, bson.M{"id": request.Identifier}); err != nil {
 		switch err.(type) {
 		case mongo.ErrNotFound:
 			return nil, err
@@ -57,8 +53,7 @@ func (s *store) FindOne(request orgsStore.FindOneRequest) (*orgsStore.FindOneRes
 	}
 
 	return &orgsStore.FindOneResponse{
-		Name: orgsModel.Name,
-
+		Org: orgsModel,
 	}, nil
 }
 

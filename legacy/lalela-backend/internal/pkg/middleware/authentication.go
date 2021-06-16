@@ -1,6 +1,7 @@
 package middleware
 
 import (
+	"fmt"
 	"github.com/rs/zerolog/log"
 	lalelaAuthenticator "lalela-backend/internal/pkg/security/authenticator"
 	"lalela-backend/internal/pkg/security/claims"
@@ -40,7 +41,7 @@ func (a *Authorisation) Apply(next http.Handler) http.Handler {
 			http.Error(w, "Unauthorized", http.StatusUnauthorized)
 			return
 		}
-
+		fmt.Println(method, org, userClaims)
 		//// validate service access
 		if _, err := a.authenticator.AuthenticateService(
 			lalelaAuthenticator.AuthenticateServiceRequest{

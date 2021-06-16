@@ -54,17 +54,17 @@ func getMethodAndOrg(r *http.Request) (string, string, error) {
 	// Retrieve id and method of json rpc request
 	var req struct {
 		// To unmarshal the received json
-		Id     int    `json:"id"`
+		Id     string `json:"id"`
 		Method string `json:"method"`
-		Params struct{
+		Params []struct {
 			OrganizationId string `json:"organization_id"`
 		} `json:"params"`
 	}
 
 	if err := json.Unmarshal(bodyBytes, &req); err != nil {
-		log.Error().Msg("unable to unmarshall json rpc request")
+		log.Error().Err(err).Msg("unable to unmarshall json rpc request")
 		return "", "", lalelaException.ErrUnexpected{}
 	}
 
-	return req.Method, req.Params.OrganizationId, nil
+	return req.Method, req.Params[0].OrganizationId, nil
 }

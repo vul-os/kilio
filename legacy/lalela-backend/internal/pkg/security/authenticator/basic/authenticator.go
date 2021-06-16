@@ -1,7 +1,9 @@
 package basic
 
 import (
+	"fmt"
 	"github.com/rs/zerolog/log"
+	"go.mongodb.org/mongo-driver/bson"
 	"golang.org/x/crypto/bcrypt"
 	lalelaException "lalela-backend/internal/pkg/exception"
 	"lalela-backend/internal/pkg/mongo"
@@ -38,7 +40,8 @@ func New(
 
 func (a *authenticator) Login(request lalelaAuthenticator.LoginRequest) (*lalelaAuthenticator.LoginResponse, error) {
 	var userLoggingIn users.User
-	err := a.database.Collection("user").FindOne(&userLoggingIn, request.Email)
+	log.Info().Msg(request.Email)
+	err := a.database.Collection("users").FindOne(&userLoggingIn, bson.M{"email": request.Email})
 	if err != nil {
 		log.Error().Err(err).Msg("retrieving user for log in")
 		return nil, err
@@ -72,6 +75,7 @@ func (a *authenticator) Login(request lalelaAuthenticator.LoginRequest) (*lalela
 func (a *authenticator) AuthenticateService(request lalelaAuthenticator.AuthenticateServiceRequest) (*lalelaAuthenticator.AuthenticateServiceResponse, error) {
 	switch typedClaims := request.Claims.(type) {
 	case claims.Login:
+		fmt.Println(request.Claims, typedClaims.UserID)
 		// try and retrieve user that owns claims
 		findOneUserResponse, err := a.usersStore.FindOne(
 			usersStore.FindOneRequest{
