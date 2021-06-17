@@ -3,13 +3,13 @@ package main
 import (
 	"flag"
 	"fmt"
-	"lalela-backend/internal/pkg/organizations"
 	"github.com/rs/zerolog/log"
 	uuid "github.com/satori/go.uuid"
 	"go.mongodb.org/mongo-driver/bson"
 	"golang.org/x/crypto/bcrypt"
 	"lalela-backend/internal/pkg/logs"
 	"lalela-backend/internal/pkg/mongo"
+	"lalela-backend/internal/pkg/organizations"
 	orgs "lalela-backend/internal/pkg/organizations"
 	orgsStore "lalela-backend/internal/pkg/organizations/store"
 	mongoOrgsStore "lalela-backend/internal/pkg/organizations/store/mongo"
@@ -59,7 +59,7 @@ func main() {
 	orgId2 := uuid.NewV4().String()
 	_, err = MongoOrgStore.CreateOne(orgsStore.CreateOneRequest{
 		organizations.Organizations{
-			ID: orgId1,
+			ID:   orgId1,
 			Name: "Spar Yellow Wood Park",
 		},
 	})
@@ -69,7 +69,7 @@ func main() {
 	}
 	_, err = MongoOrgStore.CreateOne(orgsStore.CreateOneRequest{
 		organizations.Organizations{
-			ID: orgId2,
+			ID:   orgId2,
 			Name: "Spar Woodlands East",
 		},
 	})
@@ -90,11 +90,11 @@ func main() {
 	imranId := uuid.NewV4().String()
 	_, err = MongoUserStore.CreateOne(userStore.CreateOneRequest{
 		User: users.User{
-			ID: 			 imranId,
-			Name:            "Imran",
-			Email:           "imran@paruk.com",
-			Password:        pwdHash,
-			ResetToken:      "",
+			ID:         imranId,
+			Name:       "Imran",
+			Email:      "imran@paruk.com",
+			Password:   pwdHash,
+			ResetToken: "",
 		},
 	})
 
@@ -105,11 +105,11 @@ func main() {
 	ciciId := uuid.NewV4().String()
 	_, err = MongoUserStore.CreateOne(userStore.CreateOneRequest{
 		User: users.User{
-			ID: 			 ciciId,
-			Name:            "Cici",
-			Email:           "ci@ci.com",
-			Password:        pwdHash,
-			ResetToken:      "",
+			ID:         ciciId,
+			Name:       "Cici",
+			Email:      "ci@ci.com",
+			Password:   pwdHash,
+			ResetToken: "",
 		},
 	})
 
@@ -117,7 +117,7 @@ func main() {
 		log.Error().Err(err).Msg("Already seeded")
 	}
 
-	casbinEnforcer := casbin.NewCasbinEnforcer(config.CasbinModelFile,  mongoDb)
+	casbinEnforcer := casbin.NewCasbinEnforcer(config.CasbinModelFile, mongoDb)
 	casbinEnforcer.Enforcer.EnableAutoSave(true)
 	err = casbinEnforcer.Enforcer.LoadPolicy()
 	if err != nil {
@@ -129,10 +129,9 @@ func main() {
 		userStore.UserServiceProvider,
 	}
 
-	canDoList := []string {
+	canDoList := []string{
 		"CreateOne",
 		"FindOne",
-		"FindMany",
 		"UpdateOne",
 	}
 
@@ -157,10 +156,7 @@ func main() {
 		fmt.Println(orgz, canDoList)
 		_, _ = casbinEnforcer.Enforcer.AddPolicy(ciciId, orgz[0].ID, servicez, canDoList[1])
 		_ = casbinEnforcer.Enforcer.SavePolicy()
-
 	}
-
-
 
 	//user, domain, eft, resource, action
 	//p, g:admin, RB, kanbanCards, edit
