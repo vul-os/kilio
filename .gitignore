@@ -1,0 +1,32 @@
+# Rust
+/target
+**/target
+Cargo.lock.orig
+
+# WASM build output
+/web/src/seal/pkg
+/crates/kilio-seal/pkg
+
+# Node / web
+node_modules
+/web/dist
+/web/.vite
+
+# Tauri
+/apps/desktop/src-tauri/target
+/apps/desktop/src-tauri/gen
+
+# Local runtime data / keys (never commit an operator's branch keys or DB)
+*.db
+*.db-shm
+*.db-wal
+/.kilio
+kilio.toml
+*.branchkey
+
+# OS / editor
+.DS_Store
+*.log
+.idea
+.vscode/*
+!.vscode/extensions.json
