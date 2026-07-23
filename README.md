@@ -155,6 +155,23 @@ dark — the shots below follow your GitHub theme.
 
 <sub><em>Handler inbox — triage sealed reports across branches; the reporter is always anonymous.</em></sub>
 
+### Fully responsive — on mobile, in the dark
+
+Both surfaces are built mobile-first and ship light **and** dark. On a phone the
+handler's sidebar collapses to a drawer and the case view becomes a chat.
+
+<p align="center">
+<img src="docs/screenshots/reporter-landing-mobile-dark.png" alt="Reporter landing on mobile, dark" width="200">
+&nbsp;&nbsp;
+<img src="docs/screenshots/reporter-new-mobile-dark.png" alt="Report form on mobile, dark" width="200">
+&nbsp;&nbsp;
+<img src="docs/screenshots/handler-inbox-mobile-dark.png" alt="Handler inbox on mobile, dark" width="200">
+&nbsp;&nbsp;
+<img src="docs/screenshots/handler-case-mobile-dark.png" alt="Handler case view on mobile, dark" width="200">
+</p>
+
+<sub align="center"><em>Reporter and handler surfaces on mobile, dark mode — anonymous submit, and a case handled on the go.</em></sub>
+
 ---
 
 ## Privacy model

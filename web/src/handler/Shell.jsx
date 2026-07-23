@@ -10,6 +10,15 @@ const REACH_LABEL = {
   ngrok: { label: 'Public · ngrok on', tone: 'ok' },
 }
 
+function MenuIcon() {
+  return (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      strokeWidth="1.8" strokeLinecap="round" aria-hidden="true">
+      <path d="M4 7h16M4 12h16M4 17h16" />
+    </svg>
+  )
+}
+
 /** App shell: left nav + branch filters, top bar with search and reachability.
  * Holds the small bits of cross-page state (search text, reachability,
  * deploy mode) and hands them to child routes via <Outlet context>. */
@@ -20,6 +29,7 @@ export default function Shell() {
   const [search, setSearch] = useState('')
   const [reach, setReach] = useState({ provider: 'cloudflared', url: 'https://sanctuary-4f2a.trycloudflare.com' })
   const [deployMode, setDeployMode] = useState('standalone')
+  const [navOpen, setNavOpen] = useState(false)
 
   const activeBranch = params.get('branch') || ''
   const onInbox = location.pathname === '/handler' || location.pathname === '/handler/'
@@ -40,27 +50,31 @@ export default function Shell() {
 
   function goToBranch(id) {
     navigate(id ? `/handler?branch=${id}` : '/handler')
+    setNavOpen(false)
   }
 
   const reachInfo = REACH_LABEL[reach.provider]
 
+  const closeNav = () => setNavOpen(false)
+
   return (
     <div className="h-shell">
-      <aside className="h-nav" aria-label="Handler navigation">
+      {navOpen && <div className="h-nav-backdrop" onClick={closeNav} aria-hidden="true" />}
+      <aside className={`h-nav ${navOpen ? 'open' : ''}`} aria-label="Handler navigation">
         <div className="h-nav-top">
           <Logo size={28} />
           <span className="h-nav-kicker">Handler</span>
         </div>
 
         <nav className="h-nav-list" aria-label="Sections">
-          <NavLink to="/handler" end className={({ isActive }) => `h-nav-link ${isActive ? 'active' : ''}`}>
+          <NavLink onClick={closeNav} to="/handler" end className={({ isActive }) => `h-nav-link ${isActive ? 'active' : ''}`}>
             <InboxIcon /> Inbox
             {totalOpen > 0 && <span className="h-nav-count">{totalOpen}</span>}
           </NavLink>
-          <NavLink to="/handler/branches" className={({ isActive }) => `h-nav-link ${isActive ? 'active' : ''}`}>
+          <NavLink onClick={closeNav} to="/handler/branches" className={({ isActive }) => `h-nav-link ${isActive ? 'active' : ''}`}>
             <BranchIcon /> Branches
           </NavLink>
-          <NavLink to="/handler/settings" className={({ isActive }) => `h-nav-link ${isActive ? 'active' : ''}`}>
+          <NavLink onClick={closeNav} to="/handler/settings" className={({ isActive }) => `h-nav-link ${isActive ? 'active' : ''}`}>
             <GearIcon /> Settings
           </NavLink>
         </nav>
@@ -97,6 +111,9 @@ export default function Shell() {
       </aside>
 
       <header className="h-topbar">
+        <button type="button" className="h-menu-btn" aria-label="Open navigation" onClick={() => setNavOpen(true)}>
+          <MenuIcon />
+        </button>
         <label className="h-search">
           <SearchIcon />
           <input

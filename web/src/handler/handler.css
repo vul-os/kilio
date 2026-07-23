@@ -331,14 +331,75 @@ a.h-case-row:focus-visible { outline: 2px solid var(--indigo); outline-offset: -
 
 /* ---------- responsive ---------- */
 
+/* Hamburger — hidden on desktop, shown when the sidebar collapses to a drawer. */
+.h-menu-btn {
+  display: none;
+  place-items: center;
+  width: 40px; height: 40px; flex: none;
+  border: 1px solid var(--line-2); border-radius: 10px;
+  background: var(--panel); color: var(--ink-2); cursor: pointer;
+  transition: border-color .15s ease, color .15s ease;
+}
+.h-menu-btn:hover { border-color: var(--indigo); color: var(--indigo); }
+
 @media (max-width: 1080px) {
   .case-rail { display: none; }
   .h-summary { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 }
 
 @media (max-width: 860px) {
-  .h-shell { grid-template-columns: 210px 1fr; }
+  .h-shell { grid-template-columns: 200px 1fr; }
   .branch-add-grid, .provider-grid, .about-grid { grid-template-columns: 1fr; }
-  .h-case-row { grid-template-columns: 1.1fr 1.6fr 0.8fr; }
-  .h-case-row > :last-child { display: none; }
+}
+
+/* Mobile: sidebar becomes an off-canvas drawer. */
+@media (max-width: 720px) {
+  .h-shell {
+    grid-template-columns: 1fr;
+    grid-template-rows: 56px 1fr;
+    grid-template-areas: "topbar" "main";
+  }
+  .h-menu-btn { display: inline-grid; }
+  .h-nav {
+    position: fixed;
+    top: 0; left: 0; bottom: 0;
+    width: 284px; max-width: 86vw;
+    z-index: 60;
+    transform: translateX(-102%);
+    transition: transform .24s cubic-bezier(.16,.8,.28,1);
+    box-shadow: var(--shadow-2);
+    border-right: 1px solid var(--line-2);
+  }
+  .h-nav.open { transform: translateX(0); }
+  .h-nav-backdrop {
+    position: fixed; inset: 0; z-index: 55;
+    background: rgba(0, 0, 0, .48);
+    -webkit-backdrop-filter: blur(2px); backdrop-filter: blur(2px);
+    animation: h-fade .2s ease;
+  }
+  @keyframes h-fade { from { opacity: 0 } to { opacity: 1 } }
+  .h-topbar { padding-left: 12px; gap: 10px; }
+  .h-page { padding: 20px 16px 40px; }
+  .h-summary { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+  /* The column-header row makes no sense once rows become cards. */
+  .h-case-row-head { display: none; }
+  /* Inbox rows stack into cards on phones. */
+  .h-case-row {
+    grid-template-columns: 1fr; gap: 6px; align-items: start;
+    padding: 14px 14px;
+  }
+  .h-case-row > * { min-width: 0; }
+  .h-case-time { color: var(--faint); }
+  /* Case detail: full-height chat, roomier bubbles, tighter gutters. */
+  .case-main { border-right: none; }
+  .case-header { padding: 16px 16px 12px; }
+  .case-header-row { flex-wrap: wrap; }
+  .case-thread { padding: 16px; }
+  .bubble { max-width: 90%; }
+  .case-composer { padding: 12px 16px 16px; }
+}
+
+@media (max-width: 420px) {
+  .h-summary { grid-template-columns: 1fr 1fr; }
+  .h-reach-chip { display: none; }
 }

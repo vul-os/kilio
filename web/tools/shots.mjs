@@ -30,6 +30,8 @@ const SHOTS = [
   ['handler-case', '/handler/case/7Q4K-2M9F', wide],
   ['handler-branches', '/handler/branches', wide],
   ['handler-settings', '/handler/settings', wide],
+  ['handler-inbox-mobile', '/handler', phone],
+  ['handler-case-mobile', '/handler/case/7Q4K-2M9F', phone],
 ]
 
 const run = async () => {
