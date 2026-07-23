@@ -39,10 +39,17 @@ run **cannot read the claims it stores**.
 [Quick start](#quick-start) ·
 [What it is](#what-is-kilio) ·
 [How it works](#how-it-works) ·
+[Screenshots](#screenshots) ·
 [Privacy model](#privacy-model) ·
 [Architecture](#architecture) ·
-[Docs](docs/) ·
-[Roadmap](ROADMAP.md)
+[Docs](docs/)
+
+<br><br>
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/screenshots/reporter-landing-dark.png">
+  <img src="docs/screenshots/reporter-landing-light.png" alt="kilio reporter surface — a calm, anonymous intake page" width="880">
+</picture>
 
 </div>
 
@@ -115,6 +122,41 @@ flowchart LR
 
 ---
 
+## Screenshots
+
+The **reporter** surface is a calm, public, anonymous intake page. The
+**handler** surface is the case-worker desktop app. kilio ships both light and
+dark — the shots below follow your GitHub theme.
+
+<table>
+<tr>
+<td width="50%" valign="top">
+<picture><source media="(prefers-color-scheme: dark)" srcset="docs/screenshots/reporter-new-dark.png"><img src="docs/screenshots/reporter-new-light.png" alt="Reporter — stepped report form"></picture>
+<sub><em>Make a report — a gentle, stepped form. No account, no email.</em></sub>
+</td>
+<td width="50%" valign="top">
+<picture><source media="(prefers-color-scheme: dark)" srcset="docs/screenshots/reporter-receipt-dark.png"><img src="docs/screenshots/reporter-receipt-light.png" alt="Reporter — 12-word receipt passphrase"></picture>
+<sub><em>The receipt passphrase — the only way back, and the only identity.</em></sub>
+</td>
+</tr>
+<tr>
+<td width="50%" valign="top">
+<picture><source media="(prefers-color-scheme: dark)" srcset="docs/screenshots/reporter-thread-dark.png"><img src="docs/screenshots/reporter-thread-light.png" alt="Reporter — sealed two-way thread"></picture>
+<sub><em>A sealed, anonymous two-way thread with the team.</em></sub>
+</td>
+<td width="50%" valign="top">
+<picture><source media="(prefers-color-scheme: dark)" srcset="docs/screenshots/handler-case-dark.png"><img src="docs/screenshots/handler-case-light.png" alt="Handler — case detail with content-free audit"></picture>
+<sub><em>Handler case view — decrypted thread, status, content-free audit.</em></sub>
+</td>
+</tr>
+</table>
+
+<picture><source media="(prefers-color-scheme: dark)" srcset="docs/screenshots/handler-inbox-dark.png"><img src="docs/screenshots/handler-inbox-light.png" alt="Handler inbox — sealed cases across branches" width="880"></picture>
+
+<sub><em>Handler inbox — triage sealed reports across branches; the reporter is always anonymous.</em></sub>
+
+---
+
 ## Privacy model
 
 These four properties are non-negotiable (full detail in
@@ -172,7 +214,7 @@ One Rust workspace, one shared web frontend, three ways to run it.
 | `kilio-server` | axum: public intake API + handler API + embedded PWA + tunnel control. 🚧 |
 | `kilio-cli` | `kilio init / serve / tunnel / branch`. 🚧 |
 | `apps/desktop` | Tauri v2 handler app; opens claims locally with the branch key. 🚧 |
-| `web/` | React/JSX PWA/TWA — reporter + handler surfaces; seals via `kilio-seal` WASM. 🚧 |
+| `web/` | React/JSX PWA/TWA — reporter + handler surfaces built (Sanctuary UI); `kilio-seal` WASM wiring next. 🚧 |
 
 Three **seams** (thin interface, local default, adapter wired only at the
 composition root — the ofisi pattern):
