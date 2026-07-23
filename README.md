@@ -1,22 +1,25 @@
 <div align="center">
 
-<img src="site/assets/brand/logo-wordmark-dark.svg" alt="kilio" height="64">
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="site/assets/brand/lockup-dark.svg">
+  <img src="site/assets/brand/lockup-light.svg" alt="kilio" width="232">
+</picture>
 
-# kilio
+<br><br>
 
-### Sealed, anonymous-first intake for sensitive claims — on your own machine.
+### Sealed, anonymous-first intake for sensitive claims
 
 Harassment, misconduct, and whistleblowing reports don't get made when people
-don't trust the channel. kilio is a self-hostable intake tool that lets anyone
-report **without an account and without an email**, seals every submission to
-your keys **before it leaves their device**, and still supports a two-way
-conversation — so you can ask follow-ups and give an outcome without ever
-learning who they are unless they choose to tell you.
+don't trust the channel. **kilio** lets anyone report **without an account and
+without an email**, seals every submission to your keys **before it leaves
+their device**, and still supports a two-way conversation — so you can ask
+follow-ups and give an outcome without ever learning who they are, unless they
+choose to tell you.
 
-It runs **locally**: a Rust core over plain SQLite, a Tauri desktop app for
-case handlers, and a tiny public intake page you can expose in one click. No
-SaaS backend, no multi-tenant server, no cloud account. What you run is what
-you own — and what you run **cannot read the claims it stores**.
+It is **standalone and cross-platform** — a single Rust binary plus a desktop
+app, on **macOS, Linux, and Windows**. No SaaS backend, no cloud account, no
+dependency on any hosted service. What you run is what you own — and what you
+run **cannot read the claims it stores**.
 
 <br>
 
@@ -24,11 +27,11 @@ you own — and what you run **cannot read the claims it stores**.
      image fetches — the same no-default-network-calls ethos as the app. -->
 <sub>
 <a href="LICENSE-MIT">MIT</a> OR <a href="LICENSE-APACHE">Apache-2.0</a>
-&nbsp;·&nbsp; Rust 1.85+
+&nbsp;·&nbsp; Rust
 &nbsp;·&nbsp; Tauri 2
-&nbsp;·&nbsp; SQLite
+&nbsp;·&nbsp; macOS · Linux · Windows
 &nbsp;·&nbsp; HPKE sealed-at-source
-&nbsp;·&nbsp; no cloud
+&nbsp;·&nbsp; standalone · no cloud
 </sub>
 
 <br><br>
@@ -52,23 +55,27 @@ the reporter has to trust a vendor's cloud, hand over their identity to begin,
 and hope nobody in the middle is reading along.
 
 The difference from every incumbent: **there is no central server that can read
-anything.** An organization runs its own kilio instance (a laptop with a tunnel,
-a small VPS, or a Vulos box). A reporter opens the public intake page, writes
-their claim, and their browser HPKE-seals it to the destination team's public
-key. The instance — and any tunnel or relay between them — only ever stores
-**ciphertext**. It is decrypted only inside a handler's app, with a key the
-server never holds.
+anything.** An organization runs its own kilio instance — a laptop with a
+tunnel, a small VPS, a Raspberry Pi, anything that runs the binary. A reporter
+opens the public intake page, writes their claim, and their browser HPKE-seals
+it to the destination team's public key. The instance — and any tunnel or relay
+between them — only ever stores **ciphertext**. It is decrypted only inside a
+handler's app, with a key the server never holds.
+
+kilio is **completely standalone**. It depends on no hosted service and no
+account — not even ours. It runs the same on macOS, Linux, and Windows.
+(Optional, off-by-default seams let it reach further when you want them —
+see [Architecture](#architecture) — but nothing about the core needs them.)
 
 The reporter's only identity is a **12-word receipt passphrase** minted at
 submission. It derives a per-claim keypair, so they can return, read replies,
 and add details — including, if and when *they* decide, their contact info —
 without ever creating an account.
 
-> **Status: 0.1.0 — early.** The sealed-crypto core (`kilio-seal`) and the full
-> design (`decisions.md`) have landed and are tested. The server, CLI, web
-> surfaces, and Tauri app are in progress — see the [roadmap](ROADMAP.md). This
-> repository also preserves the full history of its predecessor project under
-> [`legacy/`](legacy/).
+> **Status: 0.1.0 — early.** The sealed-crypto core (`kilio-seal`) and the
+> sealed store + branch scoping (`kilio-core`) have landed and are tested,
+> along with the full design (`decisions.md`). The server, CLI, web surfaces,
+> and Tauri app are in progress — see the [roadmap](ROADMAP.md).
 
 ---
 
@@ -161,7 +168,7 @@ One Rust workspace, one shared web frontend, three ways to run it.
 | Crate / app | Role |
 |-------------|------|
 | `kilio-seal` | Sealed-submission crypto: HPKE seal-to-branch, receipt→per-claim keys, sealed-sender envelope, PoW gate. Native **and** `wasm32`. ✅ |
-| `kilio-core` | Domain model, SQLite sealed store, the seams, branch scoping. 🚧 |
+| `kilio-core` | Domain model, SQLite sealed store, the seams, branch scoping. ✅ |
 | `kilio-server` | axum: public intake API + handler API + embedded PWA + tunnel control. 🚧 |
 | `kilio-cli` | `kilio init / serve / tunnel / branch`. 🚧 |
 | `apps/desktop` | Tauri v2 handler app; opens claims locally with the branch key. 🚧 |
@@ -202,6 +209,6 @@ sibling in the vulos suite. Contributions welcome — see
 ---
 
 <p align="center">
-  <a href="https://vulos.org"><img src="site/assets/vulos-logo.png" alt="vulos" height="20"></a><br>
-  <sub><a href="https://vulos.org"><b>vulos</b></a> — open by design</sub>
+  <sub><b>kilio</b> is free, standalone software — it runs on its own and needs no hosted service.<br>
+  Part of the <a href="https://vulos.org">vulos</a> family of self-hostable apps, but independent of it by design.</sub>
 </p>
