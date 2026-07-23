@@ -2,6 +2,7 @@
 resolver = "2"
 members = [
     "crates/kilio-seal",
+    "crates/kilio-core",
 ]
 
 [workspace.package]
@@ -30,6 +31,12 @@ subtle = { version = "2", default-features = false }
 serde = { version = "1", default-features = false, features = ["derive", "alloc"] }
 ciborium = { version = "0.2", default-features = false }
 hex = { version = "0.4", default-features = false, features = ["alloc"] }
+
+# storage
+rusqlite = { version = "0.31", features = ["bundled"] }
+
+# time
+time = { version = "0.3", default-features = false, features = ["std"] }
 
 # errors
 thiserror = "1"

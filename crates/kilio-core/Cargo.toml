@@ -1,0 +1,22 @@
+[package]
+name = "kilio-core"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+authors.workspace = true
+description = "kilio domain model, sealed SQLite store (ciphertext only), the Delivery/Reachability/Identity seams, and ofisi-style branch scoping (single requesterID choke point)."
+
+[dependencies]
+kilio-seal = { path = "../kilio-seal" }
+rusqlite.workspace = true
+serde.workspace = true
+ciborium.workspace = true
+blake3.workspace = true
+hex.workspace = true
+rand.workspace = true
+thiserror.workspace = true
+
+[dev-dependencies]
+rand = { version = "0.8", features = ["getrandom"] }
+tempfile = "3"
