@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>kilio — sealed, anonymous-first intake for sensitive claims</title>
 <meta name="description" content="Sealed, anonymous-first intake for sensitive claims — reporters need no account and no email; hosts can't read what they receive.">
-<link rel="icon" href="./assets/brand/favicon.svg">
+<link rel="icon" href="./assets/brand/mark.svg">
 <style>*,*::before,*::after{box-sizing:border-box}
 :root{
   --bg:#09090B; --bg-soft:#0E0E10; --panel:#131316; --panel-2:#18181B;
@@ -149,7 +149,7 @@ img{max-width:100%;display:block}
 </head>
 <body>
 <header class="site-header"><div class="wrap nav">
-    <a class="brand" href="./index.html"><span class="tile"><img src="./assets/brand/logo-mark.svg" alt="kilio mark"></span>kil<span class="hl">io</span></a>
+    <a class="brand" href="./index.html"><span class="tile"><img src="./assets/brand/mark.svg" alt="kilio mark"></span>kil<span class="hl">io</span></a>
     <div class="nav-spacer"></div>
     <nav class="nav-links">
       <a href="./index.html#features">Features</a>
@@ -165,7 +165,7 @@ img{max-width:100%;display:block}
 <main>
   <section class="hero"><div class="wrap">
     <span class="eyebrow">No account · No email · Sealed at source · Your box</span>
-    <h1 style="margin:0"><img class="wordmark" src="./assets/brand/logo-wordmark-dark.svg" alt="kilio"></h1>
+    <h1 style="margin:0"><img class="wordmark" src="./assets/brand/lockup-dark.svg" alt="kilio"></h1>
     <p class="tagline">Sealed, anonymous-first intake for sensitive claims — reporters need no account and no email; hosts can't read what they receive.</p>
     <p class="blurb">kilio is a self-hostable intake tool for harassment, misconduct, and whistleblowing reports. A reporter's claim is HPKE-sealed in their browser to your branch's public key before it ever leaves the device — the server, the tunnel, and the database only ever hold ciphertext. The only identity is a twelve-word receipt passphrase, so reporters can return, read replies, and keep a two-way conversation without ever creating an account. One Rust binary, one SQLite file, a one-click tunnel to go public. There is nothing to subpoena but ciphertext.</p>
     <div class="cta-row">
@@ -174,14 +174,8 @@ img{max-width:100%;display:block}
       <a class="btn btn-ghost" href="https://github.com/vul-os/kilio" target="_blank" rel="noopener">View on GitHub</a>
     </div>
     <div class="hero-visual">
-      <div class="flow">
-        <div class="flow-node"><b>Reporter</b><span>public intake page, no login</span></div>
-        <div class="flow-arrow">HPKE-seals<br>in browser →</div>
-        <div class="flow-node accent"><b>Your box</b><span>stores ciphertext only</span></div>
-        <div class="flow-arrow">← opened with<br>the branch key</div>
-        <div class="flow-node"><b>Handler</b><span>Tauri app, decrypts locally</span></div>
-      </div>
-      <p class="flow-caption"><span class="status">0.1.0 — early.</span> Sealed-crypto core and spec landed; surfaces in progress.</p>
+      <img src="./screenshots/handler-inbox-dark.png" alt="kilio handler — a sealed case inbox across branches" style="width:100%;border-radius:10px;display:block">
+      <p class="flow-caption"><span class="status">0.1.0 — early.</span> Sealed-crypto core, sealed store, and both web surfaces landed; server &amp; Tauri packaging in progress.</p>
     </div>
   </div></section>
 
