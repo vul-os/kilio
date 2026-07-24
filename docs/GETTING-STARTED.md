@@ -100,8 +100,8 @@ From the handler UI (owner-gated), start the `SubprocessTunnel` provider —
 kilio detects and spawns an installed `cloudflared` / `ngrok` / `frp` binary
 pinned to the loopback listen address, and surfaces the assigned public URL.
 No config file editing, no reverse proxy required to get a shareable link for
-"make public, hand out a URL" (decisions.md §1). A sovereign `VulosRelay`
-provider is a stubbed seam, wired the day a `vulos-relay` server exists to
+"make public, hand out a URL" (decisions.md §1). A sovereign `Ephor`
+provider is a stubbed seam, wired the day an Ephor server exists to
 point at.
 
 ### 4. `kilio branch` — manage branches

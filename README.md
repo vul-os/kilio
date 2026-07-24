@@ -239,7 +239,7 @@ composition root — the ofisi pattern):
 - **Delivery** — `Local` (default, standalone) · `Kotva` (decentralized,
   content-blind rendezvous mailbox for cross-org forwarding).
 - **Reachability** — `LocalOnly` · `SubprocessTunnel` (cloudflared/ngrok) ·
-  `VulosRelay` (wede sovereign tunnel).
+  `Ephor` (wede sovereign tunnel).
 - **Identity / deploy mode** — `standalone` · `os` (behind a Vulos OS gateway,
   fail-closed boot gate).
 

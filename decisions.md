@@ -259,8 +259,8 @@ trait Reachability {
   loopback listen addr, parse the assigned public URL. This is the honest,
   runnable-today ngrok-like path (wede's built-in relay needs a relay *server*
   that isn't in-tree yet).
-- **`VulosRelay` (seam, stubbed):** the wede sovereign reverse-tunnel agent,
-  wired the day the vulos-relay server is available.
+- **`Ephor` (seam, stubbed):** the wede sovereign reverse-tunnel agent,
+  wired the day an Ephor server is available.
 
 **SSRF guard (non-negotiable, from wede):** whichever provider runs, it
 proxies to **exactly one** configured loopback address, re-checked before

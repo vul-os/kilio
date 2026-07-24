@@ -99,7 +99,7 @@ trait Reachability {
 |---|---|---|
 | `LocalOnly` | ✅ default | Binds `127.0.0.1`, no exposure. Dev, or behind a reverse proxy the org already runs. |
 | `SubprocessTunnel` | ✅ working "click to go public" path | Spawns a detected tunnel binary (`cloudflared` / `ngrok` / `frp`) pinned to the loopback listen address, parses the assigned public URL. The honest, runnable-today path — wede's built-in relay needs a relay *server* that isn't in-tree here yet. |
-| `VulosRelay` | ⬜ stubbed seam | The wede sovereign reverse-tunnel agent, wired the day a `vulos-relay` server is available to point at. |
+| `Ephor` | ⬜ stubbed seam | The wede sovereign reverse-tunnel agent, wired the day an Ephor server is available to point at. |
 
 **SSRF guard, non-negotiable (carried from wede):** whichever provider runs,
 it proxies to exactly **one** configured loopback address, re-checked before
@@ -136,7 +136,7 @@ flowchart TD
         Server["kilio-server (axum)<br/>⬜ planned<br/>intake API · handler API · embedded PWA"]
         Core["kilio-core<br/>⬜ planned<br/>sealed SQLite store · requesterID() choke point"]
         Delivery["Delivery seam<br/>LocalDelivery (default)"]
-        Reach["Reachability seam<br/>LocalOnly / SubprocessTunnel / VulosRelay"]
+        Reach["Reachability seam<br/>LocalOnly / SubprocessTunnel / Ephor"]
     end
 
     KotvaRelay["kotva rendezvous mailbox<br/>(opt-in KotvaDelivery)<br/>content-blind"]
