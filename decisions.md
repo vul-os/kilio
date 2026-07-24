@@ -231,10 +231,10 @@ trait Delivery {
   SQLite store. Zero dependencies. This is what `standalone`/`desktop` use.
 - **`KotvaDelivery` (opt-in, decentralized):** deposit the sealed envelope as
   an opaque blob to a **kotva rendezvous mailbox** (`POST {relay}/mailbox/{to}`,
-  content-blind, key-addressed — the working wakala Go relay + `@vulos/relay-client`).
+  content-blind, key-addressed — the working ephor Go relay + `@vulos/relay-client`).
   Used to forward claims to an **external ombudsman** or across orgs without a
   shared server. The relay never sees plaintext (already sealed at source).
-  This is the "decentralized, using kotva/wakala" path — real, but optional.
+  This is the "decentralized, using kotva/ephor" path — real, but optional.
 
 kilio's envelope is deliberately kotva-MOTE-shaped so `KotvaDelivery` is a
 re-wrap, not a re-encrypt.

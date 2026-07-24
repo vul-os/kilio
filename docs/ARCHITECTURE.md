@@ -81,7 +81,7 @@ trait Delivery {
 | Implementation | Default? | What it does |
 |---|---|---|
 | `LocalDelivery` | ✅ default | Writes the sealed envelope to the local SQLite store. Zero external dependencies — what `standalone`/`desktop` use. |
-| `KotvaDelivery` | opt-in | Deposits the envelope as an opaque, content-blind blob to a kotva rendezvous mailbox (`POST {relay}/mailbox/{to}`) — the working wakala Go relay + `@vulos/relay-client`. Used to forward claims to an external ombudsman or across orgs with no shared server. The envelope is already kotva-MOTE-shaped, so this is a re-wrap, never a re-encrypt. |
+| `KotvaDelivery` | opt-in | Deposits the envelope as an opaque, content-blind blob to a kotva rendezvous mailbox (`POST {relay}/mailbox/{to}`) — the working ephor Go relay + `@vulos/relay-client`. Used to forward claims to an external ombudsman or across orgs with no shared server. The envelope is already kotva-MOTE-shaped, so this is a re-wrap, never a re-encrypt. |
 
 ### 2. `Reachability` — making the local app publicly reachable
 
