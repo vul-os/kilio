@@ -92,6 +92,7 @@ A reporter never authenticates. A handler always does. Between them runs a
 sealed, anonymous, two-way channel keyed only by a secret the reporter holds.
 
 ```mermaid
+%%{init: {'theme':'base','themeVariables':{'fontFamily':'ui-monospace, SFMono-Regular, Menlo, monospace','primaryColor':'transparent','primaryBorderColor':'#14b8a6','primaryTextColor':'#8f969e','lineColor':'#8a8f98','nodeBorder':'#5f8f8a','edgeLabelBackground':'transparent','clusterBorder':'#3f8f86','clusterBkg':'transparent'}}}%%
 flowchart LR
     reporter["Reporter<br/>(public PWA / TWA)"]
     subgraph box["your box — kilio instance"]
