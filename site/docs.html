@@ -89,7 +89,7 @@ img{max-width:100%;display:block}
 </head>
 <body>
 <header class="site-header"><div class="wrap nav">
-    <a class="brand" href="./index.html"><span class="tile"><img src="./assets/brand/logo-mark.svg" alt="kilio mark"></span>kil<span class="hl">io</span></a>
+    <a class="brand" href="./index.html"><span class="tile"><img src="./assets/brand/mark.svg" alt="kilio mark"></span>kil<span class="hl">io</span></a>
     <div class="nav-spacer"></div>
     <nav class="nav-links">
       <a href="./index.html#features">Features</a>
@@ -104,10 +104,11 @@ img{max-width:100%;display:block}
 <div class="wrap docs-shell">
   <aside class="docs-nav">
     <div class="label">kilio docs</div>
-        <a data-slug="readme" href="#readme">Overview</a>
-        <a data-slug="decisions" href="#decisions">Design decisions</a>
-        <a data-slug="architecture" href="#architecture">Architecture</a>
+        <a data-slug="overview" href="#overview">Overview</a>
+        <a data-slug="getting-started" href="#getting-started">Getting started</a>
+        <a data-slug="self-hosting" href="#self-hosting">Self-hosting</a>
         <a data-slug="security" href="#security">Security model</a>
+        <a data-slug="configuration" href="#configuration">Configuration</a>
   </aside>
   <main class="docs-main">
     <div class="docs-title" id="crumb"></div>
@@ -126,10 +127,11 @@ img{max-width:100%;display:block}
 <script>
 // The site is served statically; docs render straight from this repo's own markdown.
 const DOCS = [
-  {"slug":"readme","title":"Overview","path":"../README.md"},
-  {"slug":"decisions","title":"Design decisions","path":"../decisions.md"},
-  {"slug":"architecture","title":"Architecture","path":"../docs/ARCHITECTURE.md"},
-  {"slug":"security","title":"Security model","path":"../docs/SECURITY.md"}
+  {"slug":"overview","title":"Overview","path":"./docs/overview.md"},
+  {"slug":"getting-started","title":"Getting started","path":"./docs/getting-started.md"},
+  {"slug":"self-hosting","title":"Self-hosting","path":"./docs/self-hosting.md"},
+  {"slug":"security","title":"Security model","path":"./docs/security.md"},
+  {"slug":"configuration","title":"Configuration","path":"./docs/configuration.md"}
 ];
 const bySlug = Object.fromEntries(DOCS.map(d=>[d.slug,d]));
 const byFile = Object.fromEntries(DOCS.map(d=>[d.path.split('/').pop().toLowerCase(),d]));
