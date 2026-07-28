@@ -5,18 +5,21 @@ from outside your own network — a one-click tunnel. There is no SaaS
 backend, no cloud account, and no dependency on any hosted service. What you
 run is what you own, and what you run cannot read the claims it stores.
 
-## Three ways to run it
+## Two ways to run it
+
+`DeployMode` has two values; the single-officer laptop is a *shape* of
+`Standalone`, not a third one.
 
 | Mode | Who runs it | Reachability | Identity |
 |---|---|---|---|
-| `desktop` | one officer, on a laptop | subprocess tunnel | local owner |
-| `standalone` | an org, on a box/VPS | tunnel or reverse proxy | local admin(s), Argon2id password → session |
-| `os` | behind a Vulos OS gateway | gateway | gateway-brokered, server-verified session |
+| `Standalone` | one officer on a laptop, or an org on a box/VPS | subprocess tunnel, or a reverse proxy the org already runs | local admin(s), Argon2id password → session |
+| `Os` | behind a Vulos OS gateway | gateway | gateway-brokered, server-verified session |
 
-`os` mode **refuses to boot without a configured auth verifier** — a
-fail-closed boot gate. It never silently collapses every handler down to one
-identity. Self-hosters who aren't running behind a Vulos OS gateway will use
-`desktop` or `standalone`.
+`Os` mode is specified to **refuse to boot without a configured auth
+verifier** — a fail-closed boot gate that never silently collapses every
+handler down to one identity. That gate lands with `kilio-server`; today
+`DeployMode` is a typed enum and nothing boots. Self-hosters who aren't
+running behind a Vulos OS gateway will use `Standalone`.
 
 ## Going public with no fixed infrastructure
 

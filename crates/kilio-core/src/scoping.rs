@@ -1,4 +1,4 @@
-//! Branch scoping — the ofisi pattern, ported.
+//! Branch scoping — the diwan pattern, ported.
 //!
 //! Two invariants make multi-branch isolation trustworthy:
 //!
@@ -15,7 +15,7 @@
 
 use kilio_seal::BranchId;
 
-/// How the deployment resolves identity (the ofisi `DEPLOY_MODE` enum).
+/// How the deployment resolves identity (the diwan `DEPLOY_MODE` enum).
 #[derive(Clone, Copy, PartialEq, Eq, Debug)]
 pub enum DeployMode {
     /// One sovereign instance; handler accounts are local.
@@ -45,7 +45,9 @@ impl Requester {
     /// The single authorization decision for handler branch access.
     pub fn may_access_branch(&self, branch: &BranchId) -> bool {
         match self {
-            Requester::Handler { branches, admin, .. } => *admin || branches.contains(branch),
+            Requester::Handler {
+                branches, admin, ..
+            } => *admin || branches.contains(branch),
             _ => false,
         }
     }

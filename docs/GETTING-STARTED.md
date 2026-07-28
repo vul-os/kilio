@@ -26,21 +26,34 @@ cd kilio
 cargo build --workspace
 ```
 
-> **Today, `cargo build --workspace` builds exactly one crate**,
-> `kilio-seal` — the workspace member list in the root `Cargo.toml` has not
-> grown yet. This is expected; it will build more as `kilio-core`,
-> `kilio-server`, and `kilio-cli` land (see [`../ROADMAP.md`](../ROADMAP.md)).
+> **Today, `cargo build --workspace` builds two crates**, `kilio-seal` and
+> `kilio-core`. It will build more as `kilio-server` and `kilio-cli` land (see
+> [`../ROADMAP.md`](../ROADMAP.md)).
 
 ### Test
 
 ```bash
-cargo test -p kilio-seal
+./scripts/test-gate.sh        # runs the suite AND asserts it actually ran
 ```
 
-This runs the full crypto test suite: branch key generation, the receipt→
-per-claim-key derivation, seal/open roundtrips (including the full two-way
-submit → reply → return-and-read flow), tampered-envelope rejection, PoW
-solve/verify, and size-bucket padding. All 21 tests pass as of this writing.
+The gate is what CI runs. It executes each crate's tests and then checks the
+harness's own summary line: no `test result:` line, an ignored test, or a
+passing count below the recorded floor is a **failure**, so a suite that
+silently stops running cannot report green. Run the crates directly if you
+prefer:
+
+```bash
+cargo test -p kilio-seal      # sealed-submission crypto + branch key pinning
+cargo test -p kilio-core      # sealed store, branch scoping, the seams
+```
+
+`kilio-seal` covers branch key generation, the receipt→per-claim-key
+derivation, seal/open roundtrips (including the full two-way submit → reply →
+return-and-read flow), tampered-envelope rejection, PoW solve/verify,
+size-bucket padding, and branch key pinning (substituted-key refusal, epoch
+rollback, rekey certificates). `kilio-core` covers the end-to-end sealed
+two-way flow through the store, branch isolation, and the fail-closed
+branch-key checks.
 
 ### Build for wasm32
 
@@ -100,9 +113,11 @@ From the handler UI (owner-gated), start the `SubprocessTunnel` provider —
 kilio detects and spawns an installed `cloudflared` / `ngrok` / `frp` binary
 pinned to the loopback listen address, and surfaces the assigned public URL.
 No config file editing, no reverse proxy required to get a shareable link for
-"make public, hand out a URL" (decisions.md §1). A sovereign `Ephor`
-provider is a stubbed seam, wired the day an Ephor server exists to
-point at.
+"make public, hand out a URL" (decisions.md §1). Today `SubprocessTunnel`
+enforces the loopback SSRF guard and records the chosen binary; spawning it
+needs process access and lands with the server/CLI. Pointing kilio at an
+[Ephor](https://github.com/vul-os/ephor) broker is recorded design intent —
+there is no such provider in the tree.
 
 ### 4. `kilio branch` — manage branches
 
@@ -111,7 +126,7 @@ kilio branch add --name "HR — EMEA"
 kilio branch list
 ```
 
-Adds and lists branches for the ofisi-style multi-branch pattern
+Adds and lists branches for the diwan-style multi-branch pattern
 (decisions.md §5) — one deployment, many scoped destinations, each claim
 sealed to the branch it was submitted to.
 

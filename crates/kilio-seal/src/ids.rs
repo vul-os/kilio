@@ -63,8 +63,16 @@ macro_rules! id_type {
     };
 }
 
-id_type!(BranchId, BRANCH_ID_CTX, "Identifier for a branch (a keyed destination for sealed claims).");
-id_type!(ClaimId, CLAIM_ID_CTX, "Public handle for a claim; derived from the claim's signing key.");
+id_type!(
+    BranchId,
+    BRANCH_ID_CTX,
+    "Identifier for a branch (a keyed destination for sealed claims)."
+);
+id_type!(
+    ClaimId,
+    CLAIM_ID_CTX,
+    "Public handle for a claim; derived from the claim's signing key."
+);
 
 #[cfg(test)]
 mod tests {

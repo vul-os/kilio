@@ -23,6 +23,7 @@
 mod envelope;
 mod ids;
 mod keys;
+mod pin;
 mod receipt;
 
 pub mod pow;
@@ -36,6 +37,7 @@ pub use envelope::{
 };
 pub use ids::{BranchId, ClaimId};
 pub use keys::{BranchKeys, BranchPublic, SecretKeyBytes};
+pub use pin::{BranchDescriptor, BranchPin, RekeyCert, SignedDescriptor, DESCRIPTOR_VERSION};
 pub use pow::PowStamp;
 pub use receipt::{ClaimKeys, ClaimPublic, Receipt};
 
@@ -49,6 +51,12 @@ pub enum SealError {
     BadSignature,
     #[error("malformed identifier")]
     BadId,
+    #[error("identifier does not bind the published keys")]
+    IdMismatch,
+    #[error("pinned branch key change refused (only a rekey signed by the pinned key, or an explicit unpin, may rotate it)")]
+    KeyChangeRefused,
+    #[error("refused an older epoch than the one already pinned")]
+    Rollback,
     #[error("invalid receipt phrase")]
     BadReceipt,
     #[error("key derivation failed")]

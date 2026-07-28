@@ -154,8 +154,8 @@ fn open(recipient_sk: &<Kem as hpke::Kem>::PrivateKey, env: &Envelope) -> Result
     if env.v != SEAL_VERSION {
         return Err(SealError::Version);
     }
-    let encapped = <Kem as hpke::Kem>::EncappedKey::from_bytes(&env.enc)
-        .map_err(|_| SealError::BadKey)?;
+    let encapped =
+        <Kem as hpke::Kem>::EncappedKey::from_bytes(&env.enc).map_err(|_| SealError::BadKey)?;
     let aad = associated_data(env.v, env.kind, &env.recipient, env.size_bucket);
     let padded = single_shot_open::<Aead, Kdf, Kem>(
         &OpModeR::Base,
@@ -207,7 +207,6 @@ fn bucketize(len: usize) -> usize {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::ids::BranchId;
     use crate::receipt::Receipt;
 
     fn inner(body: &[u8], from: Option<ClaimPublic>) -> Inner {
@@ -221,8 +220,12 @@ mod tests {
     #[test]
     fn branch_seal_open_roundtrip() {
         let branch = BranchKeys::generate();
-        let env = seal_to_branch(&branch.public(), EnvelopeKind::Submission, &inner(b"hello", None))
-            .unwrap();
+        let env = seal_to_branch(
+            &branch.public(),
+            EnvelopeKind::Submission,
+            &inner(b"hello", None),
+        )
+        .unwrap();
         let got = open_with_branch(&branch, &env).unwrap();
         assert_eq!(got.body, b"hello");
     }
@@ -246,9 +249,12 @@ mod tests {
         let reporter_pub = opened.from.expect("submission carries sealed sender");
 
         // Handler seals a reply to the claim key.
-        let reply =
-            seal_to_claim(&reporter_pub, EnvelopeKind::HandlerReply, &inner(b"we are looking", None))
-                .unwrap();
+        let reply = seal_to_claim(
+            &reporter_pub,
+            EnvelopeKind::HandlerReply,
+            &inner(b"we are looking", None),
+        )
+        .unwrap();
 
         // Reporter returns with the same phrase and opens the reply.
         let claim2 = Receipt::from_phrase(receipt.phrase())
@@ -263,17 +269,24 @@ mod tests {
     fn wrong_key_cannot_open() {
         let branch = BranchKeys::generate();
         let other = BranchKeys::generate();
-        let env =
-            seal_to_branch(&branch.public(), EnvelopeKind::Submission, &inner(b"secret", None))
-                .unwrap();
+        let env = seal_to_branch(
+            &branch.public(),
+            EnvelopeKind::Submission,
+            &inner(b"secret", None),
+        )
+        .unwrap();
         assert!(open_with_branch(&other, &env).is_err());
     }
 
     #[test]
     fn tampered_kind_fails_to_open() {
         let branch = BranchKeys::generate();
-        let mut env =
-            seal_to_branch(&branch.public(), EnvelopeKind::Submission, &inner(b"x", None)).unwrap();
+        let mut env = seal_to_branch(
+            &branch.public(),
+            EnvelopeKind::Submission,
+            &inner(b"x", None),
+        )
+        .unwrap();
         env.kind = EnvelopeKind::HandlerReply; // AAD no longer matches
         assert!(open_with_branch(&branch, &env).is_err());
     }
@@ -281,9 +294,12 @@ mod tests {
     #[test]
     fn size_is_bucketed() {
         let branch = BranchKeys::generate();
-        let env =
-            seal_to_branch(&branch.public(), EnvelopeKind::Submission, &inner(b"tiny", None))
-                .unwrap();
+        let env = seal_to_branch(
+            &branch.public(),
+            EnvelopeKind::Submission,
+            &inner(b"tiny", None),
+        )
+        .unwrap();
         assert_eq!(env.size_bucket, 4 * 1024);
     }
 

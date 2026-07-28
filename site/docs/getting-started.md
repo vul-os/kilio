@@ -28,13 +28,24 @@ cargo build --workspace
 ### Test
 
 ```bash
-cargo test -p kilio-seal
+./scripts/test-gate.sh        # runs the suite AND asserts it actually ran
 ```
 
-This runs the full crypto test suite: branch key generation, the
-receipt→per-claim-key derivation, seal/open roundtrips (including the full
-two-way submit → reply → return-and-read flow), tampered-envelope rejection,
-PoW solve/verify, and size-bucket padding.
+The gate is what CI runs: it executes each crate's tests and then checks the
+harness's own summary line, so a suite that silently stops running cannot
+report green. Run the crates directly if you prefer:
+
+```bash
+cargo test -p kilio-seal      # sealed-submission crypto + branch key pinning
+cargo test -p kilio-core      # sealed store, branch scoping, the seams
+```
+
+`kilio-seal` covers branch key generation, the receipt→per-claim-key
+derivation, seal/open roundtrips (including the full two-way submit → reply →
+return-and-read flow), tampered-envelope rejection, PoW solve/verify,
+size-bucket padding, and branch key pinning. `kilio-core` covers the sealed
+store's end-to-end flow, branch isolation, and the fail-closed branch-key
+checks.
 
 ### Build for wasm32
 

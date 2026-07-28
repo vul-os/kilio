@@ -27,7 +27,10 @@ impl ClaimStatus {
             ClaimStatus::Closed => "closed",
         }
     }
-    pub fn from_str(s: &str) -> Option<Self> {
+    /// Decode the stored form. Named `from_db`, not `from_str`, so it is never
+    /// confused with `std::str::FromStr` — this is a storage codec, and an
+    /// unknown value is a corrupt row, not a parse fallback.
+    pub fn from_db(s: &str) -> Option<Self> {
         Some(match s {
             "new" => ClaimStatus::New,
             "triaged" => ClaimStatus::Triaged,
@@ -54,7 +57,8 @@ impl Direction {
             Direction::Handler => "handler",
         }
     }
-    pub fn from_str(s: &str) -> Option<Self> {
+    /// Decode the stored form — see [`ClaimStatus::from_db`].
+    pub fn from_db(s: &str) -> Option<Self> {
         match s {
             "reporter" => Some(Direction::Reporter),
             "handler" => Some(Direction::Handler),

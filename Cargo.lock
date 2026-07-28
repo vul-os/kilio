@@ -588,11 +588,8 @@ dependencies = [
  "hex",
  "hpke",
  "rand",
- "rand_core",
  "serde",
- "subtle",
  "thiserror",
- "x25519-dalek",
  "zeroize",
 ]
 

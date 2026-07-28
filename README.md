@@ -187,6 +187,12 @@ These four properties are non-negotiable (full detail in
 | **Anonymous two-way channel** | Sealed replies both directions, bound to a secret only the reporter holds. |
 | **Metadata minimization** | No IP/User-Agent logging on the intake path, size-bucketed ciphertext, an anonymous proof-of-work cold-contact gate instead of accounts, no third-party assets. |
 
+Sealing to the right key is what makes all four matter, so the branch key is
+**pinned**: a reporter's client accepts it once, and afterwards only a rekey
+countersigned by the pinned key can change it — a host cannot quietly swap in a
+key it can read. First contact is still trust-on-first-use; compare the branch
+id out of band if you need more.
+
 Primitives are RFC 9180 HPKE (DHKEM-X25519 / HKDF-SHA256 / ChaCha20Poly1305)
 via the audited `hpke` crate, Ed25519, Argon2id, and BLAKE3. No primitive is
 hand-rolled; only their composition is ours.
@@ -227,7 +233,7 @@ One Rust workspace, one shared web frontend, three ways to run it.
 
 | Crate / app | Role |
 |-------------|------|
-| `kilio-seal` | Sealed-submission crypto: HPKE seal-to-branch, receipt→per-claim keys, sealed-sender envelope, PoW gate. Native **and** `wasm32`. ✅ |
+| `kilio-seal` | Sealed-submission crypto: HPKE seal-to-branch, receipt→per-claim keys, sealed-sender envelope, PoW gate, branch key pinning. Native **and** `wasm32`. ✅ |
 | `kilio-core` | Domain model, SQLite sealed store, the seams, branch scoping. ✅ |
 | `kilio-server` | axum: public intake API + handler API + embedded PWA + tunnel control. 🚧 |
 | `kilio-cli` | `kilio init / serve / tunnel / branch`. 🚧 |
@@ -235,14 +241,18 @@ One Rust workspace, one shared web frontend, three ways to run it.
 | `web/` | React/JSX PWA/TWA — reporter + handler surfaces built (Sanctuary UI); `kilio-seal` WASM wiring next. 🚧 |
 
 Three **seams** (thin interface, local default, adapter wired only at the
-composition root — the ofisi pattern):
+composition root — the diwan pattern):
 
-- **Delivery** — `Local` (default, standalone) · `Kotva` (decentralized,
-  content-blind rendezvous mailbox for cross-org forwarding).
-- **Reachability** — `LocalOnly` · `SubprocessTunnel` (cloudflared/ngrok) ·
-  `Ephor` (wede sovereign tunnel).
-- **Identity / deploy mode** — `standalone` · `os` (behind a Vulos OS gateway,
-  fail-closed boot gate).
+- **Delivery** — `LocalDelivery` (default, standalone, ✅) · `KotvaDelivery`
+  (content-blind rendezvous mailbox for cross-org forwarding — seam declared,
+  the async deposit lands with `kilio-server` 🚧).
+- **Reachability** — `LocalOnly` (default, ✅) · `SubprocessTunnel`
+  (cloudflared / ngrok / frp — the loopback SSRF guard is enforced today, the
+  spawn lands with the server/CLI 🚧). Pointing kilio at an
+  [Ephor](https://github.com/vul-os/ephor) broker is recorded design intent,
+  **not a variant in the tree**.
+- **Identity / deploy mode** — `Standalone` · `Os` (behind a Vulos OS gateway;
+  the fail-closed boot gate lands with `kilio-server` 🚧).
 
 Full contract: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md). Design rationale
 and threat model: [`decisions.md`](decisions.md).

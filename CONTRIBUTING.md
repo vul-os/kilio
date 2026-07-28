@@ -19,7 +19,7 @@ Requirements: Rust (stable), `wasm32-unknown-unknown` target for wasm builds.
 rustup target add wasm32-unknown-unknown
 
 cargo build --workspace
-cargo test -p kilio-seal
+./scripts/test-gate.sh
 ```
 
 See [`docs/GETTING-STARTED.md`](docs/GETTING-STARTED.md) for the full build
@@ -49,9 +49,10 @@ Before opening a PR:
 
 ```bash
 cargo build --workspace
-cargo test --workspace
-cargo clippy --workspace -- -D warnings
-cargo fmt --check
+cargo clippy --workspace --all-targets -- -D warnings
+cargo fmt --all --check
+./scripts/test-gate.sh          # runs the suite and asserts it actually ran
+cargo build -p kilio-seal --target wasm32-unknown-unknown
 ```
 
 **Crypto-touching changes get extra scrutiny.** Anything in `kilio-seal` —
@@ -66,7 +67,7 @@ test. `#![forbid(unsafe_code)]` is set at the crate root; do not remove it.
 
 - Bug fixes and security improvements.
 - New crates that follow the build order in
-  [`ROADMAP.md`](ROADMAP.md)/decisions.md §9 (`kilio-core` is next).
+  [`ROADMAP.md`](ROADMAP.md)/decisions.md §9 (`kilio-server` is next).
 - Seam implementations (`Delivery`, `Reachability`) that keep the local
   default dependency-free and wire the adapter only at the composition root.
 - Tests and documentation.

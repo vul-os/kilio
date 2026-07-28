@@ -9,12 +9,14 @@ honestly. For the vulnerability-disclosure process, see the repo-level
 contact form.
 
 > **Status.** The primitives and properties described here are implemented
-> and tested in [`kilio-seal`](../crates/kilio-seal) today. Everything that
-> *uses* them — the server, the store, the branch-scoping enforcement, the
-> desktop app — is specified but not yet built (see
-> [ARCHITECTURE.md](ARCHITECTURE.md) and [`../ROADMAP.md`](../ROADMAP.md)).
-> A crypto primitive being correct is not the same claim as a deployed system
-> being secure; read this alongside that status honestly.
+> and tested in [`kilio-seal`](../crates/kilio-seal) today; the sealed store
+> and the branch-scoping enforcement are implemented and tested in
+> [`kilio-core`](../crates/kilio-core). The server, CLI, and desktop app —
+> the parts that would *expose* any of this over a socket — are specified but
+> not yet built (see [ARCHITECTURE.md](ARCHITECTURE.md) and
+> [`../ROADMAP.md`](../ROADMAP.md)). A crypto primitive being correct is not
+> the same claim as a deployed system being secure; read this alongside that
+> status honestly.
 
 ---
 
@@ -74,6 +76,7 @@ From decisions.md §8, reproduced as the canonical table:
 |---|---|---|
 | Network observer / tunnel operator | sees all traffic | TLS + sealed-at-source; only ciphertext + size-bucket transit |
 | Malicious/curious host admin | full DB + disk | claims sealed to branch key held only by handlers; DB is ciphertext |
+| Key-substituting host | serves a branch key it controls, so new claims seal to *it* | branch key **pinning** (`BranchPin`): the key is accepted once, and thereafter only a rekey countersigned by the pinned key can change it. Host-side, stored branch keys are immutable and a branch id must derive from its keys. **First contact is still TOFU** — a host hostile from the very first fetch is caught only by comparing the `branch_id` out of band |
 | Compelled host (subpoena) | can be forced to hand over data | can only hand over ciphertext + content-free metadata; no keys, no IPs |
 | Retaliatory insider (a handler) | valid handler creds for branch A | branch scoping + 404-on-deny; content-free audit log records every open |
 | Spammer / DoS | floods intake | per-branch PoW cold-contact stamp; size caps; no unauth injection |
@@ -179,6 +182,36 @@ to multiple seconds on a laptop) and can be raised under active abuse.
 Verification checks the stamp's claimed `bits` against the actual leading-zero
 count, so a stamp cannot lie about how much work it represents.
 
+### Branch key pinning
+
+Sealing to the right key is what makes every property above matter, and the
+reporter gets that key from the host. `BranchPublic::expected_id()` proves only
+*self-consistency*: a host that substitutes a key it controls substitutes the
+matching id too, and the check passes. Self-consistency is not authenticity.
+
+[`pin.rs`](../crates/kilio-seal/src/pin.rs) adds the missing half, following
+aql's pairing discipline rather than a looser first-key-wins:
+
+```
+descriptor  = { v, branch_id, kem_public, sign_public, name, pow_bits, epoch, issued_at }
+signature   = Ed25519(branch_sign_key, "kilio/branch-descriptor/v1\0" || CBOR(descriptor))
+rekey cert  = Ed25519(OLD branch_sign_key, "kilio/branch-rekey/v1\0" || CBOR(prev_id, next_descriptor))
+```
+
+- `BranchPin::pin()` is the **one** moment a branch key is accepted.
+- `BranchPin::check()` refuses *any* key change (`KeyChangeRefused`) and any
+  descriptor older than the pinned `epoch` (`Rollback`) — so an old descriptor
+  cannot be replayed to force a retired key or a weaker `pow_bits`.
+- A pinned key rotates only via a `RekeyCert` countersigned by the currently
+  pinned key, with a strictly greater epoch. The two signing domains are
+  separated, so a descriptor signature can never be replayed as a rekey.
+- The only other escape is `BranchPin::unpin()`, which consumes the pin: the
+  factory-reset analogue, never reachable from a fetch path.
+
+Host-side, `SealedStore::put_branch()` enforces the same invariant from the
+other end: a stored branch's keys are immutable, and a branch id must derive
+from the keys it publishes.
+
 ---
 
 ## Explicit residual risks
@@ -205,11 +238,23 @@ Writing these down rather than pretending they don't exist (decisions.md §8):
   make guessing impossible against an adversary with enough resources. The
   phrase's 128 bits of entropy is doing the real work — Argon2id makes
   *cheap* correlation of a stolen DB expensive, not impossible.
+- **Pinning is trust-on-first-use.** A host that is hostile from the very
+  first fetch is pinned to the attacker's key, and every check afterwards
+  faithfully enforces the wrong key. Pinning defeats *later* substitution, not
+  a bad first contact. The only defence against that is comparing the
+  `branch_id` against a value published out of band — a poster, a printed
+  card, a URL handed over in person.
+- **Nothing offline-verifiable authorizes a handler yet.** `Requester` is
+  resolved in-process; kilio has no signed, independently verifiable capability
+  for "this handler may open branch X" (contrast cackle's ticket capabilities,
+  which a scanner verifies with the network unplugged). When `kilio-server`
+  lands, the branch grant must be such a capability, not a caller-supplied
+  list.
 - **The `os` deploy mode's security depends on the Vulos OS gateway's
-  session verification being correctly configured.** kilio's own boot gate
-  refuses to start in `os` mode without a configured verifier, but a
-  misconfigured *verifier* (not kilio's problem to solve) would weaken
-  identity brokering it depends on.
+  session verification being correctly configured.** The fail-closed boot gate
+  that refuses to start in `os` mode without a configured verifier is
+  **specified, not built** — it lands with `kilio-server`. Today `DeployMode`
+  is a typed enum in `kilio-core` and nothing boots.
 
 ---
 

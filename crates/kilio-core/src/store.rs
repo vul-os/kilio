@@ -42,7 +42,33 @@ impl SealedStore {
 
     // ---- branches -------------------------------------------------------
 
+    /// Insert or update a branch.
+    ///
+    /// Fails closed on two key-substitution paths, mirroring aql's pinning
+    /// discipline (`state.ErrKeyChangeRefused`) on the host side:
+    ///
+    /// 1. **Keys are immutable once stored.** A record whose `kem_public` or
+    ///    `sign_public` differs from the stored row is refused
+    ///    ([`CoreError::BranchKeyChangeRefused`]) rather than silently ignored.
+    ///    Only `name`, `pow_bits`, and `active` are mutable.
+    /// 2. **The id must bind the keys.** `id` must equal
+    ///    `BranchId::derive(kem_public || sign_public)`, so a swapped key can
+    ///    never be served under a known branch id
+    ///    ([`CoreError::BranchIdMismatch`]).
     pub fn put_branch(&self, b: &BranchRecord) -> Result<(), CoreError> {
+        if let Some(existing) = self.get_branch(&b.id)? {
+            if existing.kem_public != b.kem_public || existing.sign_public != b.sign_public {
+                return Err(CoreError::BranchKeyChangeRefused);
+            }
+        }
+        let published = kilio_seal::BranchPublic {
+            branch_id: b.id,
+            kem_public: b.kem_public.clone(),
+            sign_public: b.sign_public,
+        };
+        if published.expected_id() != b.id {
+            return Err(CoreError::BranchIdMismatch);
+        }
         self.conn.execute(
             "INSERT INTO branches (id,name,kem_public,sign_public,pow_bits,created_at,active)
              VALUES (?1,?2,?3,?4,?5,?6,?7)
@@ -95,7 +121,9 @@ impl SealedStore {
             RecipientTag::Branch(b) => *b,
             RecipientTag::Claim(_) => return Err(CoreError::WrongRecipient),
         };
-        let branch = self.get_branch(&branch_id)?.ok_or(CoreError::UnknownBranch)?;
+        let branch = self
+            .get_branch(&branch_id)?
+            .ok_or(CoreError::UnknownBranch)?;
         if !branch.active {
             return Err(CoreError::BranchInactive);
         }
@@ -229,7 +257,13 @@ impl SealedStore {
             "UPDATE claims SET status=?2, updated_at=?3 WHERE claim_id=?1",
             params![claim_id.to_hex(), status.as_str(), now as i64],
         )?;
-        insert_audit(&tx, &actor, &format!("status:{}", status.as_str()), Some(claim_id), now)?;
+        insert_audit(
+            &tx,
+            &actor,
+            &format!("status:{}", status.as_str()),
+            Some(claim_id),
+            now,
+        )?;
         tx.commit()?;
         Ok(())
     }
@@ -336,7 +370,13 @@ fn insert_message(
 ) -> Result<(), CoreError> {
     tx.execute(
         "INSERT INTO messages (id,claim_id,direction,created_at,envelope) VALUES (?1,?2,?3,?4,?5)",
-        params![new_id(), claim_id.to_hex(), dir.as_str(), now as i64, envelope],
+        params![
+            new_id(),
+            claim_id.to_hex(),
+            dir.as_str(),
+            now as i64,
+            envelope
+        ],
     )?;
     Ok(())
 }
@@ -369,14 +409,39 @@ fn insert_audit(
     Ok(())
 }
 
+/// A row that cannot be decoded is an error, never a default.
+///
+/// The earlier `unwrap_or(BranchId([0; 16]))` style silently turned a corrupt
+/// or hostile row into a *valid-looking* zero id — an authorization decision
+/// made on garbage. Every decode below fails closed instead.
+#[derive(Debug)]
+struct CorruptRow(&'static str);
+
+impl std::fmt::Display for CorruptRow {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "corrupt row: {}", self.0)
+    }
+}
+
+impl std::error::Error for CorruptRow {}
+
+fn corrupt(idx: usize, what: &'static str) -> rusqlite::Error {
+    rusqlite::Error::FromSqlConversionFailure(
+        idx,
+        rusqlite::types::Type::Text,
+        Box::new(CorruptRow(what)),
+    )
+}
+
 fn row_to_branch(r: &rusqlite::Row) -> rusqlite::Result<BranchRecord> {
     let sign: Vec<u8> = r.get(3)?;
-    let mut sign_public = [0u8; 32];
-    if sign.len() == 32 {
-        sign_public.copy_from_slice(&sign);
-    }
+    let sign_public: [u8; 32] = sign
+        .as_slice()
+        .try_into()
+        .map_err(|_| corrupt(3, "branches.sign_public is not 32 bytes"))?;
     Ok(BranchRecord {
-        id: BranchId::from_hex(&r.get::<_, String>(0)?).unwrap_or(BranchId([0; 16])),
+        id: BranchId::from_hex(&r.get::<_, String>(0)?)
+            .map_err(|_| corrupt(0, "branches.id is not a branch id"))?,
         name: r.get(1)?,
         kem_public: r.get(2)?,
         sign_public,
@@ -388,9 +453,12 @@ fn row_to_branch(r: &rusqlite::Row) -> rusqlite::Result<BranchRecord> {
 
 fn row_to_claim(r: &rusqlite::Row) -> rusqlite::Result<ClaimRecord> {
     Ok(ClaimRecord {
-        claim_id: ClaimId::from_hex(&r.get::<_, String>(0)?).unwrap_or(ClaimId([0; 16])),
-        branch_id: BranchId::from_hex(&r.get::<_, String>(1)?).unwrap_or(BranchId([0; 16])),
-        status: ClaimStatus::from_str(&r.get::<_, String>(2)?).unwrap_or(ClaimStatus::New),
+        claim_id: ClaimId::from_hex(&r.get::<_, String>(0)?)
+            .map_err(|_| corrupt(0, "claims.claim_id is not a claim id"))?,
+        branch_id: BranchId::from_hex(&r.get::<_, String>(1)?)
+            .map_err(|_| corrupt(1, "claims.branch_id is not a branch id"))?,
+        status: ClaimStatus::from_db(&r.get::<_, String>(2)?)
+            .ok_or_else(|| corrupt(2, "claims.status is not a known status"))?,
         size_bucket: r.get::<_, i64>(3)? as u32,
         created_at: r.get::<_, i64>(4)? as u64,
         updated_at: r.get::<_, i64>(5)? as u64,
@@ -401,21 +469,27 @@ fn row_to_claim(r: &rusqlite::Row) -> rusqlite::Result<ClaimRecord> {
 fn row_to_message(r: &rusqlite::Row) -> rusqlite::Result<MessageRecord> {
     Ok(MessageRecord {
         id: r.get(0)?,
-        claim_id: ClaimId::from_hex(&r.get::<_, String>(1)?).unwrap_or(ClaimId([0; 16])),
-        direction: Direction::from_str(&r.get::<_, String>(2)?).unwrap_or(Direction::Reporter),
+        claim_id: ClaimId::from_hex(&r.get::<_, String>(1)?)
+            .map_err(|_| corrupt(1, "messages.claim_id is not a claim id"))?,
+        direction: Direction::from_db(&r.get::<_, String>(2)?)
+            .ok_or_else(|| corrupt(2, "messages.direction is not a known direction"))?,
         created_at: r.get::<_, i64>(3)? as u64,
         envelope: r.get(4)?,
     })
 }
 
 fn row_to_audit(r: &rusqlite::Row) -> rusqlite::Result<AuditEvent> {
+    let claim_id = match r.get::<_, Option<String>>(3)? {
+        None => None,
+        Some(s) => Some(
+            ClaimId::from_hex(&s).map_err(|_| corrupt(3, "audit.claim_id is not a claim id"))?,
+        ),
+    };
     Ok(AuditEvent {
         id: r.get(0)?,
         actor: r.get(1)?,
         action: r.get(2)?,
-        claim_id: r
-            .get::<_, Option<String>>(3)?
-            .and_then(|s| ClaimId::from_hex(&s).ok()),
+        claim_id,
         at: r.get::<_, i64>(4)? as u64,
     })
 }

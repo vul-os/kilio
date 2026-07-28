@@ -7,7 +7,7 @@
 //! open.
 //!
 //! - [`SealedStore`] — SQLite that stores ciphertext + routing metadata only.
-//! - [`Requester`] / [`branch_scoped_key`] — the ofisi scoping invariants: one
+//! - [`Requester`] / [`branch_scoped_key`] — the diwan scoping invariants: one
 //!   authorization choke point, one scoped-key builder.
 //! - [`Delivery`] / [`Reachability`] — the seams, with local defaults compiled
 //!   in and adapters wired only at the composition root.
@@ -21,9 +21,7 @@ mod store;
 pub mod delivery;
 pub mod reachability;
 
-pub use domain::{
-    AuditEvent, BranchRecord, ClaimRecord, ClaimStatus, Direction, MessageRecord,
-};
+pub use domain::{AuditEvent, BranchRecord, ClaimRecord, ClaimStatus, Direction, MessageRecord};
 pub use scoping::{branch_scoped_key, DeployMode, Requester};
 pub use store::SealedStore;
 
@@ -45,6 +43,10 @@ pub enum CoreError {
     UnknownBranch,
     #[error("branch is inactive")]
     BranchInactive,
+    #[error("stored branch keys are immutable; key change refused")]
+    BranchKeyChangeRefused,
+    #[error("branch id does not bind the branch's published keys")]
+    BranchIdMismatch,
     #[error("a claim with that id already exists")]
     ClaimExists,
     #[error("unknown claim")]
@@ -63,8 +65,8 @@ pub enum CoreError {
 mod integration_tests {
     use super::*;
     use kilio_seal::{
-        open_with_branch, open_with_claim, seal_to_branch, seal_to_claim, BranchKeys,
-        EnvelopeKind, Inner, Receipt,
+        open_with_branch, open_with_claim, seal_to_branch, seal_to_claim, BranchKeys, EnvelopeKind,
+        Inner, Receipt,
     };
 
     fn branch_record(b: &BranchKeys, name: &str) -> BranchRecord {
@@ -80,7 +82,11 @@ mod integration_tests {
         }
     }
 
-    fn submission(b: &BranchKeys, claim_pub: kilio_seal::ClaimPublic, body: &[u8]) -> kilio_seal::Envelope {
+    fn submission(
+        b: &BranchKeys,
+        claim_pub: kilio_seal::ClaimPublic,
+        body: &[u8],
+    ) -> kilio_seal::Envelope {
         seal_to_branch(
             &b.public(),
             EnvelopeKind::Submission,
@@ -97,7 +103,9 @@ mod integration_tests {
     fn end_to_end_sealed_two_way_flow() {
         let mut store = SealedStore::open_in_memory().unwrap();
         let branch = BranchKeys::generate();
-        store.put_branch(&branch_record(&branch, "corporate")).unwrap();
+        store
+            .put_branch(&branch_record(&branch, "corporate"))
+            .unwrap();
 
         // Reporter mints a receipt, derives a claim identity, seals a submission.
         let receipt = Receipt::generate();
@@ -127,10 +135,16 @@ mod integration_tests {
         let reply = seal_to_claim(
             &reporter_pub,
             EnvelopeKind::HandlerReply,
-            &Inner { from: None, created_at: 2, body: b"received".to_vec() },
+            &Inner {
+                from: None,
+                created_at: 2,
+                body: b"received".to_vec(),
+            },
         )
         .unwrap();
-        store.append_handler_reply(&handler, &claim_id, &reply).unwrap();
+        store
+            .append_handler_reply(&handler, &claim_id, &reply)
+            .unwrap();
 
         // Reporter returns with the same passphrase and reads the sealed reply.
         let reporter = Requester::Reporter { claim: claim_id };
@@ -168,19 +182,71 @@ mod integration_tests {
         };
         assert!(store.get_claim(&handler_b, &claim_id).unwrap().is_none());
         assert!(store.list_claims(&handler_b).unwrap().is_empty());
-        assert!(store.messages_for_claim(&handler_b, &claim_id).unwrap().is_empty());
+        assert!(store
+            .messages_for_claim(&handler_b, &claim_id)
+            .unwrap()
+            .is_empty());
 
         // A reply attempt across the boundary is refused as NotFound.
         let reply = seal_to_claim(
             &claim.public(),
             EnvelopeKind::HandlerReply,
-            &Inner { from: None, created_at: 2, body: b"x".to_vec() },
+            &Inner {
+                from: None,
+                created_at: 2,
+                body: b"x".to_vec(),
+            },
         )
         .unwrap();
         assert!(matches!(
             store.append_handler_reply(&handler_b, &claim_id, &reply),
             Err(CoreError::NotFound)
         ));
+    }
+
+    /// The host-side half of the pinning discipline: a stored branch's keys are
+    /// immutable, so a swapped key cannot be written under a known branch id.
+    #[test]
+    fn branch_key_change_is_refused() {
+        let store = SealedStore::open_in_memory().unwrap();
+        let a = BranchKeys::generate();
+        let b = BranchKeys::generate();
+        store.put_branch(&branch_record(&a, "corporate")).unwrap();
+
+        // Same id, someone else's keys.
+        let mut swapped = branch_record(&b, "corporate");
+        swapped.id = a.public().branch_id;
+        assert!(matches!(
+            store.put_branch(&swapped),
+            Err(CoreError::BranchKeyChangeRefused)
+        ));
+
+        // The stored key is untouched.
+        let stored = store.get_branch(&a.public().branch_id).unwrap().unwrap();
+        assert_eq!(stored.kem_public, a.public().kem_public);
+        assert_eq!(stored.sign_public, a.public().sign_public);
+
+        // A benign re-put (name / pow_bits / active only) still works.
+        let mut renamed = branch_record(&a, "corporate-eu");
+        renamed.pow_bits = 22;
+        store.put_branch(&renamed).unwrap();
+        let got = store.get_branch(&a.public().branch_id).unwrap().unwrap();
+        assert_eq!(got.name, "corporate-eu");
+        assert_eq!(got.pow_bits, 22);
+    }
+
+    /// A branch id must be derived from the keys it publishes.
+    #[test]
+    fn branch_id_must_bind_its_keys() {
+        let store = SealedStore::open_in_memory().unwrap();
+        let a = BranchKeys::generate();
+        let mut forged = branch_record(&a, "corporate");
+        forged.id = kilio_seal::BranchId::derive(b"an id i made up");
+        assert!(matches!(
+            store.put_branch(&forged),
+            Err(CoreError::BranchIdMismatch)
+        ));
+        assert!(store.get_branch(&forged.id).unwrap().is_none());
     }
 
     #[test]

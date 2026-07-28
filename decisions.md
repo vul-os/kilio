@@ -34,7 +34,7 @@ while keeping the same source-protecting guarantees.
 ### Non-goals
 
 - Not a case-management ERP. It manages *claims and the conversation about
-  them*, nothing more (the ofisi lesson: stay narrow).
+  them*, nothing more (the diwan lesson: stay narrow).
 - Not a Tor hidden service (though it must not preclude running behind one).
 - Not a social network. There is no directory, no discovery, no profiles.
 - Not multi-tenant SaaS. One deployment = one organization (§7).
@@ -70,7 +70,7 @@ Rust here; it is the opposite of the "five hand-rolled sync engines" mistake.
 are JSX; protocol/crypto/engine code is typed. kilio honors this — all
 sealing is Rust-in-WASM with a thin typed wrapper; the surfaces are plain JSX.
 
-**Three run modes** (the ofisi `DEPLOY_MODE` pattern, one typed enum):
+**Three run modes** (the diwan `DEPLOY_MODE` pattern, one typed enum):
 
 | Mode | Who runs it | Reachability | Identity |
 |------|-------------|--------------|----------|
@@ -78,7 +78,7 @@ sealing is Rust-in-WASM with a thin typed wrapper; the surfaces are plain JSX.
 | `standalone` | org, on a box/VPS | tunnel or reverse proxy | local admin(s) |
 | `os` | behind a Vulos OS gateway | gateway | gateway-brokered |
 
-`os` mode **refuses to boot without an auth posture** (ofisi's fail-closed
+`os` mode **refuses to boot without an auth posture** (diwan's fail-closed
 boot gate — never silently collapse all handlers to one identity).
 
 ---
@@ -97,13 +97,43 @@ branch private key). This is *honest* privacy — the host cannot read claims
 even if compelled, because it never has the key.
 
 - Sealing: **HPKE (RFC 9180)**, mode Base, DHKEM(X25519, HKDF-SHA256),
-  HKDF-SHA256, ChaCha20Poly1305. Chosen crate: `hpke-rs` (audited,
-  RustCrypto-adjacent, wasm-friendly). We do **not** hand-roll AEAD/KEM.
+  HKDF-SHA256, ChaCha20Poly1305. Chosen crate: `hpke` 0.12 (RustCrypto-adjacent,
+  wasm-friendly). We do **not** hand-roll AEAD/KEM.
 - The envelope mirrors kotva's MOTE `Envelope`/`Payload` split: a cleartext
-  outer (`ciphertext`, ephemeral `enc`, `kind`, `challenge`) and a sealed
-  inner (`from`, `body`, `attachments`, `created_at`). The sender identity
-  lives *inside* the sealed inner — **sealed sender** — so intermediaries
-  never see who sent it, only an ephemeral, unlinkable key.
+  outer (`v`, `kind`, `recipient` tag, ephemeral `enc`, `ciphertext`,
+  `size_bucket`) and a sealed inner (`from`, `created_at`, `body`). The sender
+  identity lives *inside* the sealed inner — **sealed sender** — so
+  intermediaries never see who sent it, only an ephemeral, unlinkable key.
+  (Attachments are not a separate field: they are body content, sealed with it.)
+
+### 3.1a Branch key pinning
+
+Sealing to the right key is what makes §3.1 mean anything, and the reporter
+gets that key from the host §3.1 says they must not have to trust.
+`BranchPublic::expected_id()` proves only *self-consistency* — an attacker that
+substitutes a key it controls substitutes the matching id too, and the check
+passes. Self-consistency is not authenticity.
+
+So kilio pins, following **aql's pairing discipline** rather than a looser
+first-key-wins (`crates/kilio-seal/src/pin.rs`):
+
+- A branch publishes a **signed, versioned descriptor** (both public keys,
+  `name`, `pow_bits`, a monotonic `epoch`), self-signed under a dedicated
+  signing domain. The self-signature is a prerequisite for trust, never a
+  source of it.
+- `BranchPin::pin()` is the **one** moment a key is accepted; `check()`
+  thereafter refuses any key change and any epoch below the pinned one.
+- The only rotation path is a **rekey certificate countersigned by the
+  currently pinned key**, with a strictly greater epoch — aql's `repair`, in
+  kilio's shape. The only other escape is an explicit `unpin()`, the
+  factory-reset analogue.
+- Host-side, `SealedStore::put_branch()` enforces the same invariant from the
+  other end: stored branch keys are immutable, and a branch id must derive from
+  the keys it publishes.
+
+**Accepted residual:** first contact is still trust-on-first-use. Pinning
+defeats *later* substitution, not a hostile first fetch; the answer to that is
+comparing the `branch_id` published out of band.
 
 ### 3.2 No mandatory identity
 
@@ -193,10 +223,10 @@ AuditEvent  { id, actor, action, claim_id?, at }  # append-only, content-free
   time T, never what Y said. It exists for the org's own governance and for
   the reporter's trust ("who has looked at my report").
 
-### Branch scoping (the ofisi multi-branch pattern)
+### Branch scoping (the diwan multi-branch pattern)
 
 One deployment, many branches (offices, regions, "corporate/global"). Copied
-from ofisi verbatim in spirit:
+from diwan verbatim in spirit:
 
 - **One scoped-key builder.** `branch_key(branch_id, name)` →
   `<branch_id>/<name>` with segment sanitization (no `/`, `\`, `..`). Every
@@ -214,16 +244,20 @@ from ofisi verbatim in spirit:
 
 ## 6. Seams (thin interface, local default, adapter at the composition root)
 
-The ofisi rule: **core defines the interface and compiles a local default;
+The diwan rule: **core defines the interface and compiles a local default;
 the fancy adapter is wired only in `main`, and core never imports it.** Remove
 any adapter and the standalone build still works.
 
 ### 6.1 `Delivery` — where sealed claims go
 
+The local store write always happens; `Delivery` is the optional extra hop, so
+the implemented trait is a one-way forward rather than a deposit/collect pair:
+
 ```rust
-trait Delivery {
-    async fn deposit(&self, branch_id: &BranchId, envelope: &Envelope) -> Result<Receipt>;
-    async fn collect(&self, branch_id: &BranchId, since: Cursor) -> Result<Vec<Envelope>>;
+// crates/kilio-core/src/delivery.rs — as implemented
+pub trait Delivery: Send + Sync {
+    fn forward(&self, claim_id: &ClaimId, env: &Envelope) -> Result<(), CoreError>;
+    fn label(&self) -> &'static str;
 }
 ```
 
@@ -231,10 +265,12 @@ trait Delivery {
   SQLite store. Zero dependencies. This is what `standalone`/`desktop` use.
 - **`KotvaDelivery` (opt-in, decentralized):** deposit the sealed envelope as
   an opaque blob to a **kotva rendezvous mailbox** (`POST {relay}/mailbox/{to}`,
-  content-blind, key-addressed — the working ephor Go relay + `@vulos/relay-client`).
+  content-blind, key-addressed — the ephor Go broker + `@vulos/relay-client`).
   Used to forward claims to an **external ombudsman** or across orgs without a
   shared server. The relay never sees plaintext (already sealed at source).
   This is the "decentralized, using kotva/ephor" path — real, but optional.
+  **Built today:** the struct and the seam. **Not built:** `forward()`, which
+  returns `Unsupported` until the async deposit lands with `kilio-server`.
 
 kilio's envelope is deliberately kotva-MOTE-shaped so `KotvaDelivery` is a
 re-wrap, not a re-encrypt.
@@ -245,22 +281,28 @@ Mirrors wede's `Provider` interface (`start/stop/public_url/snapshot`),
 mechanism-agnostic:
 
 ```rust
-trait Reachability {
-    async fn start(&self, local_addr: SocketAddr) -> Result<PublicUrl>;
-    async fn stop(&self) -> Result<()>;
-    fn snapshot(&self) -> TunnelStatus;   // token always redacted
+// crates/kilio-core/src/reachability.rs — as implemented
+pub trait Reachability: Send {
+    fn start(&mut self, local_addr: SocketAddr) -> Result<String, CoreError>;
+    fn stop(&mut self) -> Result<(), CoreError>;
+    fn snapshot(&self) -> TunnelStatus;   // never carries a token
 }
 ```
 
 - **`LocalOnly` (default):** bind `127.0.0.1`, no exposure. For dev / behind a
   reverse proxy the org already runs.
-- **`SubprocessTunnel` (working default for "click to go public"):** spawn a
-  detected tunnel binary — `cloudflared` / `ngrok` / `frp` — pinned to the
-  loopback listen addr, parse the assigned public URL. This is the honest,
-  runnable-today ngrok-like path (wede's built-in relay needs a relay *server*
-  that isn't in-tree yet).
-- **`Ephor` (seam, stubbed):** the wede sovereign reverse-tunnel agent,
-  wired the day an Ephor server is available.
+- **`SubprocessTunnel` (the "click to go public" path):** spawn a detected
+  tunnel binary — `cloudflared` / `ngrok` / `frp` — pinned to the loopback
+  listen addr, parse the assigned public URL. This is the honest, ngrok-like
+  path (wede's built-in relay needs a relay *server* that isn't in-tree here).
+  **Built today:** the loopback SSRF guard and the provider choice. **Not
+  built:** the spawn and URL parse, which need process access and land with
+  `kilio-server`/`kilio-cli` — `start()` returns `Unsupported` until then.
+- **Ephor (intent, not a seam):** pointing kilio at an
+  [Ephor](https://github.com/vul-os/ephor) broker — the KOTVA reference broker,
+  Go module `github.com/vul-os/ephor`, its own product rather than part of wede
+  — is recorded intent. **There is no `Ephor` variant in the tree**, and none
+  should be documented as configurable until one exists.
 
 **SSRF guard (non-negotiable, from wede):** whichever provider runs, it
 proxies to **exactly one** configured loopback address, re-checked before
@@ -268,9 +310,12 @@ every connection. The inbound request's Host/URL never chooses the target.
 
 ### 6.3 `Identity` / deploy mode
 
-`standalone`/`desktop`: local handler accounts (Argon2id password → session).
-`os`: identity brokered by the Vulos OS gateway via server-verified session,
-never a client header. Boot gate refuses `os` without a configured verifier.
+`Standalone` (an org's box, or one officer's laptop — a shape of the same
+mode, not a third enum value): local handler accounts (Argon2id password →
+session). `Os`: identity brokered by the Vulos OS gateway via server-verified
+session, never a client header; the boot gate refuses `Os` without a configured
+verifier. **Built today:** the `DeployMode` enum in `kilio-core`. **Not built:**
+the boot gate and the sessions themselves — both land with `kilio-server`.
 
 ---
 
@@ -281,7 +326,7 @@ org's claims through one shared operator's database. Instance-per-org keeps the
 trust boundary honest: **the org that receives the claims is the only party
 with the keys, and it runs its own box.** Multi-branch (within one org) is the
 supported axis of scale; multi-*org* is achieved by running more instances,
-optionally federated over kotva delivery. This is exactly ofisi's stance and
+optionally federated over kotva delivery. This is exactly diwan's stance and
 it is a *security* decision, not just an ops one.
 
 ---
@@ -292,6 +337,7 @@ it is a *security* decision, not just an ops one.
 |-----------|-----------|----------------|
 | Network observer / tunnel operator | sees all traffic | TLS + sealed-at-source; only ciphertext + size-bucket transit |
 | Malicious/curious host admin | full DB + disk | claims sealed to branch key held only by handlers; DB is ciphertext |
+| Key-substituting host | serves a branch key it controls | branch key pinning (§3.1a): accepted once, rotated only by a rekey countersigned by the pinned key; immutable stored keys host-side. First contact remains TOFU |
 | Compelled host (subpoena) | can be forced to hand over data | can only hand over ciphertext + content-free metadata; no keys, no IPs |
 | Retaliatory insider (a handler) | valid handler creds for branch A | branch scoping + `404`-on-deny; content-free audit log records every open |
 | Spammer / DoS | floods intake | per-branch PoW cold-contact stamp; size caps; no unauth injection |

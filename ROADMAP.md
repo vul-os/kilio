@@ -27,20 +27,23 @@ one before it already proved.
   ChaCha20Poly1305 via the audited `hpke` crate), receipt-passphrase → per-claim
   key derivation (Argon2id → Ed25519 + X25519), the sealed-sender envelope
   (kotva-MOTE-shaped, AAD-bound routing fields, size-bucketed padding), and the
-  anonymous proof-of-work cold-contact gate. Compiles native + `wasm32`.
-  21 unit tests green (`cargo test -p kilio-seal`), covering the full two-way
-  submit → reply → return-and-read flow, tamper rejection, and wrong-key
-  rejection. See [`docs/SECURITY.md`](docs/SECURITY.md) for the primitives in
-  depth.
+  anonymous proof-of-work cold-contact gate, and branch key **pinning**
+  (signed descriptors, `BranchPin`, rekey certificates). Compiles native +
+  `wasm32`. Unit tests green (`cargo test -p kilio-seal`), covering the full
+  two-way submit → reply → return-and-read flow, tamper rejection, wrong-key
+  rejection, and substituted-key / rollback / forged-rekey refusal. See
+  [`docs/SECURITY.md`](docs/SECURITY.md) for the primitives in depth.
+
+- ✅ **`kilio-core`** — domain model (Branch/Claim/Message/AuditEvent per
+  decisions.md §5), SQLite sealed store (ciphertext + routing metadata only),
+  the `Delivery` / `Reachability` seam traits with their local defaults
+  compiled in, the diwan-style `branch_scoped_key()` builder, and the single
+  `Requester` choke point that resolves branch access and returns an
+  indistinguishable "not found" on denial. `DeployMode` is a typed enum here;
+  the fail-closed boot gate it feeds lands with `kilio-server`.
 
 ### Next — actively planned, in build order
 
-- ⬜ **`kilio-core`** — domain model (Branch/Claim/Message/Attachment/Handler/
-  AuditEvent per decisions.md §5), SQLite sealed store, the `Delivery` /
-  `Reachability` / `Identity` seam traits with their local defaults compiled
-  in, the ofisi-style `branch_key()` scoped-storage builder, and the single
-  `requesterID()` choke point that resolves a handler's branch grants
-  server-side and returns `404` (never a distinguishable `403`) on denial.
 - ⬜ **`kilio-server` + `kilio-cli`** — axum intake API (reporter-facing, no
   auth, never given the client socket addr) and handler API (session-gated),
   the embedded PWA, owner-gated tunnel start/stop, and the `kilio init |
@@ -48,10 +51,11 @@ one before it already proved.
 
 ### Later — completes the two surfaces
 
-- ⬜ **`web/`** — the JSX PWA: reporter surface (submit, receipt passphrase
-  display, return-and-poll, read replies) and handler surface (inbox, open,
-  reply), sealing entirely client-side via `kilio-seal` compiled to WASM, a
-  service worker, and a TWA manifest for installability.
+- 🚧 **`web/`** — the JSX PWA. Both surfaces are built and responsive
+  (reporter: submit, receipt passphrase display, return-and-poll, read
+  replies; handler: inbox, open, reply) but run on mock data. Remaining:
+  sealing entirely client-side via `kilio-seal` compiled to WASM, a service
+  worker, and a TWA manifest for installability.
 - ⬜ **`apps/desktop`** — the Tauri v2 handler app. Embeds `kilio-core`
   natively (not WASM) so a single officer can run kilio, decrypt, and reply
   from a laptop with the subprocess tunnel as the default public-reachability
@@ -92,7 +96,7 @@ Carried from decisions.md §1 — restated here because a roadmap that doesn't
 say what it *won't* build is incomplete:
 
 - **Not a case-management ERP.** kilio manages claims and the conversation
-  about them, nothing more (the ofisi lesson: stay narrow).
+  about them, nothing more (the diwan lesson: stay narrow).
 - **Not a Tor hidden service** by default, though it must never preclude
   running behind one.
 - **Not a social network.** No directory, no discovery, no profiles.
