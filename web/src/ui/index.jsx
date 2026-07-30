@@ -1,7 +1,9 @@
 import './ui.css'
 import { useTheme } from '../lib/theme.js'
 
-/** The kilio seal mark: a medallion holding one contained voice-drop. */
+/** The kilio seal mark: a full-bleed rounded-square tile holding one leaning
+ *  voice-drop and its faint echo (mirrors brand/logo.svg — see cb58ae2,
+ *  which replaced this component's earlier circular medallion silhouette). */
 export function Seal({ size = 34, className = '' }) {
   return (
     <svg width={size} height={size} viewBox="0 0 64 64" className={className} aria-hidden="true">
