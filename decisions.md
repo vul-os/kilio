@@ -1,3 +1,10 @@
+<!-- no-broker-dep:allow-file: §6.1/6.2 below name the ephor/Kotva broker three times while
+     documenting a default-off, not-yet-functional design: KotvaDelivery is opt-in behind the
+     default LocalDelivery and its forward() "returns Unsupported until the async deposit
+     lands"; the Ephor Reachability variant is explicitly "intent, not a seam" with "no `Ephor`
+     variant in the tree". Design-decision prose, not a build or startup path — C-DEP's rust/node
+     closures are clean (no broker crate/package). -->
+
 # kilio — design decisions
 
 > **kilio** (Swahili: *an outcry, a cry for help*) — a self-hostable, sealed,
