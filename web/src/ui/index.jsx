@@ -11,8 +11,7 @@ export function Seal({ size = 34, className = '' }) {
           <stop offset="1" stopColor="#4B3BCF" />
         </linearGradient>
       </defs>
-      <circle cx="32" cy="32" r="30" fill="url(#seal-g)" />
-      <circle cx="32" cy="32" r="25.5" fill="none" stroke="#fff" strokeOpacity="0.16" strokeWidth="1" />
+      <rect width="64" height="64" rx="14" fill="url(#seal-g)" />
       <g transform="rotate(-13 32 32)">
         <path d="M32 13 C38.5 20.5 41.5 26.3 41.5 33.5 A9.5 9.5 0 1 1 22.5 33.5 C22.5 26.3 25.5 20.5 32 13 Z" fill="#FBFAF6" />
         <path d="M36 24 C38.5 27 39.5 30 39 33" fill="none" stroke="#fff" strokeOpacity="0.45" strokeWidth="1.1" strokeLinecap="round" />

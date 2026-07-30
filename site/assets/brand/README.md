@@ -1,5 +1,14 @@
 # kilio brand mark
 
+> **Superseded silhouette, 2026-07-30:** the canonical mark is now
+> `/brand/logo.svg` — the same "Sealed Cry" drop-and-echo on a full-bleed
+> rounded-square tile (`rect rx=14`, viewBox 0 0 64 64), matching the rest of
+> the suite's fleet-wide tile standard. `mark.svg`, `favicon.svg`, and the
+> lockups below have been updated to the rounded-square silhouette to match.
+> The circle-vs-square rationale in the "Concept" section is kept verbatim
+> as the historical record of the earlier decision; read the shape notes
+> below with that supersession in mind.
+
 ## Concept: "Sealed Cry"
 
 Three directions were sketched before committing:
@@ -51,9 +60,10 @@ changes between `lockup-light.svg` and `lockup-dark.svg`.
 
 ## Files
 
-- `mark.svg` — full glyph (medallion + rim + drop + echo), viewBox 0 0 64 64.
-- `favicon.svg` (in `web/public/`) — simplified glyph (medallion + drop
-  only, hairline details removed) for crispness at 16px.
+- `mark.svg` — exact copy of `/brand/logo.svg` (tile + drop + echo), viewBox
+  0 0 64 64.
+- `favicon.svg` (in `web/public/`) — also an exact copy of `/brand/logo.svg`,
+  per the fleet rule of deriving favicons by copying rather than redrawing.
 - `lockup-light.svg` / `lockup-dark.svg` — mark + "kilio" wordmark, viewBox
   0 0 290 84, serif system stack.
 

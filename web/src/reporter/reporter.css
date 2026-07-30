@@ -387,7 +387,7 @@
   background: var(--indigo-soft);
   color: var(--indigo);
   font-family: var(--sans);
-  font-size: .68rem;
+  font-size: .75rem;
   font-weight: 700;
   display: grid; place-items: center;
 }

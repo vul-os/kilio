@@ -32,7 +32,7 @@
 }
 .h-nav-top .logo { font-size: 1.08rem; }
 .h-nav-kicker {
-  font-size: 0.68rem; font-weight: 650; letter-spacing: 0.09em; text-transform: uppercase;
+  font-size: 0.75rem; font-weight: 650; letter-spacing: 0.09em; text-transform: uppercase;
   color: var(--faint); border: 1px solid var(--line-2); border-radius: 999px; padding: 2px 7px;
 }
 
@@ -48,7 +48,7 @@
 .h-nav-link.active { background: var(--indigo-soft); color: var(--indigo); }
 .h-nav-link.active svg { color: var(--indigo); }
 .h-nav-count {
-  margin-left: auto; font-size: 0.72rem; font-weight: 650; color: var(--muted);
+  margin-left: auto; font-size: 0.75rem; font-weight: 650; color: var(--muted);
   background: var(--panel); border: 1px solid var(--line-2); border-radius: 999px;
   padding: 1px 7px; min-width: 20px; text-align: center;
 }
@@ -56,7 +56,7 @@
 
 .h-nav-section { padding-top: 6px; border-top: 1px solid var(--line); margin-top: 4px; }
 .h-nav-heading {
-  display: block; font-size: 0.7rem; font-weight: 650; letter-spacing: 0.07em;
+  display: block; font-size: 0.75rem; font-weight: 650; letter-spacing: 0.07em;
   text-transform: uppercase; color: var(--faint); padding: 12px 10px 8px;
 }
 .h-branch-filter { display: flex; flex-direction: column; gap: 1px; }
@@ -142,7 +142,7 @@
 a.h-case-row:hover { background: var(--paper-2); text-decoration: none; }
 a.h-case-row:focus-visible { outline: 2px solid var(--indigo); outline-offset: -2px; }
 .h-case-row-head {
-  font-size: 0.72rem; font-weight: 650; letter-spacing: 0.06em; text-transform: uppercase;
+  font-size: 0.75rem; font-weight: 650; letter-spacing: 0.06em; text-transform: uppercase;
   color: var(--faint); padding-top: 12px; padding-bottom: 12px;
 }
 .h-case-receipt { display: flex; align-items: center; gap: 9px; font-size: 0.92rem; }
@@ -226,7 +226,7 @@ a.h-case-row:focus-visible { outline: 2px solid var(--indigo); outline-offset: -
 }
 .bubble-row.reporter .bubble { background: var(--panel); border-top-left-radius: 4px; }
 .bubble-row.handler .bubble { background: var(--indigo-soft); border-color: color-mix(in srgb, var(--indigo) 25%, transparent); border-top-right-radius: 4px; }
-.bubble-meta { display: flex; align-items: baseline; justify-content: space-between; gap: 14px; font-size: 0.74rem; font-weight: 650; color: var(--muted); margin-bottom: 5px; }
+.bubble-meta { display: flex; align-items: baseline; justify-content: space-between; gap: 14px; font-size: 0.75rem; font-weight: 650; color: var(--muted); margin-bottom: 5px; }
 .bubble-row.handler .bubble-meta { color: var(--indigo); }
 .bubble-time { font-weight: 500; color: var(--faint); white-space: nowrap; }
 .bubble p { font-size: 0.93rem; line-height: 1.55; color: var(--ink-2); }
@@ -266,14 +266,14 @@ a.h-case-row:focus-visible { outline: 2px solid var(--indigo); outline-offset: -
 .branch-blurb { font-size: 0.87rem; color: var(--muted); line-height: 1.5; }
 .branch-stats { display: flex; gap: 18px; }
 .branch-stat { display: flex; flex-direction: column; gap: 2px; }
-.branch-stat-label { font-size: 0.72rem; color: var(--faint); text-transform: uppercase; letter-spacing: 0.05em; }
+.branch-stat-label { font-size: 0.75rem; color: var(--faint); text-transform: uppercase; letter-spacing: 0.05em; }
 .branch-stat-value { font-size: 0.9rem; font-weight: 600; color: var(--ink-2); }
 .branch-fingerprint {
   display: flex; align-items: center; gap: 10px; padding: 10px 12px; background: var(--paper-2);
   border: 1px solid var(--line); border-radius: var(--r-sm);
 }
 .branch-fingerprint svg { color: var(--faint); flex: none; }
-.branch-fp-label { display: block; font-size: 0.72rem; color: var(--faint); margin-bottom: 2px; }
+.branch-fp-label { display: block; font-size: 0.75rem; color: var(--faint); margin-bottom: 2px; }
 .branch-fp-value { display: block; font-size: 0.78rem; color: var(--ink-2); word-break: break-all; }
 
 /* switch */
@@ -325,7 +325,7 @@ a.h-case-row:focus-visible { outline: 2px solid var(--indigo); outline-offset: -
 .about-head h2 { font-size: 1.15rem; }
 .about-tagline { font-size: 0.87rem; color: var(--muted); }
 .about-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; padding: 14px 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
-.about-grid dt { font-size: 0.72rem; color: var(--faint); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 3px; }
+.about-grid dt { font-size: 0.75rem; color: var(--faint); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 3px; }
 .about-grid dd { font-size: 0.88rem; color: var(--ink-2); }
 .about-links { display: flex; gap: 10px; flex-wrap: wrap; }
 
