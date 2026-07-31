@@ -52,11 +52,7 @@ img{max-width:100%;display:block}
 .nav-spacer{flex:1}
 .nav-links{display:flex;align-items:center;gap:22px}
 .nav-links a{color:var(--muted);font-size:14.5px;font-weight:500;transition:color .15s}
-.nav-links a:hover{color:var(--text)}
-.vulos-badge{display:inline-flex;align-items:center;gap:8px;padding:6px 12px;border:1px solid var(--border-2);border-radius:999px;font-size:13px;color:var(--muted);transition:border-color .15s,color .15s}
-.vulos-badge:hover{border-color:var(--accent);color:var(--text)}
-.vulos-badge img{width:16px;height:16px;border-radius:4px}
-@media(max-width:760px){.nav-links{display:none}}
+.nav-links a:hover{color:var(--text)}@media(max-width:760px){.nav-links{display:none}}
 
 /* Buttons */
 .btn{display:inline-flex;align-items:center;gap:9px;padding:12px 20px;border-radius:11px;font-weight:600;font-size:15px;border:1px solid transparent;cursor:pointer;transition:transform .12s,box-shadow .2s,background .2s,border-color .2s}
@@ -143,15 +139,6 @@ img{max-width:100%;display:block}
 .decent h4{margin:0 0 6px;font-size:16px;letter-spacing:-.01em}
 .decent h4::before{content:"/ ";color:var(--accent);font-weight:700}
 .decent p{margin:0;color:var(--muted);font-size:14.5px}
-
-/* Vulos band */
-.vulos-band{margin:24px 0;background:linear-gradient(120deg,var(--panel),var(--bg-soft));border:1px solid var(--border);border-radius:var(--radius);padding:40px;display:flex;gap:26px;align-items:center}
-@media(max-width:680px){.vulos-band{flex-direction:column;text-align:center}}
-.vulos-band img{width:60px;height:60px;border-radius:14px;flex:none}
-.vulos-band h3{margin:0 0 6px;font-size:21px}
-.vulos-band p{margin:0;color:var(--muted);max-width:680px}
-.vulos-band .more{margin-top:14px;display:inline-flex;color:var(--accent);font-weight:600;font-size:15px}
-
 /* Footer */
 .site-footer{border-top:1px solid var(--border);margin-top:40px;padding:40px 0}
 .foot{display:flex;flex-wrap:wrap;gap:18px;align-items:center;justify-content:space-between}
@@ -161,7 +148,18 @@ img{max-width:100%;display:block}
 .foot .links a{color:var(--muted);font-size:14px}
 .foot .links a:hover{color:var(--text)}
 </style>
-<style>:root{--accent:#7C5CFF;--accent-2:#B197FC}</style>
+<style>:root{--accent:#7C5CFF;--accent-2:#B197FC}
+  /* ── Vulos suite chrome — identical on every product landing ───────────────
+     Two elements, and only two: a logo-only home button in the top bar, and
+     one line in the footer. Deliberately free of repo variables so the block
+     is byte-identical across the suite and can be diffed as one thing. */
+  .vulos-home { display: inline-flex; align-items: center; justify-content: center; width: 34px; height: 34px; border-radius: 9px; flex: 0 0 auto; opacity: .72; transition: opacity .15s ease, transform .15s ease; }
+  .vulos-home:hover, .vulos-home:focus-visible { opacity: 1; transform: translateY(-1px); }
+  .vulos-home img { display: block; width: 22px; height: 22px; border-radius: 6px; }
+  .vulos-foot { display: inline-flex; align-items: center; gap: 9px; font-size: 13.5px; line-height: 1.45; text-decoration: none; color: inherit; opacity: .85; transition: opacity .15s ease; }
+  .vulos-foot:hover { opacity: 1; text-decoration: none; }
+  .vulos-foot img { display: block; width: 18px; height: 18px; border-radius: 5px; flex: 0 0 auto; }
+</style>
 </head>
 <body>
 <header class="site-header"><div class="wrap nav">
@@ -174,15 +172,14 @@ img{max-width:100%;display:block}
       <a href="./docs.html">Docs</a>
       <a href="https://github.com/vul-os/kilio" target="_blank" rel="noopener">GitHub</a>
     </nav>
-    <a class="vulos-badge" href="https://vulos.org" target="_blank" rel="noopener" title="Part of VulOS">
-      <img src="./assets/vulos-logo.png" alt="VulOS">Part of VulOS
-    </a>
+    <a class="vulos-home" href="https://vulos.org" target="_blank" rel="noopener" title="Vulos — open, self-hostable software" aria-label="Vulos — open, self-hostable software"><img src="./assets/vulos-logo.png" alt="" width="22" height="22"></a>
   </div></header>
 <main>
   <section class="hero"><div class="wrap">
     <span class="eyebrow">No account · No email · Sealed at source · Your box</span>
     <h1 style="margin:0"><img class="wordmark" src="./assets/brand/lockup-dark.svg" alt="kilio"></h1>
     <p class="tagline">Sealed, anonymous-first intake for sensitive claims — reporters need no account and no email; hosts can't read what they receive.</p>
+    <p class="tagline"><a href="./LICENSE.txt">MIT OR Apache-2.0</a> · self-hosted · no account</p>
     <p class="blurb">kilio is a self-hostable intake tool for harassment, misconduct, and whistleblowing reports. A reporter's claim is HPKE-sealed in their browser to your branch's public key before it ever leaves the device — the server, the tunnel, and the database only ever hold ciphertext. The only identity is a twelve-word receipt passphrase, so reporters can return, read replies, and keep a two-way conversation without ever creating an account. One Rust binary, one SQLite file, a one-click tunnel to go public. There is nothing to subpoena but ciphertext.</p>
     <div class="cta-row">
       <a class="btn btn-primary" href="#quickstart">Get started</a>
@@ -271,24 +268,12 @@ cd kilio
     </div>
   </div></section>
 
-  <section class="section" style="padding-top:0"><div class="wrap">
-    <div class="vulos-band">
-      <img src="./assets/vulos-logo.png" alt="VulOS logo">
-      <div>
-        <h3>Part of VulOS</h3>
-        <p><a href="https://vulos.org" target="_blank" rel="noopener" style="color:var(--text);font-weight:600">VulOS</a> is a family of open, self-hostable apps. kilio is fully standalone — it never requires VulOS infrastructure — and borrows its multi-branch scoping and decentralized-delivery patterns from its siblings without depending on them. No hub, no account, no coupling.</p>
-        <a class="more" href="https://vulos.org" target="_blank" rel="noopener">Explore VulOS →</a>
-      </div>
-    </div>
-  </div></section>
 </main>
 <footer class="site-footer"><div class="wrap foot">
-    <div class="left"><img src="./assets/vulos-logo.png" alt="VulOS"> <span>Part of <a href="https://vulos.org" target="_blank" rel="noopener" style="color:var(--text)">VulOS</a> — open, self-hostable apps. Standalone by design.</span></div>
+    <a class="vulos-foot" href="https://vulos.org" target="_blank" rel="noopener"><img src="./assets/vulos-logo.png" alt="" width="18" height="18"><span>Part of <strong>Vulos</strong> — open, self-hostable software</span></a>
     <div class="links">
       <a href="./docs.html">Docs</a>
       <a href="https://github.com/vul-os/kilio" target="_blank" rel="noopener">GitHub</a>
-      <a href="./LICENSE.txt">License</a>
-      <a href="https://vulos.org" target="_blank" rel="noopener">vulos.org</a>
     </div>
   </div></footer>
 </body>
