@@ -86,11 +86,14 @@
 }
 
 .rp-hero-seal {
+  /* A quiet corner watermark, not a floating sticker — low opacity, tucked
+     toward the edge so it reads as atmosphere rather than a second logo
+     competing with the headline. */
   position: absolute;
-  top: -8%;
-  right: -8%;
-  opacity: .5;
-  animation: rp-breathe 9s ease-in-out infinite;
+  top: -10%;
+  right: -6%;
+  opacity: .16;
+  animation: rp-breathe 12s ease-in-out infinite;
 }
 @media (prefers-reduced-motion: reduce) { .rp-hero-seal { animation: none; } }
 @media (max-width: 720px) { .rp-hero-seal { display: none; } }
@@ -131,7 +134,7 @@
   color: var(--muted);
   font-size: .88rem;
 }
-.rp-trust-item { display: inline-flex; align-items: center; gap: 7px; }
+.rp-trust-item { display: inline-flex; align-items: center; gap: 7px; white-space: nowrap; }
 .rp-trust-item svg { color: var(--indigo); flex: none; }
 .rp-trust-sep { color: var(--faint); }
 
@@ -532,8 +535,11 @@
 .rp-composer {
   display: flex; flex-direction: column; gap: 10px;
   padding: 16px;
-  position: sticky;
-  bottom: 16px;
+  /* In-flow, not sticky: this page is a plain scrolling document (unlike the
+     handler's fixed-height app shell), so a sticky composer would ride over
+     the message thread rather than stay pinned below it — a real overlap
+     bug seen on mobile where the last two messages sat behind this card. */
+  margin-top: 6px;
 }
 .rp-composer textarea { min-height: 88px; }
 .rp-composer-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; }

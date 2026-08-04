@@ -6,7 +6,7 @@ import { IconLock, IconShield, IconUser, IconArrowRight } from './icons.tsx'
 export default function Landing() {
   return (
     <section className="rp-hero">
-      <Seal size={210} className="rp-hero-seal" />
+      <Seal size={150} className="rp-hero-seal" />
       <div className="rp-hero-inner">
         <h1 className="rp-hero-title rp-in" style={{ '--i': 0 } as CSSProperties}>
           Speak safely.<br />You stay <em>anonymous</em>.

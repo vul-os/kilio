@@ -42,7 +42,22 @@ h1, h2, h3, h4 {
 a { color: var(--indigo); text-decoration: none; }
 a:hover { text-decoration: underline; }
 
-button { font-family: inherit; }
+/* Reset native button chrome everywhere. Every real button in this app sets
+   its own background/border via a class (.btn, .h-branch-item, .provider-card,
+   etc); without this reset those elements keep the browser's default outset
+   button bezel wherever a component didn't happen to also declare a border,
+   which is how several controls ended up with a stray dark rectangle around
+   them (h-branch-item, status-menu-list, segmented, provider-card, switch). */
+button {
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: none;
+  appearance: none;
+  -webkit-appearance: none;
+  text-align: inherit;
+  cursor: pointer;
+}
 
 img, svg { display: block; max-width: 100%; }
 
