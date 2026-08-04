@@ -1,11 +1,11 @@
 import { Routes, Route, Link, Outlet } from 'react-router-dom'
 import './reporter.css'
-import { Logo, ThemeToggle } from '../ui/index.jsx'
-import Landing from './Landing.jsx'
-import NewReport from './NewReport.jsx'
-import Receipt from './Receipt.jsx'
-import Return from './Return.jsx'
-import Thread from './Thread.jsx'
+import { Logo, ThemeToggle } from '../ui/index.tsx'
+import Landing from './Landing.tsx'
+import NewReport from './NewReport.tsx'
+import Receipt from './Receipt.tsx'
+import Return from './Return.tsx'
+import Thread from './Thread.tsx'
 
 function Layout() {
   return (

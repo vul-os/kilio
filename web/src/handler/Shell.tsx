@@ -1,10 +1,29 @@
-import { useMemo, useState } from 'react'
+import { useMemo, useState, type Dispatch, type SetStateAction } from 'react'
 import { NavLink, Outlet, useNavigate, useSearchParams, useLocation } from 'react-router-dom'
-import { Logo, Pill, ThemeToggle } from '../ui/index.jsx'
-import { BRANCHES, CLAIMS } from '../mock/data.js'
-import { InboxIcon, BranchIcon, GearIcon, SearchIcon } from './icons.jsx'
+import { Logo, Pill, ThemeToggle } from '../ui/index.tsx'
+import { BRANCHES, CLAIMS, type Tone } from '../mock/data.ts'
+import { InboxIcon, BranchIcon, GearIcon, SearchIcon } from './icons.tsx'
 
-const REACH_LABEL = {
+export type ReachProviderId = 'local' | 'cloudflared' | 'ngrok'
+
+export interface ReachState {
+  provider: ReachProviderId
+  url: string
+}
+
+export type DeployMode = 'standalone' | 'os_gateway'
+
+/** Cross-page state the shell owns and hands to child routes via
+ * <Outlet context>. */
+export interface HandlerOutletContext {
+  search: string
+  reach: ReachState
+  setReach: Dispatch<SetStateAction<ReachState>>
+  deployMode: DeployMode
+  setDeployMode: Dispatch<SetStateAction<DeployMode>>
+}
+
+const REACH_LABEL: Record<ReachProviderId, { label: string; tone: Tone }> = {
   local: { label: 'Local only', tone: 'muted' },
   cloudflared: { label: 'Public · tunnel on', tone: 'ok' },
   ngrok: { label: 'Public · ngrok on', tone: 'ok' },
@@ -27,15 +46,15 @@ export default function Shell() {
   const location = useLocation()
   const [params] = useSearchParams()
   const [search, setSearch] = useState('')
-  const [reach, setReach] = useState({ provider: 'cloudflared', url: 'https://sanctuary-4f2a.trycloudflare.com' })
-  const [deployMode, setDeployMode] = useState('standalone')
+  const [reach, setReach] = useState<ReachState>({ provider: 'cloudflared', url: 'https://sanctuary-4f2a.trycloudflare.com' })
+  const [deployMode, setDeployMode] = useState<DeployMode>('standalone')
   const [navOpen, setNavOpen] = useState(false)
 
   const activeBranch = params.get('branch') || ''
   const onInbox = location.pathname === '/handler' || location.pathname === '/handler/'
 
   const branchCounts = useMemo(() => {
-    const m = new Map()
+    const m = new Map<string, number>()
     for (const c of CLAIMS) {
       if (c.status === 'resolved' || c.status === 'closed') continue
       m.set(c.branchId, (m.get(c.branchId) || 0) + 1)
@@ -48,7 +67,7 @@ export default function Shell() {
     []
   )
 
-  function goToBranch(id) {
+  function goToBranch(id: string) {
     navigate(id ? `/handler?branch=${id}` : '/handler')
     setNavOpen(false)
   }
@@ -102,7 +121,7 @@ export default function Shell() {
                 >
                   <span className="h-branch-dot" aria-hidden="true" />
                   <span className="h-branch-name">{b.name}</span>
-                  {branchCounts.get(b.id) > 0 && <span className="h-nav-count">{branchCounts.get(b.id)}</span>}
+                  {(branchCounts.get(b.id) ?? 0) > 0 && <span className="h-nav-count">{branchCounts.get(b.id)}</span>}
                 </button>
               </li>
             ))}

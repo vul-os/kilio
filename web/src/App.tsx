@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import { Logo, Button, ThemeToggle, SealBadge } from './ui/index.jsx'
+import { Logo, Button, ThemeToggle, SealBadge } from './ui/index.tsx'
 
 // Dev landing — links to both surfaces. Not a shipped screen; the reporter and
 // handler apps are the real surfaces.

@@ -1,21 +1,22 @@
+import type { CSSProperties } from 'react'
 import { Link } from 'react-router-dom'
-import { Button, Seal } from '../ui/index.jsx'
-import { IconLock, IconShield, IconUser, IconArrowRight } from './icons.jsx'
+import { Button, Seal } from '../ui/index.tsx'
+import { IconLock, IconShield, IconUser, IconArrowRight } from './icons.tsx'
 
 export default function Landing() {
   return (
     <section className="rp-hero">
       <Seal size={210} className="rp-hero-seal" />
       <div className="rp-hero-inner">
-        <h1 className="rp-hero-title rp-in" style={{ '--i': 0 }}>
+        <h1 className="rp-hero-title rp-in" style={{ '--i': 0 } as CSSProperties}>
           Speak safely.<br />You stay <em>anonymous</em>.
         </h1>
-        <p className="rp-hero-lede rp-in" style={{ '--i': 1 }}>
+        <p className="rp-hero-lede rp-in" style={{ '--i': 1 } as CSSProperties}>
           Report something that matters — without an account, without an email.
           Your words are sealed the moment you send them, and only the team you
           choose can ever open them.
         </p>
-        <div className="rp-hero-actions rp-in" style={{ '--i': 2 }}>
+        <div className="rp-hero-actions rp-in" style={{ '--i': 2 } as CSSProperties}>
           <Button as={Link} to="/report/new" size="lg">
             Make a report <IconArrowRight width={17} height={17} />
           </Button>
@@ -23,7 +24,7 @@ export default function Landing() {
             I have a receipt code
           </Button>
         </div>
-        <div className="rp-trust rp-in" style={{ '--i': 3 }}>
+        <div className="rp-trust rp-in" style={{ '--i': 3 } as CSSProperties}>
           <span className="rp-trust-item"><IconLock width={15} height={15} /> No account or email</span>
           <span className="rp-trust-sep">·</span>
           <span className="rp-trust-item"><IconShield width={15} height={15} /> Sealed end-to-end</span>

@@ -1,10 +1,10 @@
 import { Route, Routes } from 'react-router-dom'
 import './handler.css'
-import Shell from './Shell.jsx'
-import Inbox from './Inbox.jsx'
-import CaseDetail from './CaseDetail.jsx'
-import Branches from './Branches.jsx'
-import Settings from './Settings.jsx'
+import Shell from './Shell.tsx'
+import Inbox from './Inbox.tsx'
+import CaseDetail from './CaseDetail.tsx'
+import Branches from './Branches.tsx'
+import Settings from './Settings.tsx'
 
 // Handler surface — the case-worker desktop app. Nested under /handler.
 export default function HandlerApp() {

@@ -1,19 +1,33 @@
 import { useState } from 'react'
-import { Button, Field } from '../ui/index.jsx'
-import { BRANCHES } from '../mock/data.js'
-import { keyFingerprint } from './utils.js'
-import { KeyIcon, PlusIcon } from './icons.jsx'
+import { Button, Field } from '../ui/index.tsx'
+import { BRANCHES, type Branch } from '../mock/data.ts'
+import { keyFingerprint } from './utils.ts'
+import { KeyIcon, PlusIcon } from './icons.tsx'
+
+interface HandlerBranch extends Branch {
+  active: boolean
+}
+
+// The <select> below stores its value as a string once the reporter changes
+// it (native <select> onChange always yields a string), even though the
+// initial value and the eventual submitted branch are numbers — same laxity
+// as the original JS, just made visible by the type.
+interface BranchDraft {
+  name: string
+  blurb: string
+  powBits: number | string
+}
 
 export default function Branches() {
-  const [branches, setBranches] = useState(BRANCHES.map((b) => ({ ...b, active: true })))
+  const [branches, setBranches] = useState<HandlerBranch[]>(BRANCHES.map((b) => ({ ...b, active: true })))
   const [adding, setAdding] = useState(false)
-  const [draft, setDraft] = useState({ name: '', blurb: '', powBits: 20 })
+  const [draft, setDraft] = useState<BranchDraft>({ name: '', blurb: '', powBits: 20 })
 
-  function toggleActive(id) {
+  function toggleActive(id: string) {
     setBranches((list) => list.map((b) => (b.id === id ? { ...b, active: !b.active } : b)))
   }
 
-  function addBranch(e) {
+  function addBranch(e: { preventDefault: () => void }) {
     e.preventDefault()
     const name = draft.name.trim()
     if (!name) return

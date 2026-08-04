@@ -3,7 +3,7 @@
 
 /** "3h ago" / "2d ago" style relative time, falling back to a date for
  * anything older than a week (keeps distant mock dates legible). */
-export function timeAgo(iso) {
+export function timeAgo(iso: string): string {
   const then = new Date(iso).getTime()
   const now = Date.now()
   const diff = Math.max(0, now - then)
@@ -18,7 +18,7 @@ export function timeAgo(iso) {
 }
 
 /** Full readable timestamp for thread bubbles / audit entries. */
-export function fullTime(iso) {
+export function fullTime(iso: string): string {
   return new Date(iso).toLocaleString(undefined, {
     weekday: 'short', month: 'short', day: 'numeric',
     hour: 'numeric', minute: '2-digit',
@@ -26,7 +26,7 @@ export function fullTime(iso) {
 }
 
 /** Mask a receipt id down to its last group, e.g. "7Q4K-2M9F" -> "••••-2M9F". */
-export function maskReceipt(id) {
+export function maskReceipt(id: string): string {
   const parts = String(id).split('-')
   if (parts.length < 2) return '•'.repeat(Math.max(4, id.length - 2)) + id.slice(-2)
   return parts.slice(0, -1).map((p) => '•'.repeat(p.length)).join('-') + '-' + parts[parts.length - 1]
@@ -34,18 +34,18 @@ export function maskReceipt(id) {
 
 /** Deterministic pseudo-fingerprint for a branch id, styled like a key
  * fingerprint. Not real crypto — display only, mock demo data. */
-export function keyFingerprint(seed) {
+export function keyFingerprint(seed: string): string {
   let h1 = 0x811c9dc5, h2 = 0x1000193
   for (let i = 0; i < seed.length; i++) {
     const c = seed.charCodeAt(i)
     h1 = (h1 ^ c) * 16777619 >>> 0
     h2 = (h2 + c * 2654435761) >>> 0
   }
-  const hex = (n) => n.toString(16).padStart(8, '0')
+  const hex = (n: number) => n.toString(16).padStart(8, '0')
   const raw = (hex(h1) + hex(h2) + hex(h1 ^ h2) + hex((h1 + h2) >>> 0)).slice(0, 32)
-  return raw.toUpperCase().match(/.{1,4}/g).join(' ')
+  return (raw.toUpperCase().match(/.{1,4}/g) as string[]).join(' ')
 }
 
-export function initialsFrom(text) {
+export function initialsFrom(text: string): string {
   return text.split(/\s+/).filter(Boolean).slice(0, 2).map((w) => w[0]).join('').toUpperCase()
 }

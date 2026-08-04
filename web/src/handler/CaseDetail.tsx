@@ -1,11 +1,11 @@
 import { useMemo, useRef, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
-import { Button, Pill, SealBadge } from '../ui/index.jsx'
-import { CLAIMS, STATUS, branchName } from '../mock/data.js'
-import { fullTime, maskReceipt, timeAgo } from './utils.js'
-import { ArrowLeftIcon, ChevronDownIcon, LockIcon, SendIcon } from './icons.jsx'
+import { Button, Pill, SealBadge } from '../ui/index.tsx'
+import { CLAIMS, STATUS, branchName, type StatusKey } from '../mock/data.ts'
+import { fullTime, maskReceipt, timeAgo } from './utils.ts'
+import { ArrowLeftIcon, ChevronDownIcon, LockIcon, SendIcon } from './icons.tsx'
 
-const STATUS_ORDER = ['new', 'triaged', 'in_progress', 'resolved', 'closed']
+const STATUS_ORDER: StatusKey[] = ['new', 'triaged', 'in_progress', 'resolved', 'closed']
 
 export default function CaseDetail() {
   const { id } = useParams()
@@ -15,7 +15,7 @@ export default function CaseDetail() {
   const [thread, setThread] = useState(base.thread)
   const [audit, setAudit] = useState(base.audit)
   const [draft, setDraft] = useState('')
-  const listRef = useRef(null)
+  const listRef = useRef<HTMLDivElement>(null)
 
   // Reset local session state when navigating to a different case.
   const caseKey = useRef(base.id)
@@ -27,13 +27,15 @@ export default function CaseDetail() {
     setDraft('')
   }
 
-  function changeStatus(next) {
+  function changeStatus(next: StatusKey) {
     if (next === status) return
     setStatus(next)
     setAudit((a) => [...a, { at: new Date().toISOString(), text: `Status → ${STATUS[next].label}` }])
   }
 
-  function sendReply(e) {
+  // Accepts both a form submit event and a keydown event (⌘/Ctrl+Enter) —
+  // only preventDefault() is used, so that's all the parameter requires.
+  function sendReply(e: { preventDefault: () => void }) {
     e.preventDefault()
     const body = draft.trim()
     if (!body) return
@@ -132,7 +134,12 @@ export default function CaseDetail() {
   )
 }
 
-function StatusMenu({ value, onChange }) {
+interface StatusMenuProps {
+  value: StatusKey
+  onChange: (next: StatusKey) => void
+}
+
+function StatusMenu({ value, onChange }: StatusMenuProps) {
   const [open, setOpen] = useState(false)
   const tone = STATUS[value].tone
 

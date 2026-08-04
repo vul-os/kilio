@@ -2,18 +2,62 @@
 // Real sealing/decryption lives in the kilio-seal crate; here the handler
 // side shows already-"opened" content and the reporter side simulates submit.
 
-export const BRANCHES = [
+/** Tone used to color a Pill / status swatch. Shared by STATUS and the
+ * handler's reachability labels. */
+export type Tone = 'indigo' | 'warn' | 'ok' | 'muted'
+
+export interface Branch {
+  id: string
+  name: string
+  blurb: string
+  powBits: number
+}
+
+export type StatusKey = 'new' | 'triaged' | 'in_progress' | 'resolved' | 'closed'
+
+export interface StatusInfo {
+  label: string
+  tone: Tone
+}
+
+export type MessageDir = 'reporter' | 'handler'
+
+export interface ThreadMessage {
+  dir: MessageDir
+  at: string
+  body: string
+}
+
+export interface AuditEntry {
+  at: string
+  text: string
+}
+
+export interface Claim {
+  id: string
+  branchId: string
+  category: string
+  status: StatusKey
+  title: string
+  createdAt: string
+  updatedAt: string
+  unread: boolean
+  thread: ThreadMessage[]
+  audit: AuditEntry[]
+}
+
+export const BRANCHES: Branch[] = [
   { id: 'b_people', name: 'People & Culture', blurb: 'Harassment, discrimination, workplace conduct.', powBits: 20 },
   { id: 'b_ethics', name: 'Ethics & Compliance', blurb: 'Fraud, conflicts of interest, policy breaches.', powBits: 20 },
   { id: 'b_safety', name: 'Health & Safety', blurb: 'Unsafe conditions, incidents, near-misses.', powBits: 18 },
 ]
 
-export const CATEGORIES = [
+export const CATEGORIES: string[] = [
   'Harassment', 'Discrimination', 'Bullying', 'Safety concern',
   'Fraud or theft', 'Conflict of interest', 'Retaliation', 'Something else',
 ]
 
-export const STATUS = {
+export const STATUS: Record<StatusKey, StatusInfo> = {
   new:        { label: 'Received',     tone: 'indigo' },
   triaged:    { label: 'Under review', tone: 'warn' },
   in_progress:{ label: 'In progress',  tone: 'warn' },
@@ -22,7 +66,7 @@ export const STATUS = {
 }
 
 // Short, non-graphic sample threads. Reporter is always anonymous.
-export const CLAIMS = [
+export const CLAIMS: Claim[] = [
   {
     id: '7Q4K-2M9F', branchId: 'b_people', category: 'Harassment', status: 'triaged',
     title: 'Repeated comments from a team lead', createdAt: '2026-07-20T09:12:00Z',
@@ -84,8 +128,8 @@ const WORDS = ['harbor','willow','lantern','pebble','cedar','meadow','copper','a
   'saffron','ripple','marble','thistle','ember','quartz','hollow','bramble',
   'orchard','velvet','pewter','cove','fable','indigo','maple','wren']
 
-export function makeReceipt() {
-  const out = []
+export function makeReceipt(): string[] {
+  const out: string[] = []
   const pool = [...WORDS]
   for (let i = 0; i < 12; i++) {
     const n = (i * 7 + 3) % pool.length // deterministic for stable screenshots
@@ -94,6 +138,6 @@ export function makeReceipt() {
   return out
 }
 
-export function branchName(id) {
-  return (BRANCHES.find((b) => b.id === id) || {}).name || 'General'
+export function branchName(id: string): string {
+  return (BRANCHES.find((b) => b.id === id) || ({} as Partial<Branch>)).name || 'General'
 }

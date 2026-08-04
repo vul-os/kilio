@@ -1,17 +1,20 @@
 import { useMemo, useState } from 'react'
 import { Link, useOutletContext, useSearchParams } from 'react-router-dom'
-import { Pill } from '../ui/index.jsx'
-import { CLAIMS, STATUS, branchName } from '../mock/data.js'
-import { timeAgo } from './utils.js'
-import { LockIcon, LockOpenIcon } from './icons.jsx'
+import { Pill } from '../ui/index.tsx'
+import { CLAIMS, STATUS, branchName, type StatusKey } from '../mock/data.ts'
+import { timeAgo } from './utils.ts'
+import { LockIcon, LockOpenIcon } from './icons.tsx'
+import type { HandlerOutletContext } from './Shell.tsx'
 
-const STATUS_ORDER = ['new', 'triaged', 'in_progress', 'resolved', 'closed']
+const STATUS_ORDER: StatusKey[] = ['new', 'triaged', 'in_progress', 'resolved', 'closed']
+
+type StatusFilter = 'all' | StatusKey
 
 export default function Inbox() {
-  const { search } = useOutletContext()
+  const { search } = useOutletContext<HandlerOutletContext>()
   const [params] = useSearchParams()
   const branchId = params.get('branch') || ''
-  const [statusFilter, setStatusFilter] = useState('all')
+  const [statusFilter, setStatusFilter] = useState<StatusFilter>('all')
 
   const branchScoped = useMemo(
     () => (branchId ? CLAIMS.filter((c) => c.branchId === branchId) : CLAIMS),
@@ -19,7 +22,7 @@ export default function Inbox() {
   )
 
   const counts = useMemo(() => {
-    const m = { all: branchScoped.length }
+    const m: Partial<Record<StatusKey, number>> & { all: number } = { all: branchScoped.length }
     for (const key of STATUS_ORDER) m[key] = branchScoped.filter((c) => c.status === key).length
     return m
   }, [branchScoped])
@@ -37,7 +40,7 @@ export default function Inbox() {
         )
       })
       .slice()
-      .sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt))
+      .sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime())
   }, [branchScoped, statusFilter, search])
 
   return (

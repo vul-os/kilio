@@ -1,24 +1,31 @@
 import { useState } from 'react'
 import { useOutletContext } from 'react-router-dom'
-import { Button, Field, Seal } from '../ui/index.jsx'
-import { CopyIcon, GlobeIcon } from './icons.jsx'
+import { Button, Field, Seal } from '../ui/index.tsx'
+import { CopyIcon, GlobeIcon } from './icons.tsx'
+import type { HandlerOutletContext, ReachProviderId } from './Shell.tsx'
 
-const PROVIDERS = [
+interface ProviderInfo {
+  id: ReachProviderId
+  name: string
+  desc: string
+}
+
+const PROVIDERS: ProviderInfo[] = [
   { id: 'local', name: 'Local only', desc: 'Reachable only on this device / network. Most private, no public URL.' },
   { id: 'cloudflared', name: 'Cloudflared', desc: 'Cloudflare Tunnel gives a public URL without opening a port.' },
   { id: 'ngrok', name: 'ngrok', desc: 'ngrok tunnel — good for quick demos, URL changes on restart.' },
 ]
 
-const MOCK_URLS = {
+const MOCK_URLS: Record<Exclude<ReachProviderId, 'local'>, string> = {
   cloudflared: 'https://sanctuary-4f2a.trycloudflare.com',
   ngrok: 'https://a1b2-203-0-113-9.ngrok-free.app',
 }
 
 export default function Settings() {
-  const { reach, setReach, deployMode, setDeployMode } = useOutletContext()
+  const { reach, setReach, deployMode, setDeployMode } = useOutletContext<HandlerOutletContext>()
   const [copied, setCopied] = useState(false)
 
-  function setProvider(id) {
+  function setProvider(id: ReachProviderId) {
     setReach({ provider: id, url: id === 'local' ? '' : (MOCK_URLS[id] || reach.url) })
   }
 

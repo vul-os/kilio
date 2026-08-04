@@ -1,7 +1,7 @@
-import { useState } from 'react'
+import { useState, type FormEvent } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Button, Seal } from '../ui/index.jsx'
-import { IconArrowRight, IconKey } from './icons.jsx'
+import { Button, Seal } from '../ui/index.tsx'
+import { IconArrowRight, IconKey } from './icons.tsx'
 
 export default function Return() {
   const nav = useNavigate()
@@ -9,7 +9,7 @@ export default function Return() {
   const words = code.trim().split(/\s+/).filter(Boolean)
   const ready = words.length === 12
 
-  const open = (e) => {
+  const open = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     if (ready) nav('/report/thread')
   }

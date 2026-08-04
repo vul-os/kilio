@@ -1,10 +1,10 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Button, Field, Stepper } from '../ui/index.jsx'
-import { BRANCHES, CATEGORIES, branchName } from '../mock/data.js'
+import { Button, Field, Stepper } from '../ui/index.tsx'
+import { BRANCHES, CATEGORIES, branchName } from '../mock/data.ts'
 import {
   IconArrowLeft, IconArrowRight, IconPaperclip, IconLock, IconCheck, IconShield,
-} from './icons.jsx'
+} from './icons.tsx'
 
 const STEPS = ['Team', 'Category', 'Your account', 'Attachments', 'Contact', 'Review']
 
@@ -17,6 +17,11 @@ const REASSURE = [
   'Nothing has been sent yet. Review, then seal and send.',
 ]
 
+interface MockFile {
+  name: string
+  size: string
+}
+
 export default function NewReport() {
   const nav = useNavigate()
   const [step, setStep] = useState(0)
@@ -24,7 +29,7 @@ export default function NewReport() {
   const [category, setCategory] = useState('')
   const [title, setTitle] = useState('')
   const [body, setBody] = useState('')
-  const [files, setFiles] = useState([])
+  const [files, setFiles] = useState<MockFile[]>([])
   const [contact, setContact] = useState('')
 
   const canNext =
@@ -165,7 +170,7 @@ export default function NewReport() {
   )
 }
 
-function stepTitle(step) {
+function stepTitle(step: number): string {
   return [
     'Who should receive this?',
     'What kind of concern is it?',
@@ -176,7 +181,13 @@ function stepTitle(step) {
   ][step]
 }
 
-function Row({ label, value, body }) {
+interface RowProps {
+  label: string
+  value: string
+  body?: boolean
+}
+
+function Row({ label, value, body }: RowProps) {
   return (
     <div className="rp-review-row">
       <div className="rp-review-label">{label}</div>

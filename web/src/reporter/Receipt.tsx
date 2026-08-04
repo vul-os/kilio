@@ -1,8 +1,8 @@
 import { useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { Button, Seal } from '../ui/index.jsx'
-import { makeReceipt } from '../mock/data.js'
-import { IconCopy, IconDownload, IconCheck, IconArrowRight } from './icons.jsx'
+import { Button, Seal } from '../ui/index.tsx'
+import { makeReceipt } from '../mock/data.ts'
+import { IconCopy, IconDownload, IconCheck, IconArrowRight } from './icons.tsx'
 
 export default function Receipt() {
   const words = useMemo(() => makeReceipt(), [])

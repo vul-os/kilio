@@ -1,10 +1,17 @@
+import type { ElementType, ComponentPropsWithoutRef, ReactNode } from 'react'
 import './ui.css'
-import { useTheme } from '../lib/theme.js'
+import { useTheme } from '../lib/theme.ts'
+import type { Tone } from '../mock/data.ts'
+
+export interface SealProps {
+  size?: number
+  className?: string
+}
 
 /** The kilio seal mark: a full-bleed rounded-square tile holding one leaning
  *  voice-drop and its faint echo (mirrors brand/logo.svg — see cb58ae2,
  *  which replaced this component's earlier circular medallion silhouette). */
-export function Seal({ size = 34, className = '' }) {
+export function Seal({ size = 34, className = '' }: SealProps) {
   return (
     <svg width={size} height={size} viewBox="0 0 64 64" className={className} aria-hidden="true">
       <defs>
@@ -25,23 +32,53 @@ export function Seal({ size = 34, className = '' }) {
   )
 }
 
-export function Logo({ size = 34 }) {
+export interface LogoProps {
+  size?: number
+}
+
+export function Logo({ size = 34 }: LogoProps) {
   return (
     <span className="logo"><Seal size={size} className="tile" />kilio</span>
   )
 }
 
-export function Button({ variant = 'primary', size, as, className = '', children, ...rest }) {
+type ButtonOwnProps<C extends ElementType> = {
+  variant?: 'primary' | 'ghost'
+  size?: 'lg' | 'sm'
+  as?: C
+  className?: string
+  children?: ReactNode
+}
+
+export type ButtonProps<C extends ElementType> =
+  ButtonOwnProps<C> & Omit<ComponentPropsWithoutRef<C>, keyof ButtonOwnProps<C>>
+
+const DEFAULT_BUTTON_TAG = 'button'
+
+export function Button<C extends ElementType = typeof DEFAULT_BUTTON_TAG>({
+  variant = 'primary', size, as, className = '', children, ...rest
+}: ButtonProps<C>) {
   const cls = `btn btn-${variant} ${size === 'lg' ? 'btn-lg' : ''} ${className}`.trim()
-  const Tag = as || 'button'
+  const Tag = (as || DEFAULT_BUTTON_TAG) as ElementType
   return <Tag className={cls} {...rest}>{children}</Tag>
 }
 
-export function Pill({ tone = 'muted', children }) {
+export interface PillProps {
+  tone?: Tone
+  children?: ReactNode
+}
+
+export function Pill({ tone = 'muted', children }: PillProps) {
   return <span className={`pill pill-${tone}`}><span className="dot" />{children}</span>
 }
 
-export function Field({ label, hint, children }) {
+export interface FieldProps {
+  label?: ReactNode
+  hint?: ReactNode
+  children?: ReactNode
+}
+
+export function Field({ label, hint, children }: FieldProps) {
   return (
     <div className="field">
       {label && <label>{label}</label>}
@@ -51,7 +88,11 @@ export function Field({ label, hint, children }) {
   )
 }
 
-export function SealBadge({ children = 'Sealed end-to-end' }) {
+export interface SealBadgeProps {
+  children?: ReactNode
+}
+
+export function SealBadge({ children = 'Sealed end-to-end' }: SealBadgeProps) {
   return (
     <span className="seal-badge">
       <svg width="13" height="13" viewBox="0 0 24 24" fill="none" aria-hidden="true">
@@ -63,7 +104,12 @@ export function SealBadge({ children = 'Sealed end-to-end' }) {
   )
 }
 
-export function Stepper({ count, active }) {
+export interface StepperProps {
+  count: number
+  active: number
+}
+
+export function Stepper({ count, active }: StepperProps) {
   return (
     <div className="stepper" aria-label={`Step ${active + 1} of ${count}`}>
       {Array.from({ length: count }).map((_, i) => (

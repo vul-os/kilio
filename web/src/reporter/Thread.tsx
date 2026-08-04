@@ -1,8 +1,8 @@
-import { useState } from 'react'
-import { Button, SealBadge } from '../ui/index.jsx'
-import { CLAIMS, STATUS, branchName } from '../mock/data.js'
-import { formatDateTime } from './format.js'
-import { IconLock, IconSend } from './icons.jsx'
+import { useState, type CSSProperties } from 'react'
+import { Button, SealBadge } from '../ui/index.tsx'
+import { CLAIMS, STATUS, branchName } from '../mock/data.ts'
+import { formatDateTime } from './format.ts'
+import { IconLock, IconSend } from './icons.tsx'
 
 export default function Thread() {
   const claim = CLAIMS[0]
@@ -23,7 +23,7 @@ export default function Thread() {
         <SealBadge>Sealed to {branchName(claim.branchId)}</SealBadge>
       </div>
 
-      <div className={`rp-banner rp-banner-tone-${status.tone} rp-in`} style={{ '--i': 1 }}>
+      <div className={`rp-banner rp-banner-tone-${status.tone} rp-in`} style={{ '--i': 1 } as CSSProperties}>
         <span className="rp-banner-dot" />
         <span className="rp-banner-text">
           <strong>{status.label}.</strong> The team has your report and can reply
@@ -33,7 +33,7 @@ export default function Thread() {
 
       <div className="rp-messages">
         {claim.thread.map((m, i) => (
-          <div key={i} className={`rp-msg rp-msg-${m.dir} rp-in`} style={{ '--i': i + 2 }}>
+          <div key={i} className={`rp-msg rp-msg-${m.dir} rp-in`} style={{ '--i': i + 2 } as CSSProperties}>
             <div className="rp-msg-bubble">{m.body}</div>
             <div className="rp-msg-meta">
               <IconLock width={12} height={12} />
@@ -43,7 +43,7 @@ export default function Thread() {
         ))}
       </div>
 
-      <div className="card rp-composer rp-in" style={{ '--i': 8 }}>
+      <div className="card rp-composer rp-in" style={{ '--i': 8 } as CSSProperties}>
         <textarea className="textarea" value={draft} onChange={(e) => setDraft(e.target.value)}
           placeholder="Add anything else you'd like the team to know…" />
         <div className="rp-composer-row">
