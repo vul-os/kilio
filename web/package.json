@@ -9,6 +9,7 @@
     "build": "vite build",
     "preview": "vite preview --port 4173",
     "lint": "eslint .",
+    "typecheck": "tsc --noEmit",
     "check:lint-config": "node tools/check-lint-config.mjs"
   },
   "dependencies": {
