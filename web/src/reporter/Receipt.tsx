@@ -48,7 +48,7 @@ export default function Receipt() {
           </div>
 
           <div className="rp-receipt-actions">
-            <Button variant="ghost" onClick={copy}>
+            <Button variant="ghost" onClick={() => { void copy() }}>
               <IconCopy width={16} height={16} /> Copy code
             </Button>
             <Button variant="ghost" onClick={download}>

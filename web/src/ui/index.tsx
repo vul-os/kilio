@@ -59,7 +59,7 @@ export function Button<C extends ElementType = typeof DEFAULT_BUTTON_TAG>({
   variant = 'primary', size, as, className = '', children, ...rest
 }: ButtonProps<C>) {
   const cls = `btn btn-${variant} ${size === 'lg' ? 'btn-lg' : ''} ${className}`.trim()
-  const Tag = (as || DEFAULT_BUTTON_TAG) as ElementType
+  const Tag = as || DEFAULT_BUTTON_TAG
   return <Tag className={cls} {...rest}>{children}</Tag>
 }
 
