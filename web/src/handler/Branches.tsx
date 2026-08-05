@@ -8,14 +8,14 @@ interface HandlerBranch extends Branch {
   active: boolean
 }
 
-// The <select> below stores its value as a string once the reporter changes
-// it (native <select> onChange always yields a string), even though the
-// initial value and the eventual submitted branch are numbers — same laxity
-// as the original JS, just made visible by the type.
+// The <select> below yields a string in its onChange event (native <select>
+// onChange always does), so that string is parsed once, right at the
+// boundary where it originates, in the onChange handler below. BranchDraft
+// itself only ever holds the number the rest of the app expects.
 interface BranchDraft {
   name: string
   blurb: string
-  powBits: number | string
+  powBits: number
 }
 
 export default function Branches() {
@@ -32,7 +32,7 @@ export default function Branches() {
     const name = draft.name.trim()
     if (!name) return
     const id = 'b_' + name.toLowerCase().replace(/[^a-z0-9]+/g, '_').slice(0, 24) + '_' + branches.length
-    setBranches((list) => [...list, { id, name, blurb: draft.blurb.trim() || 'No description yet.', powBits: Number(draft.powBits) || 20, active: true }])
+    setBranches((list) => [...list, { id, name, blurb: draft.blurb.trim() || 'No description yet.', powBits: draft.powBits, active: true }])
     setDraft({ name: '', blurb: '', powBits: 20 })
     setAdding(false)
   }
@@ -65,7 +65,7 @@ export default function Branches() {
               <select
                 className="select"
                 value={draft.powBits}
-                onChange={(e) => setDraft((d) => ({ ...d, powBits: e.target.value }))}
+                onChange={(e) => setDraft((d) => ({ ...d, powBits: Number(e.target.value) }))}
               >
                 {[16, 18, 20, 22, 24].map((n) => <option key={n} value={n}>{n} bits</option>)}
               </select>
