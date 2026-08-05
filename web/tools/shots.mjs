@@ -44,12 +44,12 @@ const run = async () => {
         colorScheme: theme,
       })
       await ctx.addInitScript((t) => {
-        try { localStorage.setItem('kilio-theme', t) } catch (e) {}
+        try { localStorage.setItem('kilio-theme', t) } catch { /* localStorage may be unavailable in this context */ }
       }, theme)
       const page = await ctx.newPage()
       try {
         await page.goto(BASE + route, { waitUntil: 'networkidle', timeout: 20000 })
-      } catch (e) {
+      } catch {
         await page.goto(BASE + route, { waitUntil: 'load', timeout: 20000 })
       }
       await page.waitForTimeout(600)

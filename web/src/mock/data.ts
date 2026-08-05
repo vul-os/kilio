@@ -122,6 +122,16 @@ export const CLAIMS: Claim[] = [
   },
 ]
 
+/** CLAIMS is a fixed, non-empty demo dataset. Surfaces that need "the demo
+ * claim" (or a fallback when a route id doesn't match anything) use this
+ * instead of indexing CLAIMS[0] directly, so the non-empty invariant lives
+ * in one place instead of being re-asserted at every call site. */
+export function firstClaim(): Claim {
+  const claim = CLAIMS[0]
+  if (!claim) throw new Error('CLAIMS must not be empty')
+  return claim
+}
+
 // A small, friendly word pool for the demo receipt passphrase (BIP-39-like
 // look; the real receipt is a 12-word BIP-39 phrase minted client-side).
 const WORDS = ['harbor','willow','lantern','pebble','cedar','meadow','copper','anchor',
@@ -133,7 +143,7 @@ export function makeReceipt(): string[] {
   const pool = [...WORDS]
   for (let i = 0; i < 12; i++) {
     const n = (i * 7 + 3) % pool.length // deterministic for stable screenshots
-    out.push(pool.splice(n % pool.length, 1)[0] || WORDS[i % WORDS.length])
+    out.push(pool.splice(n % pool.length, 1)[0] ?? WORDS[i % WORDS.length] ?? 'lantern')
   }
   return out
 }

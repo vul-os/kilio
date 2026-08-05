@@ -1,7 +1,7 @@
 import { useMemo, useRef, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { Button, Pill, SealBadge } from '../ui/index.tsx'
-import { CLAIMS, STATUS, branchName, type StatusKey } from '../mock/data.ts'
+import { CLAIMS, STATUS, branchName, firstClaim, type StatusKey } from '../mock/data.ts'
 import { fullTime, maskReceipt, timeAgo } from './utils.ts'
 import { ArrowLeftIcon, ChevronDownIcon, LockIcon, SendIcon } from './icons.tsx'
 
@@ -9,7 +9,7 @@ const STATUS_ORDER: StatusKey[] = ['new', 'triaged', 'in_progress', 'resolved', 
 
 export default function CaseDetail() {
   const { id } = useParams()
-  const base = useMemo(() => CLAIMS.find((c) => c.id === id) || CLAIMS[0], [id])
+  const base = useMemo(() => CLAIMS.find((c) => c.id === id) ?? firstClaim(), [id])
 
   const [status, setStatus] = useState(base.status)
   const [thread, setThread] = useState(base.thread)
@@ -17,10 +17,12 @@ export default function CaseDetail() {
   const [draft, setDraft] = useState('')
   const listRef = useRef<HTMLDivElement>(null)
 
-  // Reset local session state when navigating to a different case.
-  const caseKey = useRef(base.id)
-  if (caseKey.current !== base.id) {
-    caseKey.current = base.id
+  // Reset local session state when navigating to a different case. Tracked
+  // via a state variable (not a ref) so the reset happens safely during
+  // render — see https://react.dev/learn/you-might-not-need-an-effect#adjusting-some-state-when-a-prop-changes
+  const [caseKey, setCaseKey] = useState(base.id)
+  if (caseKey !== base.id) {
+    setCaseKey(base.id)
     setStatus(base.status)
     setThread(base.thread)
     setAudit(base.audit)

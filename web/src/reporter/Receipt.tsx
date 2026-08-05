@@ -10,7 +10,7 @@ export default function Receipt() {
   const [copied, setCopied] = useState(false)
 
   const copy = async () => {
-    try { await navigator.clipboard.writeText(phrase) } catch (e) {}
+    try { await navigator.clipboard.writeText(phrase) } catch { /* clipboard permission denied; still show the copied state below */ }
     setCopied(true)
     setTimeout(() => setCopied(false), 2200)
   }

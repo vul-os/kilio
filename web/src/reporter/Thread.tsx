@@ -1,11 +1,11 @@
 import { useState, type CSSProperties } from 'react'
 import { Button, SealBadge } from '../ui/index.tsx'
-import { CLAIMS, STATUS, branchName } from '../mock/data.ts'
+import { STATUS, branchName, firstClaim } from '../mock/data.ts'
 import { formatDateTime } from './format.ts'
 import { IconLock, IconSend } from './icons.tsx'
 
 export default function Thread() {
-  const claim = CLAIMS[0]
+  const claim = firstClaim()
   const status = STATUS[claim.status]
   const [draft, setDraft] = useState('')
 

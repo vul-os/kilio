@@ -171,14 +171,15 @@ export default function NewReport() {
 }
 
 function stepTitle(step: number): string {
-  return [
+  const titles = [
     'Who should receive this?',
     'What kind of concern is it?',
     'Tell us what happened',
     'Add anything that helps',
     'Do you want us to reach you?',
     'Ready to send',
-  ][step]
+  ]
+  return titles[step] ?? titles[0] ?? 'New report'
 }
 
 interface RowProps {

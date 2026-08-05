@@ -21,7 +21,7 @@ export function useTheme(): UseThemeResult {
 
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', theme)
-    try { localStorage.setItem(KEY, theme) } catch (e) {}
+    try { localStorage.setItem(KEY, theme) } catch { /* localStorage may be unavailable (private mode / disabled) */ }
   }, [theme])
 
   const toggle = useCallback(() => {
