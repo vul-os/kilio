@@ -60,6 +60,8 @@ jobs:
 
       - run: npm run lint
 
+      - run: npm run typecheck
+
       # `npm run lint` exiting 0 is not evidence the type-aware rules ran at
       # all — that is exactly how 12 of 13 sibling repos briefly enforced
       # nothing while reporting full coverage. This gate runs the tools
