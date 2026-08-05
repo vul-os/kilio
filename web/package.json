@@ -8,7 +8,8 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview --port 4173",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "check:lint-config": "node tools/check-lint-config.mjs"
   },
   "dependencies": {
     "@fontsource-variable/fraunces": "^5.1.0",
